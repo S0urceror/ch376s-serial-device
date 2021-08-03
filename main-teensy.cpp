@@ -1,10 +1,10 @@
+#include <wiring.h>
 #include <SPI.h>
 #include "device.h"
 #include "ch376s.h"
 
-
 int ledPin = 11;
-int intPin = 4;
+int intPin = 5;
 int misoPin = 3;
 bool bDeviceOk = false;
 
@@ -194,17 +194,32 @@ void printf_begin(void)
   fdevopen( &serial_putc, 0 );
 }
 
-void error (char* msg)
-{
-  printf ("Error: %s\r\n",msg);
-}
-
 void loop() 
 {
-  if(bDeviceOk && (readStatus() & 0x80) == 0)
+  if((readStatus() & 0x80) == 0)
     handleInterrupt(); 
 }
 
+void host_reset ()
+{
+  printf ("resetting host\n");
+}
+void host_basic_interpreter ()
+{
+  printf ("starting BASIC\n");
+}
+void host_go (uint16_t address)
+{
+  printf ("jumping to 0x%04X\n",address);
+}
+void host_writeByte (uint16_t address, uint8_t value)
+{
+  printf ("address: 0x%04X, value: 0x%02X",address,value);
+}
+uint8_t host_readByte (uint16_t address)
+{
+  return address&0xff;
+}
 void setup() {
   // initialize SPI pins
   pinMode(SS, OUTPUT);
@@ -221,5 +236,14 @@ void setup() {
 
   // initialize USB device
   bDeviceOk = initDevice ();
+  if (bDeviceOk)
+  {
+      printf ("CH376s recognised\r\n");
+  }
+  else
+  {
+      printf ("CH376s not inserted\r\n");
+      while (true);
+  }
 }
 

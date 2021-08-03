@@ -1,0 +1,110 @@
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180 / ZX-Next / eZ80), page 1.
+Hexadecimal [24-Bits]
+
+Symbol Table
+
+    .__.$$$.                                                    =  002710 L
+    .__.ABS.                                                    =  000000 G
+    .__.CPU.                                                    =  000000 L
+    .__.H$L.                                                    =  000000 L
+  0 WAIT                                                           000025 R
+  2 _BYTES_MSG                                                     000170 GR
+  2 _ConDes                                                        000012 GR
+  2 _DevDes                                                        000000 GR
+  2 _LangDes                                                       000055 GR
+  2 _MANUFACTURER_Des                                              000059 GR
+  2 _NEWLINE_MSG                                                   000192 GR
+  2 _PRODUCER_Des                                                  000085 GR
+  2 _PRODUCER_SN_Des                                               0000AB GR
+  2 _UNKNOWN_MSG                                                   00015A GR
+  2 _WELCOME_MSG                                                   0000C3 GR
+    __divsint                                                      ****** GX
+  7 __xinit__BYTES_MSG                                             000170 R
+  7 __xinit__ConDes                                                000012 R
+  7 __xinit__DevDes                                                000000 R
+  7 __xinit__LangDes                                               000055 R
+  7 __xinit__MANUFACTURER_Des                                      000059 R
+  7 __xinit__NEWLINE_MSG                                           000192 R
+  7 __xinit__PRODUCER_Des                                          000085 R
+  7 __xinit__PRODUCER_SN_Des                                       0000AB R
+  7 __xinit__UNKNOWN_MSG                                           00015A R
+  7 __xinit__WELCOME_MSG                                           0000C3 R
+  7 __xinit__memory_buffer                                         000197 R
+  7 __xinit__oneOneByte                                            0000BD R
+  7 __xinit__oneZeroByte                                           0000BE R
+  7 __xinit__transaction_state                                     0000C2 R
+  7 __xinit__twoZeroBytes                                          0000BF R
+  7 __xinit__usb_terminal_open                                     0000C1 R
+  0 _check_exists                                                  000917 GR
+  0 _convertHex                                                    0001C0 GR
+  0 _convertToStr                                                  000211 GR
+  1 _dataLength                                                    000004 GR
+  1 _dataLength2                                                   000006 GR
+  1 _dataToTransfer                                                000000 GR
+  1 _dataToTransfer2                                               000002 GR
+  0 _handleIHX                                                     00024C GR
+  0 _handleInterrupt                                               0005C8 GR
+    _host_basic_interpreter                                        ****** GX
+    _host_go                                                       ****** GX
+    _host_readByte                                                 ****** GX
+    _host_reset                                                    ****** GX
+    _host_writeByte                                                ****** GX
+  0 _initDevice                                                    00095B GR
+  1 _length                                                        000051 GR
+  2 _memory_buffer                                                 000197 GR
+  0 _millis_elapsed                                                000040 GR
+    _millis_elapsed_FRAME_COUNTER_65536_95                      =  00FC9E 
+  0 _msdelay                                                       00002C GR
+  0 _msx_wait                                                      000025 GR
+  2 _oneOneByte                                                    0000BD GR
+  2 _oneZeroByte                                                   0000BE GR
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180 / ZX-Next / eZ80), page 2.
+Hexadecimal [24-Bits]
+
+Symbol Table
+
+  1 _payload                                                       000095 GR
+  1 _payloadptr                                                    0000D6 GR
+  0 _print_memory                                                  0002F8 GR
+  1 _processing_command                                            000094 GR
+    _readData                                                      ****** GX
+  0 _read_and_process_data                                         000374 GR
+  0 _read_usb_data                                                 000177 GR
+  1 _request                                                       000011 GR
+  0 _reset                                                         00004E GR
+  1 _resultBuffer                                                  000053 GR
+  0 _sendEP0ACK                                                    00006D GR
+  0 _sendEP0NAK                                                    000077 GR
+  0 _sendEP0STALL                                                  000081 GR
+  0 _set_target_device_address                                     0001AF GR
+  0 _set_usb_host_mode                                             00092E GR
+    _strlen                                                        ****** GX
+  0 _strupr                                                        000000 GR
+    _toupper                                                       ****** GX
+  2 _transaction_state                                             0000C2 GR
+  2 _twoZeroBytes                                                  0000BF GR
+  1 _uart_parameters                                               00000A GR
+  1 _usb_configuration_id                                          000009 GR
+  1 _usb_device_address                                            000008 GR
+  2 _usb_terminal_open                                             0000C1 GR
+    _writeCommand                                                  ****** GX
+    _writeData                                                     ****** GX
+  0 _writeDataForEndpoint0                                         00008B GR
+  0 _writeDataForEndpoint2                                         0000FD GR
+
+
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180 / ZX-Next / eZ80), page 3.
+Hexadecimal [24-Bits]
+
+Area Table
+
+   0 _CODE                                      size    981   flags    0
+   1 _DATA                                      size     D8   flags    0
+   2 _INITIALIZED                               size    1C9   flags    0
+   3 _DABS                                      size      0   flags    8
+   4 _HOME                                      size      0   flags    0
+   5 _GSINIT                                    size      0   flags    0
+   6 _GSFINAL                                   size      0   flags    0
+   7 _INITIALIZER                               size    1C9   flags    0
+   8 _CABS                                      size      0   flags    8
+

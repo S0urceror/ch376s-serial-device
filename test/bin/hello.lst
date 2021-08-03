@@ -1,0 +1,37 @@
+# file opened: helloworld.asm
+ 1    0000              CHPUT equ 0A2h
+ 2    0000
+ 3    0000              ; Our program!
+ 4    0000                  org 0A000h
+ 5    A000              START:
+ 6    A000 21 10 A0         ld hl, TXT_HELLO1
+ 7    A003 CD 07 A0         call PRINT
+ 8    A006              ;    ld hl, TXT_HELLO2
+ 9    A006              ;    call PRINT
+10    A006 C9               ret
+11    A007
+12    A007              ; PRINT a zero-terminated string in MSX-DOS
+13    A007              ; INPUT: HL points to start of string
+14    A007              PRINT:
+15    A007                  ; Check if the passed HL lies between start and end
+16    A007                  ;
+17    A007                  ; ASSERT HL>=TXT_ZERO_TERMINATED_START && HL<TXT_ZERO_TERMINATED_END
+18    A007 7E               ld a, (hl)
+19    A008 A7               and a
+20    A009 C8               ret z
+21    A00A                  ;
+22    A00A CD A2 00         call CHPUT
+23    A00D                  ;
+24    A00D 23               inc hl
+25    A00E 18 F7            jr PRINT
+26    A010
+27    A010              TXT_ZERO_TERMINATED_START
+28    A010 48 65 6C 6C  TXT_HELLO1 DB "Hello MSX!",0
+28    A014 6F 20 4D 53
+28    A018 58 21 00
+29    A01B              ;TXT_HELLO2 DB "\r\nSerial terminal to MSX over USB",0
+30    A01B              TXT_ZERO_TERMINATED_END
+31    A01B
+32    A01B              ;TXT_ERROR  DB 0
+33    A01B
+# file closed: helloworld.asm

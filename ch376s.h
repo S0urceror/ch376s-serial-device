@@ -17,9 +17,9 @@
 #define CH375_CMD_UNLOCK_USB      0x23
 #define CH375_CMD_RD_USB_DATA     0x27
 #define CH375_CMD_RD_USB_DATA_UNLOCK     0x28
-#define CH_CMD_WR_EP0 0x29 // DATA3
-#define CH_CMD_WR_EP1 0x2A // DATA5
-#define CH_CMD_WR_EP2 0x2B // DATA7
+#define CH_CMD_WR_EP0             0x29 // DATA3
+#define CH_CMD_WR_EP1             0x2A // DATA5
+#define CH_CMD_WR_EP2             0x2B // DATA7
 #define CH375_CMD_WR_HOST_DATA    0x2C
 #define CH376_CMD_CLR_STALL       0x41
 #define CH375_CMD_ISSUE_TKN_X     0x4E
@@ -28,7 +28,6 @@
 #define CH_CMD_DELAY_100US        0x0f
 #define CH375_CMD_GET_DESCR       0x46
 #define CH_CMD_TEST_CONNECT       0x16
-
 #define CH_CMD_SET_FILE_NAME      0x2f
 #define CH_CMD_DISK_CONNECT       0x30
 #define CH_CMD_DISK_MOUNT         0x31
@@ -57,10 +56,29 @@
 #define CH375_USB_MODE_HOST 0x06
 #define CH375_USB_MODE_HOST_RESET 0x07
 
-void writeCommand (byte cmd);
-void writeData (byte data);
-byte readData ();
-byte readStatus ();
-void error (char* msg);
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+    void host_reset ();
+    void host_basic_interpreter ();
+    void host_writeByte (uint16_t address, uint8_t value);
+    uint8_t readData ();
+    uint8_t readStatus ();
+#ifndef __SDCC
+    void writeCommand (uint8_t cmd);
+    void writeData (uint8_t data);
+    void host_go (uint16_t address);
+    uint8_t host_readByte (uint16_t address);
+#else
+    void writeCommand (uint8_t data) __z88dk_fastcall;
+    void writeData (uint8_t data) __z88dk_fastcall;
+    void host_go (uint16_t address) __z88dk_fastcall;
+    uint8_t host_readByte (uint16_t address) __z88dk_fastcall;
+#endif
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // CH376S_H__

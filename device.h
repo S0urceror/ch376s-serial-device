@@ -86,8 +86,13 @@
 #define USB_TYPE_VENDOR			(0x02 << 5)
 #define USB_TYPE_RESERVED		(0x03 << 5)
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 bool initDevice ();
 void handleInterrupt ();
-
+#ifdef __cplusplus
+}
+#endif
 
 #endif // USB_DEVICE 

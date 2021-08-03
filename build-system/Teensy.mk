@@ -25,6 +25,11 @@
 # ARDUINO_VERSION = 104
 # ARDUINO_LIBS = Bounce LiquidCrystal LedControl Encoder
 # USER_LIBS = <your own sketchbook libraries>
+TARGET  = 			usb_device
+ARDUINO_VERSION = 	10813
+ARDUINO_DIR   = 	/Applications/Teensyduino.app/Contents/Java
+BOARD_TAG     = 	teensy2
+ARDUINO_LIBS = 		SPI
 #
 # Or you can set them in a small Makefile and include this file with:
 # include Teensy.mk
@@ -90,7 +95,7 @@ endif
 CPPFLAGS         += $(OPTIMIZATION)
 LDFLAGS          += $(OPTIMIZATION)
 
-CPPFLAGS         += -DARDUINO=$(ARDUINO_VERSION)
+CPPFLAGS         += -DARDUINO=$(ARDUINO_VERSION) -DDEBUG=1
 #CPPFLAGS         += -ffunction-sections -fdata-sections
 
 CXXFLAGS         += -fno-exceptions
@@ -285,8 +290,8 @@ LIB_DEPS          = $(LIB_OBJS:.o=.d)
 LIB_INCLUDES      = $(patsubst %,-I%,$(LIBS))
 
 ####  Local sources
-LOCAL_C_SRCS      = $(wildcard *.c)
-LOCAL_CPP_SRCS    = $(wildcard *.cpp)
+LOCAL_C_SRCS      = device.c #$(wildcard *.c)
+LOCAL_CPP_SRCS    = main-teensy.cpp #$(wildcard *.cpp)
 LOCAL_CC_SRCS     = $(wildcard *.cc)
 LOCAL_PDE_SRCS    = $(wildcard *.pde)
 LOCAL_INO_SRCS    = $(wildcard *.ino)

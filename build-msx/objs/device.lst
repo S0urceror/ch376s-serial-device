@@ -1,0 +1,2162 @@
+                                      1 ;--------------------------------------------------------
+                                      2 ; File Created by SDCC : free open source ANSI-C Compiler
+                                      3 ; Version 4.0.3 #11868 (Mac OS X x86_64)
+                                      4 ;--------------------------------------------------------
+                                      5 	.module device
+                                      6 	.optsdcc -mz80
+                                      7 	
+                                      8 ;--------------------------------------------------------
+                                      9 ; Public variables in this module
+                                     10 ;--------------------------------------------------------
+                                     11 	.globl _set_usb_host_mode
+                                     12 	.globl _check_exists
+                                     13 	.globl _read_and_process_data
+                                     14 	.globl _print_memory
+                                     15 	.globl _handleIHX
+                                     16 	.globl _convertToStr
+                                     17 	.globl _convertHex
+                                     18 	.globl _set_target_device_address
+                                     19 	.globl _read_usb_data
+                                     20 	.globl _writeDataForEndpoint2
+                                     21 	.globl _writeDataForEndpoint0
+                                     22 	.globl _sendEP0STALL
+                                     23 	.globl _sendEP0NAK
+                                     24 	.globl _sendEP0ACK
+                                     25 	.globl _reset
+                                     26 	.globl _millis_elapsed
+                                     27 	.globl _msdelay
+                                     28 	.globl _msx_wait
+                                     29 	.globl _strupr
+                                     30 	.globl _strlen
+                                     31 	.globl _host_go
+                                     32 	.globl _readData
+                                     33 	.globl _writeData
+                                     34 	.globl _writeCommand
+                                     35 	.globl _host_readByte
+                                     36 	.globl _host_writeByte
+                                     37 	.globl _host_basic_interpreter
+                                     38 	.globl _host_reset
+                                     39 	.globl _toupper
+                                     40 	.globl _memory_buffer
+                                     41 	.globl _NEWLINE_MSG
+                                     42 	.globl _BYTES_MSG
+                                     43 	.globl _UNKNOWN_MSG
+                                     44 	.globl _WELCOME_MSG
+                                     45 	.globl _transaction_state
+                                     46 	.globl _usb_terminal_open
+                                     47 	.globl _twoZeroBytes
+                                     48 	.globl _oneZeroByte
+                                     49 	.globl _oneOneByte
+                                     50 	.globl _PRODUCER_SN_Des
+                                     51 	.globl _PRODUCER_Des
+                                     52 	.globl _MANUFACTURER_Des
+                                     53 	.globl _LangDes
+                                     54 	.globl _ConDes
+                                     55 	.globl _DevDes
+                                     56 	.globl _payloadptr
+                                     57 	.globl _payload
+                                     58 	.globl _processing_command
+                                     59 	.globl _resultBuffer
+                                     60 	.globl _length
+                                     61 	.globl _request
+                                     62 	.globl _uart_parameters
+                                     63 	.globl _usb_configuration_id
+                                     64 	.globl _usb_device_address
+                                     65 	.globl _dataLength2
+                                     66 	.globl _dataLength
+                                     67 	.globl _dataToTransfer2
+                                     68 	.globl _dataToTransfer
+                                     69 	.globl _handleInterrupt
+                                     70 	.globl _initDevice
+                                     71 ;--------------------------------------------------------
+                                     72 ; special function registers
+                                     73 ;--------------------------------------------------------
+                                     74 ;--------------------------------------------------------
+                                     75 ; ram data
+                                     76 ;--------------------------------------------------------
+                                     77 	.area _DATA
+                           00FC9E    78 _millis_elapsed_FRAME_COUNTER_65536_95	=	0xfc9e
+      000000                         79 _dataToTransfer::
+      000000                         80 	.ds 2
+      000002                         81 _dataToTransfer2::
+      000002                         82 	.ds 2
+      000004                         83 _dataLength::
+      000004                         84 	.ds 2
+      000006                         85 _dataLength2::
+      000006                         86 	.ds 2
+      000008                         87 _usb_device_address::
+      000008                         88 	.ds 1
+      000009                         89 _usb_configuration_id::
+      000009                         90 	.ds 1
+      00000A                         91 _uart_parameters::
+      00000A                         92 	.ds 7
+      000011                         93 _request::
+      000011                         94 	.ds 64
+      000051                         95 _length::
+      000051                         96 	.ds 2
+      000053                         97 _resultBuffer::
+      000053                         98 	.ds 65
+      000094                         99 _processing_command::
+      000094                        100 	.ds 1
+      000095                        101 _payload::
+      000095                        102 	.ds 65
+      0000D6                        103 _payloadptr::
+      0000D6                        104 	.ds 2
+                                    105 ;--------------------------------------------------------
+                                    106 ; ram data
+                                    107 ;--------------------------------------------------------
+                                    108 	.area _INITIALIZED
+      000000                        109 _DevDes::
+      000000                        110 	.ds 18
+      000012                        111 _ConDes::
+      000012                        112 	.ds 67
+      000055                        113 _LangDes::
+      000055                        114 	.ds 4
+      000059                        115 _MANUFACTURER_Des::
+      000059                        116 	.ds 44
+      000085                        117 _PRODUCER_Des::
+      000085                        118 	.ds 38
+      0000AB                        119 _PRODUCER_SN_Des::
+      0000AB                        120 	.ds 18
+      0000BD                        121 _oneOneByte::
+      0000BD                        122 	.ds 1
+      0000BE                        123 _oneZeroByte::
+      0000BE                        124 	.ds 1
+      0000BF                        125 _twoZeroBytes::
+      0000BF                        126 	.ds 2
+      0000C1                        127 _usb_terminal_open::
+      0000C1                        128 	.ds 1
+      0000C2                        129 _transaction_state::
+      0000C2                        130 	.ds 1
+      0000C3                        131 _WELCOME_MSG::
+      0000C3                        132 	.ds 151
+      00015A                        133 _UNKNOWN_MSG::
+      00015A                        134 	.ds 22
+      000170                        135 _BYTES_MSG::
+      000170                        136 	.ds 34
+      000192                        137 _NEWLINE_MSG::
+      000192                        138 	.ds 5
+      000197                        139 _memory_buffer::
+      000197                        140 	.ds 50
+                                    141 ;--------------------------------------------------------
+                                    142 ; absolute external ram data
+                                    143 ;--------------------------------------------------------
+                                    144 	.area _DABS (ABS)
+                                    145 ;--------------------------------------------------------
+                                    146 ; global & static initialisations
+                                    147 ;--------------------------------------------------------
+                                    148 	.area _HOME
+                                    149 	.area _GSINIT
+                                    150 	.area _GSFINAL
+                                    151 	.area _GSINIT
+                                    152 ;--------------------------------------------------------
+                                    153 ; Home
+                                    154 ;--------------------------------------------------------
+                                    155 	.area _HOME
+                                    156 	.area _HOME
+                                    157 ;--------------------------------------------------------
+                                    158 ; code
+                                    159 ;--------------------------------------------------------
+                                    160 	.area _CODE
+                                    161 ;device.c:15: char * strupr (char *str) 
+                                    162 ;	---------------------------------
+                                    163 ; Function strupr
+                                    164 ; ---------------------------------
+      000000                        165 _strupr::
+      000000 DD E5            [15]  166 	push	ix
+                                    167 ;device.c:17: char *ret = str;
+      000002 21 04 00         [10]  168 	ld	hl, #0 + 4
+      000005 39               [11]  169 	add	hl, sp
+      000006 4E               [ 7]  170 	ld	c, (hl)
+      000007 23               [ 6]  171 	inc	hl
+      000008 46               [ 7]  172 	ld	b, (hl)
+                                    173 ;device.c:19: while (*str)
+      000009 59               [ 4]  174 	ld	e, c
+      00000A 50               [ 4]  175 	ld	d, b
+      00000B                        176 00101$:
+      00000B 1A               [ 7]  177 	ld	a, (de)
+      00000C B7               [ 4]  178 	or	a, a
+      00000D 28 11            [12]  179 	jr	Z, 00103$
+                                    180 ;device.c:21: *str = toupper (*str);
+      00000F 6F               [ 4]  181 	ld	l, a
+      000010 26 00            [ 7]  182 	ld	h, #0x00
+      000012 C5               [11]  183 	push	bc
+      000013 D5               [11]  184 	push	de
+      000014 E5               [11]  185 	push	hl
+      000015 CDr00r00         [17]  186 	call	_toupper
+      000018 F1               [10]  187 	pop	af
+      000019 D1               [10]  188 	pop	de
+      00001A C1               [10]  189 	pop	bc
+      00001B 7D               [ 4]  190 	ld	a, l
+      00001C 12               [ 7]  191 	ld	(de), a
+                                    192 ;device.c:22: ++str;
+      00001D 13               [ 6]  193 	inc	de
+      00001E 18 EB            [12]  194 	jr	00101$
+      000020                        195 00103$:
+                                    196 ;device.c:25: return ret;
+      000020 69               [ 4]  197 	ld	l, c
+      000021 60               [ 4]  198 	ld	h, b
+                                    199 ;device.c:26: }
+      000022 DD E1            [14]  200 	pop	ix
+      000024 C9               [10]  201 	ret
+                                    202 ;device.c:64: void msx_wait (uint16_t times_jiffy)  __z88dk_fastcall __naked
+                                    203 ;	---------------------------------
+                                    204 ; Function msx_wait
+                                    205 ; ---------------------------------
+      000025                        206 _msx_wait::
+                                    207 ;device.c:78: __endasm; 
+                                    208 ;	Wait a determined number of interrupts
+                                    209 ;	Input: BC = number of 1/framerate interrupts to wait
+                                    210 ;	Output: (none)
+      000025                        211 	    WAIT:
+      000025 76               [ 4]  212 	halt	; waits 1/50th or 1/60th of a second till next interrupt
+      000026 2B               [ 6]  213 	dec	hl
+      000027 7C               [ 4]  214 	ld	a,h
+      000028 B5               [ 4]  215 	or	l
+      000029 20 FA            [12]  216 	jr	nz, WAIT
+      00002B C9               [10]  217 	ret
+                                    218 ;device.c:79: }
+                                    219 ;device.c:81: void msdelay (int milliseconds)
+                                    220 ;	---------------------------------
+                                    221 ; Function msdelay
+                                    222 ; ---------------------------------
+      00002C                        223 _msdelay::
+                                    224 ;device.c:83: msx_wait (milliseconds/20);
+      00002C 21 14 00         [10]  225 	ld	hl, #0x0014
+      00002F E5               [11]  226 	push	hl
+      000030 21 04 00         [10]  227 	ld	hl, #4
+      000033 39               [11]  228 	add	hl, sp
+      000034 4E               [ 7]  229 	ld	c, (hl)
+      000035 23               [ 6]  230 	inc	hl
+      000036 46               [ 7]  231 	ld	b, (hl)
+      000037 C5               [11]  232 	push	bc
+      000038 CDr00r00         [17]  233 	call	__divsint
+      00003B F1               [10]  234 	pop	af
+      00003C F1               [10]  235 	pop	af
+                                    236 ;device.c:84: }
+      00003D C3r25r00         [10]  237 	jp	_msx_wait
+                                    238 ;device.c:85: uint32_t millis_elapsed () 
+                                    239 ;	---------------------------------
+                                    240 ; Function millis_elapsed
+                                    241 ; ---------------------------------
+      000040                        242 _millis_elapsed::
+                                    243 ;device.c:88: return FRAME_COUNTER*20;
+      000040 2A 9E FC         [16]  244 	ld	hl, (_millis_elapsed_FRAME_COUNTER_65536_95)
+      000043 4D               [ 4]  245 	ld	c, l
+      000044 44               [ 4]  246 	ld	b, h
+      000045 29               [11]  247 	add	hl, hl
+      000046 29               [11]  248 	add	hl, hl
+      000047 09               [11]  249 	add	hl, bc
+      000048 29               [11]  250 	add	hl, hl
+      000049 29               [11]  251 	add	hl, hl
+      00004A 11 00 00         [10]  252 	ld	de, #0x0000
+                                    253 ;device.c:89: }
+      00004D C9               [10]  254 	ret
+                                    255 ;device.c:202: void reset ()
+                                    256 ;	---------------------------------
+                                    257 ; Function reset
+                                    258 ; ---------------------------------
+      00004E                        259 _reset::
+                                    260 ;device.c:204: dataLength = 0;
+      00004E 21 00 00         [10]  261 	ld	hl, #0x0000
+      000051 22r04r00         [16]  262 	ld	(_dataLength), hl
+                                    263 ;device.c:205: dataToTransfer = NULL;
+      000054 6C               [ 4]  264 	ld	l, h
+      000055 22r00r00         [16]  265 	ld	(_dataToTransfer), hl
+                                    266 ;device.c:206: usb_device_address = 0;
+      000058 21r08r00         [10]  267 	ld	hl, #_usb_device_address
+      00005B 36 00            [10]  268 	ld	(hl), #0x00
+                                    269 ;device.c:207: usb_configuration_id = 0;
+      00005D 21r09r00         [10]  270 	ld	hl, #_usb_configuration_id
+      000060 36 00            [10]  271 	ld	(hl), #0x00
+                                    272 ;device.c:208: transaction_state = STATUS;
+      000062 21rC2r00         [10]  273 	ld	hl, #_transaction_state
+      000065 36 02            [10]  274 	ld	(hl), #0x02
+                                    275 ;device.c:209: usb_terminal_open = false;
+      000067 21rC1r00         [10]  276 	ld	hl, #_usb_terminal_open
+      00006A 36 00            [10]  277 	ld	(hl), #0x00
+                                    278 ;device.c:213: }
+      00006C C9               [10]  279 	ret
+                                    280 ;device.c:215: void sendEP0ACK ()
+                                    281 ;	---------------------------------
+                                    282 ; Function sendEP0ACK
+                                    283 ; ---------------------------------
+      00006D                        284 _sendEP0ACK::
+                                    285 ;device.c:217: writeCommand (SET_ENDP3__TX_EP0);
+      00006D 2E 19            [ 7]  286 	ld	l, #0x19
+      00006F CDr00r00         [17]  287 	call	_writeCommand
+                                    288 ;device.c:218: writeData (SET_ENDP_ACK);
+      000072 2E 00            [ 7]  289 	ld	l, #0x00
+                                    290 ;device.c:219: }
+      000074 C3r00r00         [10]  291 	jp	_writeData
+                                    292 ;device.c:220: void sendEP0NAK ()
+                                    293 ;	---------------------------------
+                                    294 ; Function sendEP0NAK
+                                    295 ; ---------------------------------
+      000077                        296 _sendEP0NAK::
+                                    297 ;device.c:222: writeCommand (SET_ENDP3__TX_EP0);
+      000077 2E 19            [ 7]  298 	ld	l, #0x19
+      000079 CDr00r00         [17]  299 	call	_writeCommand
+                                    300 ;device.c:223: writeData (SET_ENDP_NAK);
+      00007C 2E 0E            [ 7]  301 	ld	l, #0x0e
+                                    302 ;device.c:224: }
+      00007E C3r00r00         [10]  303 	jp	_writeData
+                                    304 ;device.c:225: void sendEP0STALL ()
+                                    305 ;	---------------------------------
+                                    306 ; Function sendEP0STALL
+                                    307 ; ---------------------------------
+      000081                        308 _sendEP0STALL::
+                                    309 ;device.c:227: writeCommand (SET_ENDP3__TX_EP0);
+      000081 2E 19            [ 7]  310 	ld	l, #0x19
+      000083 CDr00r00         [17]  311 	call	_writeCommand
+                                    312 ;device.c:228: writeData (SET_ENDP_STALL);
+      000086 2E 0F            [ 7]  313 	ld	l, #0x0f
+                                    314 ;device.c:229: }
+      000088 C3r00r00         [10]  315 	jp	_writeData
+                                    316 ;device.c:231: void writeDataForEndpoint0()
+                                    317 ;	---------------------------------
+                                    318 ; Function writeDataForEndpoint0
+                                    319 ; ---------------------------------
+      00008B                        320 _writeDataForEndpoint0::
+      00008B DD E5            [15]  321 	push	ix
+      00008D DD 21 00 00      [14]  322 	ld	ix,#0
+      000091 DD 39            [15]  323 	add	ix,sp
+      000093 F5               [11]  324 	push	af
+                                    325 ;device.c:233: int amount = min (EP0_PIPE_SIZE,dataLength);
+      000094 21r04r00         [10]  326 	ld	hl, #_dataLength
+      000097 3E 08            [ 7]  327 	ld	a, #0x08
+      000099 BE               [ 7]  328 	cp	a, (hl)
+      00009A 3E 00            [ 7]  329 	ld	a, #0x00
+      00009C 23               [ 6]  330 	inc	hl
+      00009D 9E               [ 7]  331 	sbc	a, (hl)
+      00009E E2rA3r00         [10]  332 	jp	PO, 00125$
+      0000A1 EE 80            [ 7]  333 	xor	a, #0x80
+      0000A3                        334 00125$:
+      0000A3 F2rABr00         [10]  335 	jp	P, 00107$
+      0000A6 21 08 00         [10]  336 	ld	hl, #0x0008
+      0000A9 18 03            [12]  337 	jr	00108$
+      0000AB                        338 00107$:
+      0000AB 2Ar04r00         [16]  339 	ld	hl, (_dataLength)
+      0000AE                        340 00108$:
+      0000AE 33               [ 6]  341 	inc	sp
+      0000AF 33               [ 6]  342 	inc	sp
+      0000B0 E5               [11]  343 	push	hl
+                                    344 ;device.c:239: writeCommand(CH_CMD_WR_EP0);
+      0000B1 2E 29            [ 7]  345 	ld	l, #0x29
+      0000B3 CDr00r00         [17]  346 	call	_writeCommand
+                                    347 ;device.c:240: writeData(amount);
+      0000B6 DD 6E FE         [19]  348 	ld	l, -2 (ix)
+      0000B9 CDr00r00         [17]  349 	call	_writeData
+                                    350 ;device.c:241: for(int i=0; i<amount; i++) 
+      0000BC 01 00 00         [10]  351 	ld	bc, #0x0000
+      0000BF                        352 00103$:
+      0000BF 79               [ 4]  353 	ld	a, c
+      0000C0 DD 96 FE         [19]  354 	sub	a, -2 (ix)
+      0000C3 78               [ 4]  355 	ld	a, b
+      0000C4 DD 9E FF         [19]  356 	sbc	a, -1 (ix)
+      0000C7 E2rCCr00         [10]  357 	jp	PO, 00126$
+      0000CA EE 80            [ 7]  358 	xor	a, #0x80
+      0000CC                        359 00126$:
+      0000CC F2rDCr00         [10]  360 	jp	P, 00101$
+                                    361 ;device.c:246: writeData(dataToTransfer[i]);
+      0000CF 2Ar00r00         [16]  362 	ld	hl, (_dataToTransfer)
+      0000D2 09               [11]  363 	add	hl, bc
+      0000D3 6E               [ 7]  364 	ld	l, (hl)
+      0000D4 C5               [11]  365 	push	bc
+      0000D5 CDr00r00         [17]  366 	call	_writeData
+      0000D8 C1               [10]  367 	pop	bc
+                                    368 ;device.c:241: for(int i=0; i<amount; i++) 
+      0000D9 03               [ 6]  369 	inc	bc
+      0000DA 18 E3            [12]  370 	jr	00103$
+      0000DC                        371 00101$:
+                                    372 ;device.c:251: dataToTransfer += amount;
+      0000DC 21r00r00         [10]  373 	ld	hl, #_dataToTransfer
+      0000DF 7E               [ 7]  374 	ld	a, (hl)
+      0000E0 DD 86 FE         [19]  375 	add	a, -2 (ix)
+      0000E3 77               [ 7]  376 	ld	(hl), a
+      0000E4 23               [ 6]  377 	inc	hl
+      0000E5 7E               [ 7]  378 	ld	a, (hl)
+      0000E6 DD 8E FF         [19]  379 	adc	a, -1 (ix)
+      0000E9 77               [ 7]  380 	ld	(hl), a
+                                    381 ;device.c:252: dataLength -= amount;
+      0000EA 21r04r00         [10]  382 	ld	hl, #_dataLength
+      0000ED 7E               [ 7]  383 	ld	a, (hl)
+      0000EE DD 96 FE         [19]  384 	sub	a, -2 (ix)
+      0000F1 77               [ 7]  385 	ld	(hl), a
+      0000F2 23               [ 6]  386 	inc	hl
+      0000F3 7E               [ 7]  387 	ld	a, (hl)
+      0000F4 DD 9E FF         [19]  388 	sbc	a, -1 (ix)
+      0000F7 77               [ 7]  389 	ld	(hl), a
+                                    390 ;device.c:253: }
+      0000F8 DD F9            [10]  391 	ld	sp, ix
+      0000FA DD E1            [14]  392 	pop	ix
+      0000FC C9               [10]  393 	ret
+                                    394 ;device.c:254: void writeDataForEndpoint2()
+                                    395 ;	---------------------------------
+                                    396 ; Function writeDataForEndpoint2
+                                    397 ; ---------------------------------
+      0000FD                        398 _writeDataForEndpoint2::
+      0000FD DD E5            [15]  399 	push	ix
+      0000FF DD 21 00 00      [14]  400 	ld	ix,#0
+      000103 DD 39            [15]  401 	add	ix,sp
+      000105 F5               [11]  402 	push	af
+                                    403 ;device.c:256: int amount = min (BULK_OUT_ENDP_MAX_SIZE,dataLength2);
+      000106 21r06r00         [10]  404 	ld	hl, #_dataLength2
+      000109 3E 40            [ 7]  405 	ld	a, #0x40
+      00010B BE               [ 7]  406 	cp	a, (hl)
+      00010C 3E 00            [ 7]  407 	ld	a, #0x00
+      00010E 23               [ 6]  408 	inc	hl
+      00010F 9E               [ 7]  409 	sbc	a, (hl)
+      000110 E2r15r01         [10]  410 	jp	PO, 00132$
+      000113 EE 80            [ 7]  411 	xor	a, #0x80
+      000115                        412 00132$:
+      000115 F2r1Dr01         [10]  413 	jp	P, 00109$
+      000118 21 40 00         [10]  414 	ld	hl, #0x0040
+      00011B 18 03            [12]  415 	jr	00110$
+      00011D                        416 00109$:
+      00011D 2Ar06r00         [16]  417 	ld	hl, (_dataLength2)
+      000120                        418 00110$:
+      000120 33               [ 6]  419 	inc	sp
+      000121 33               [ 6]  420 	inc	sp
+      000122 E5               [11]  421 	push	hl
+                                    422 ;device.c:258: if (amount!=0)
+      000123 DD 7E FF         [19]  423 	ld	a, -1 (ix)
+      000126 DD B6 FE         [19]  424 	or	a, -2 (ix)
+      000129 28 47            [12]  425 	jr	Z, 00107$
+                                    426 ;device.c:263: writeCommand(CH_CMD_WR_EP2);
+      00012B 2E 2B            [ 7]  427 	ld	l, #0x2b
+      00012D CDr00r00         [17]  428 	call	_writeCommand
+                                    429 ;device.c:264: writeData(amount);
+      000130 DD 6E FE         [19]  430 	ld	l, -2 (ix)
+      000133 CDr00r00         [17]  431 	call	_writeData
+                                    432 ;device.c:265: for(int i=0; i<amount; i++) 
+      000136 01 00 00         [10]  433 	ld	bc, #0x0000
+      000139                        434 00105$:
+      000139 79               [ 4]  435 	ld	a, c
+      00013A DD 96 FE         [19]  436 	sub	a, -2 (ix)
+      00013D 78               [ 4]  437 	ld	a, b
+      00013E DD 9E FF         [19]  438 	sbc	a, -1 (ix)
+      000141 E2r46r01         [10]  439 	jp	PO, 00133$
+      000144 EE 80            [ 7]  440 	xor	a, #0x80
+      000146                        441 00133$:
+      000146 F2r56r01         [10]  442 	jp	P, 00101$
+                                    443 ;device.c:270: writeData(dataToTransfer2[i]);
+      000149 2Ar02r00         [16]  444 	ld	hl, (_dataToTransfer2)
+      00014C 09               [11]  445 	add	hl, bc
+      00014D 6E               [ 7]  446 	ld	l, (hl)
+      00014E C5               [11]  447 	push	bc
+      00014F CDr00r00         [17]  448 	call	_writeData
+      000152 C1               [10]  449 	pop	bc
+                                    450 ;device.c:265: for(int i=0; i<amount; i++) 
+      000153 03               [ 6]  451 	inc	bc
+      000154 18 E3            [12]  452 	jr	00105$
+      000156                        453 00101$:
+                                    454 ;device.c:275: dataToTransfer2 += amount;
+      000156 21r02r00         [10]  455 	ld	hl, #_dataToTransfer2
+      000159 7E               [ 7]  456 	ld	a, (hl)
+      00015A DD 86 FE         [19]  457 	add	a, -2 (ix)
+      00015D 77               [ 7]  458 	ld	(hl), a
+      00015E 23               [ 6]  459 	inc	hl
+      00015F 7E               [ 7]  460 	ld	a, (hl)
+      000160 DD 8E FF         [19]  461 	adc	a, -1 (ix)
+      000163 77               [ 7]  462 	ld	(hl), a
+                                    463 ;device.c:276: dataLength2 -= amount;
+      000164 21r06r00         [10]  464 	ld	hl, #_dataLength2
+      000167 7E               [ 7]  465 	ld	a, (hl)
+      000168 DD 96 FE         [19]  466 	sub	a, -2 (ix)
+      00016B 77               [ 7]  467 	ld	(hl), a
+      00016C 23               [ 6]  468 	inc	hl
+      00016D 7E               [ 7]  469 	ld	a, (hl)
+      00016E DD 9E FF         [19]  470 	sbc	a, -1 (ix)
+      000171 77               [ 7]  471 	ld	(hl), a
+      000172                        472 00107$:
+                                    473 ;device.c:278: }
+      000172 DD F9            [10]  474 	ld	sp, ix
+      000174 DD E1            [14]  475 	pop	ix
+      000176 C9               [10]  476 	ret
+                                    477 ;device.c:280: size_t read_usb_data (uint8_t* pBuffer)
+                                    478 ;	---------------------------------
+                                    479 ; Function read_usb_data
+                                    480 ; ---------------------------------
+      000177                        481 _read_usb_data::
+                                    482 ;device.c:283: writeCommand(CH375_CMD_RD_USB_DATA_UNLOCK);
+      000177 2E 28            [ 7]  483 	ld	l, #0x28
+      000179 CDr00r00         [17]  484 	call	_writeCommand
+                                    485 ;device.c:284: value = readData();
+      00017C CDr00r00         [17]  486 	call	_readData
+      00017F 4D               [ 4]  487 	ld	c, l
+                                    488 ;device.c:285: if (value==0)
+      000180 79               [ 4]  489 	ld	a, c
+      000181 B7               [ 4]  490 	or	a, a
+      000182 20 04            [12]  491 	jr	NZ, 00111$
+                                    492 ;device.c:286: return 0;
+      000184 21 00 00         [10]  493 	ld	hl, #0x0000
+      000187 C9               [10]  494 	ret
+                                    495 ;device.c:287: for (uint8_t i=0;i<value;i++)
+      000188                        496 00111$:
+      000188 06 00            [ 7]  497 	ld	b, #0x00
+      00018A                        498 00105$:
+      00018A 78               [ 4]  499 	ld	a, b
+      00018B 91               [ 4]  500 	sub	a, c
+      00018C 30 1D            [12]  501 	jr	NC, 00103$
+                                    502 ;device.c:288: *(pBuffer+i) = readData();
+      00018E FD 21 02 00      [14]  503 	ld	iy, #2
+      000192 FD 39            [15]  504 	add	iy, sp
+      000194 FD 7E 00         [19]  505 	ld	a, 0 (iy)
+      000197 80               [ 4]  506 	add	a, b
+      000198 5F               [ 4]  507 	ld	e, a
+      000199 FD 7E 01         [19]  508 	ld	a, 1 (iy)
+      00019C CE 00            [ 7]  509 	adc	a, #0x00
+      00019E 57               [ 4]  510 	ld	d, a
+      00019F C5               [11]  511 	push	bc
+      0001A0 D5               [11]  512 	push	de
+      0001A1 CDr00r00         [17]  513 	call	_readData
+      0001A4 7D               [ 4]  514 	ld	a, l
+      0001A5 D1               [10]  515 	pop	de
+      0001A6 C1               [10]  516 	pop	bc
+      0001A7 12               [ 7]  517 	ld	(de), a
+                                    518 ;device.c:287: for (uint8_t i=0;i<value;i++)
+      0001A8 04               [ 4]  519 	inc	b
+      0001A9 18 DF            [12]  520 	jr	00105$
+      0001AB                        521 00103$:
+                                    522 ;device.c:289: return value;
+      0001AB 26 00            [ 7]  523 	ld	h, #0x00
+      0001AD 69               [ 4]  524 	ld	l, c
+                                    525 ;device.c:290: }
+      0001AE C9               [10]  526 	ret
+                                    527 ;device.c:292: void set_target_device_address (uint8_t address)
+                                    528 ;	---------------------------------
+                                    529 ; Function set_target_device_address
+                                    530 ; ---------------------------------
+      0001AF                        531 _set_target_device_address::
+                                    532 ;device.c:294: writeCommand (CH375_CMD_SET_USB_ADDR);
+      0001AF 2E 13            [ 7]  533 	ld	l, #0x13
+      0001B1 CDr00r00         [17]  534 	call	_writeCommand
+                                    535 ;device.c:295: writeData(address);
+      0001B4 FD 21 02 00      [14]  536 	ld	iy, #2
+      0001B8 FD 39            [15]  537 	add	iy, sp
+      0001BA FD 6E 00         [19]  538 	ld	l, 0 (iy)
+                                    539 ;device.c:297: }
+      0001BD C3r00r00         [10]  540 	jp	_writeData
+                                    541 ;device.c:306: uint16_t convertHex (char* start, uint8_t len)
+                                    542 ;	---------------------------------
+                                    543 ; Function convertHex
+                                    544 ; ---------------------------------
+      0001C0                        545 _convertHex::
+      0001C0 DD E5            [15]  546 	push	ix
+      0001C2 DD 21 00 00      [14]  547 	ld	ix,#0
+      0001C6 DD 39            [15]  548 	add	ix,sp
+      0001C8 3B               [ 6]  549 	dec	sp
+                                    550 ;device.c:308: uint16_t result=0;
+      0001C9 01 00 00         [10]  551 	ld	bc, #0x0000
+                                    552 ;device.c:310: cur = start;
+      0001CC DD 5E 04         [19]  553 	ld	e, 4 (ix)
+      0001CF DD 56 05         [19]  554 	ld	d, 5 (ix)
+                                    555 ;device.c:311: while (len-- && *cur!='\0')
+      0001D2 DD 7E 06         [19]  556 	ld	a, 6 (ix)
+      0001D5 DD 77 FF         [19]  557 	ld	-1 (ix), a
+      0001D8                        558 00104$:
+      0001D8 DD 6E FF         [19]  559 	ld	l, -1 (ix)
+      0001DB DD 35 FF         [23]  560 	dec	-1 (ix)
+      0001DE 7D               [ 4]  561 	ld	a, l
+      0001DF B7               [ 4]  562 	or	a, a
+      0001E0 28 29            [12]  563 	jr	Z, 00106$
+      0001E2 1A               [ 7]  564 	ld	a, (de)
+      0001E3 B7               [ 4]  565 	or	a, a
+      0001E4 28 25            [12]  566 	jr	Z, 00106$
+                                    567 ;device.c:313: *cur = *cur;
+      0001E6 12               [ 7]  568 	ld	(de), a
+                                    569 ;device.c:314: uint8_t dec = *cur - '0';
+      0001E7 C6 D0            [ 7]  570 	add	a, #0xd0
+      0001E9 6F               [ 4]  571 	ld	l, a
+                                    572 ;device.c:315: if (dec>9)
+      0001EA 3E 09            [ 7]  573 	ld	a, #0x09
+      0001EC 95               [ 4]  574 	sub	a, l
+      0001ED 30 04            [12]  575 	jr	NC, 00102$
+                                    576 ;device.c:316: dec -= 7;
+      0001EF 7D               [ 4]  577 	ld	a, l
+      0001F0 C6 F9            [ 7]  578 	add	a, #0xf9
+      0001F2 6F               [ 4]  579 	ld	l, a
+      0001F3                        580 00102$:
+                                    581 ;device.c:317: result = (result << 4) + dec;
+      0001F3 CB 21            [ 8]  582 	sla	c
+      0001F5 CB 10            [ 8]  583 	rl	b
+      0001F7 CB 21            [ 8]  584 	sla	c
+      0001F9 CB 10            [ 8]  585 	rl	b
+      0001FB CB 21            [ 8]  586 	sla	c
+      0001FD CB 10            [ 8]  587 	rl	b
+      0001FF CB 21            [ 8]  588 	sla	c
+      000201 CB 10            [ 8]  589 	rl	b
+      000203 26 00            [ 7]  590 	ld	h, #0x00
+      000205 09               [11]  591 	add	hl, bc
+      000206 4D               [ 4]  592 	ld	c, l
+      000207 44               [ 4]  593 	ld	b, h
+                                    594 ;device.c:318: cur++;
+      000208 13               [ 6]  595 	inc	de
+      000209 18 CD            [12]  596 	jr	00104$
+      00020B                        597 00106$:
+                                    598 ;device.c:320: return result;
+      00020B 69               [ 4]  599 	ld	l, c
+      00020C 60               [ 4]  600 	ld	h, b
+                                    601 ;device.c:321: }
+      00020D 33               [ 6]  602 	inc	sp
+      00020E DD E1            [14]  603 	pop	ix
+      000210 C9               [10]  604 	ret
+                                    605 ;device.c:322: void convertToStr (uint8_t value, char* buffer)
+                                    606 ;	---------------------------------
+                                    607 ; Function convertToStr
+                                    608 ; ---------------------------------
+      000211                        609 _convertToStr::
+                                    610 ;device.c:324: uint8_t lo_nibble = value & 0x0f;
+      000211 FD 21 02 00      [14]  611 	ld	iy, #2
+      000215 FD 39            [15]  612 	add	iy, sp
+      000217 FD 7E 00         [19]  613 	ld	a, 0 (iy)
+      00021A F5               [11]  614 	push	af
+      00021B E6 0F            [ 7]  615 	and	a, #0x0f
+      00021D 4F               [ 4]  616 	ld	c, a
+      00021E F1               [10]  617 	pop	af
+                                    618 ;device.c:325: uint8_t hi_nibble = value >> 4;
+      00021F 07               [ 4]  619 	rlca
+      000220 07               [ 4]  620 	rlca
+      000221 07               [ 4]  621 	rlca
+      000222 07               [ 4]  622 	rlca
+      000223 E6 0F            [ 7]  623 	and	a, #0x0f
+      000225 6F               [ 4]  624 	ld	l, a
+                                    625 ;device.c:327: *buffer = hi_nibble>9?hi_nibble+'A'-10:hi_nibble+'0';
+      000226 FD 5E 01         [19]  626 	ld	e, 1 (iy)
+      000229 FD 56 02         [19]  627 	ld	d, 2 (iy)
+      00022C 45               [ 4]  628 	ld	b, l
+      00022D 3E 09            [ 7]  629 	ld	a, #0x09
+      00022F 95               [ 4]  630 	sub	a, l
+      000230 30 05            [12]  631 	jr	NC, 00103$
+      000232 78               [ 4]  632 	ld	a, b
+      000233 C6 37            [ 7]  633 	add	a, #0x37
+      000235 18 03            [12]  634 	jr	00104$
+      000237                        635 00103$:
+      000237 78               [ 4]  636 	ld	a, b
+      000238 C6 30            [ 7]  637 	add	a, #0x30
+      00023A                        638 00104$:
+      00023A 12               [ 7]  639 	ld	(de), a
+                                    640 ;device.c:328: *(buffer+1) = lo_nibble>9?lo_nibble+'A'-10:lo_nibble+'0';
+      00023B 13               [ 6]  641 	inc	de
+      00023C 41               [ 4]  642 	ld	b, c
+      00023D 3E 09            [ 7]  643 	ld	a, #0x09
+      00023F 91               [ 4]  644 	sub	a, c
+      000240 30 05            [12]  645 	jr	NC, 00105$
+      000242 78               [ 4]  646 	ld	a, b
+      000243 C6 37            [ 7]  647 	add	a, #0x37
+      000245 18 03            [12]  648 	jr	00106$
+      000247                        649 00105$:
+      000247 78               [ 4]  650 	ld	a, b
+      000248 C6 30            [ 7]  651 	add	a, #0x30
+      00024A                        652 00106$:
+      00024A 12               [ 7]  653 	ld	(de), a
+                                    654 ;device.c:329: }
+      00024B C9               [10]  655 	ret
+                                    656 ;device.c:331: uint8_t handleIHX(char* ihxline)
+                                    657 ;	---------------------------------
+                                    658 ; Function handleIHX
+                                    659 ; ---------------------------------
+      00024C                        660 _handleIHX::
+      00024C DD E5            [15]  661 	push	ix
+      00024E DD 21 00 00      [14]  662 	ld	ix,#0
+      000252 DD 39            [15]  663 	add	ix,sp
+      000254 F5               [11]  664 	push	af
+      000255 3B               [ 6]  665 	dec	sp
+                                    666 ;device.c:336: uint8_t type = convertHex (ihxline+6,2);
+      000256 DD 6E 04         [19]  667 	ld	l, 4 (ix)
+      000259 DD 66 05         [19]  668 	ld	h, 5 (ix)
+      00025C 11 06 00         [10]  669 	ld	de, #0x0006
+      00025F 19               [11]  670 	add	hl, de
+      000260 3E 02            [ 7]  671 	ld	a, #0x02
+      000262 F5               [11]  672 	push	af
+      000263 33               [ 6]  673 	inc	sp
+      000264 E5               [11]  674 	push	hl
+      000265 CDrC0r01         [17]  675 	call	_convertHex
+      000268 F1               [10]  676 	pop	af
+                                    677 ;device.c:337: if (type!=00)
+      000269 7D               [ 4]  678 	ld	a, l
+      00026A 33               [ 6]  679 	inc	sp
+      00026B B7               [ 4]  680 	or	a, a
+      00026C 28 05            [12]  681 	jr	Z, 00102$
+                                    682 ;device.c:338: return 0;
+      00026E 2E 00            [ 7]  683 	ld	l, #0x00
+      000270 C3rF3r02         [10]  684 	jp	00106$
+      000273                        685 00102$:
+                                    686 ;device.c:342: uint8_t byteCount = convertHex (ihxline,2);
+      000273 3E 02            [ 7]  687 	ld	a, #0x02
+      000275 F5               [11]  688 	push	af
+      000276 33               [ 6]  689 	inc	sp
+      000277 DD 6E 04         [19]  690 	ld	l, 4 (ix)
+      00027A DD 66 05         [19]  691 	ld	h, 5 (ix)
+      00027D E5               [11]  692 	push	hl
+      00027E CDrC0r01         [17]  693 	call	_convertHex
+      000281 F1               [10]  694 	pop	af
+      000282 45               [ 4]  695 	ld	b, l
+      000283 33               [ 6]  696 	inc	sp
+                                    697 ;device.c:343: uint16_t addressStart = convertHex (ihxline+2,4);
+      000284 DD 5E 04         [19]  698 	ld	e, 4 (ix)
+      000287 DD 56 05         [19]  699 	ld	d, 5 (ix)
+      00028A 13               [ 6]  700 	inc	de
+      00028B 13               [ 6]  701 	inc	de
+      00028C C5               [11]  702 	push	bc
+      00028D 3E 04            [ 7]  703 	ld	a, #0x04
+      00028F F5               [11]  704 	push	af
+      000290 33               [ 6]  705 	inc	sp
+      000291 D5               [11]  706 	push	de
+      000292 CDrC0r01         [17]  707 	call	_convertHex
+      000295 F1               [10]  708 	pop	af
+      000296 33               [ 6]  709 	inc	sp
+      000297 C1               [10]  710 	pop	bc
+      000298 EB               [ 4]  711 	ex	de,hl
+                                    712 ;device.c:349: ihxline += 8;
+      000299 DD 7E 04         [19]  713 	ld	a, 4 (ix)
+      00029C C6 08            [ 7]  714 	add	a, #0x08
+      00029E DD 77 04         [19]  715 	ld	4 (ix), a
+      0002A1 30 03            [12]  716 	jr	NC, 00124$
+      0002A3 DD 34 05         [23]  717 	inc	5 (ix)
+      0002A6                        718 00124$:
+                                    719 ;device.c:350: while (byteCount--)
+      0002A6 0E 00            [ 7]  720 	ld	c, #0x00
+      0002A8 DD 7E 04         [19]  721 	ld	a, 4 (ix)
+      0002AB DD 77 FE         [19]  722 	ld	-2 (ix), a
+      0002AE DD 7E 05         [19]  723 	ld	a, 5 (ix)
+      0002B1 DD 77 FF         [19]  724 	ld	-1 (ix), a
+      0002B4                        725 00103$:
+      0002B4 78               [ 4]  726 	ld	a, b
+      0002B5 05               [ 4]  727 	dec	b
+      0002B6 B7               [ 4]  728 	or	a, a
+      0002B7 28 39            [12]  729 	jr	Z, 00105$
+                                    730 ;device.c:352: value = convertHex (ihxline,2);
+      0002B9 C5               [11]  731 	push	bc
+      0002BA D5               [11]  732 	push	de
+      0002BB 3E 02            [ 7]  733 	ld	a, #0x02
+      0002BD F5               [11]  734 	push	af
+      0002BE 33               [ 6]  735 	inc	sp
+      0002BF DD 6E FE         [19]  736 	ld	l, -2 (ix)
+      0002C2 DD 66 FF         [19]  737 	ld	h, -1 (ix)
+      0002C5 E5               [11]  738 	push	hl
+      0002C6 CDrC0r01         [17]  739 	call	_convertHex
+      0002C9 F1               [10]  740 	pop	af
+      0002CA 33               [ 6]  741 	inc	sp
+      0002CB D1               [10]  742 	pop	de
+      0002CC C1               [10]  743 	pop	bc
+      0002CD DD 75 FD         [19]  744 	ld	-3 (ix), l
+                                    745 ;device.c:353: host_writeByte (addressStart++,value);
+      0002D0 6B               [ 4]  746 	ld	l, e
+      0002D1 62               [ 4]  747 	ld	h, d
+      0002D2 13               [ 6]  748 	inc	de
+      0002D3 C5               [11]  749 	push	bc
+      0002D4 D5               [11]  750 	push	de
+      0002D5 DD 7E FD         [19]  751 	ld	a, -3 (ix)
+      0002D8 F5               [11]  752 	push	af
+      0002D9 33               [ 6]  753 	inc	sp
+      0002DA E5               [11]  754 	push	hl
+      0002DB CDr00r00         [17]  755 	call	_host_writeByte
+      0002DE F1               [10]  756 	pop	af
+      0002DF 33               [ 6]  757 	inc	sp
+      0002E0 D1               [10]  758 	pop	de
+      0002E1 C1               [10]  759 	pop	bc
+                                    760 ;device.c:354: bytesWritten++;
+      0002E2 0C               [ 4]  761 	inc	c
+                                    762 ;device.c:355: ihxline+=2;
+      0002E3 DD 7E FE         [19]  763 	ld	a, -2 (ix)
+      0002E6 C6 02            [ 7]  764 	add	a, #0x02
+      0002E8 DD 77 FE         [19]  765 	ld	-2 (ix), a
+      0002EB 30 C7            [12]  766 	jr	NC, 00103$
+      0002ED DD 34 FF         [23]  767 	inc	-1 (ix)
+      0002F0 18 C2            [12]  768 	jr	00103$
+      0002F2                        769 00105$:
+                                    770 ;device.c:366: return bytesWritten;
+      0002F2 69               [ 4]  771 	ld	l, c
+      0002F3                        772 00106$:
+                                    773 ;device.c:367: }
+      0002F3 DD F9            [10]  774 	ld	sp, ix
+      0002F5 DD E1            [14]  775 	pop	ix
+      0002F7 C9               [10]  776 	ret
+                                    777 ;device.c:370: void print_memory (uint16_t address)
+                                    778 ;	---------------------------------
+                                    779 ; Function print_memory
+                                    780 ; ---------------------------------
+      0002F8                        781 _print_memory::
+      0002F8 DD E5            [15]  782 	push	ix
+      0002FA DD 21 00 00      [14]  783 	ld	ix,#0
+      0002FE DD 39            [15]  784 	add	ix,sp
+      000300 F5               [11]  785 	push	af
+                                    786 ;device.c:372: dataToTransfer2 = memory_buffer;
+      000301 01r97r01         [10]  787 	ld	bc, #_memory_buffer+0
+      000304 ED 43r02r00      [20]  788 	ld	(_dataToTransfer2), bc
+                                    789 ;device.c:373: dataLength2 = sizeof (memory_buffer);
+      000308 21 32 00         [10]  790 	ld	hl, #0x0032
+      00030B 22r06r00         [16]  791 	ld	(_dataLength2), hl
+                                    792 ;device.c:375: convertToStr (address>>8,memory_buffer+5);
+      00030E 21r9Cr01         [10]  793 	ld	hl, #(_memory_buffer + 0x0005)
+      000311 DD 56 05         [19]  794 	ld	d, 5 (ix)
+      000314 1E 00            [ 7]  795 	ld	e, #0x00
+      000316 C5               [11]  796 	push	bc
+      000317 E5               [11]  797 	push	hl
+      000318 D5               [11]  798 	push	de
+      000319 33               [ 6]  799 	inc	sp
+      00031A CDr11r02         [17]  800 	call	_convertToStr
+      00031D F1               [10]  801 	pop	af
+      00031E 33               [ 6]  802 	inc	sp
+      00031F C1               [10]  803 	pop	bc
+                                    804 ;device.c:376: convertToStr (address&0xff,memory_buffer+7);
+      000320 11r9Er01         [10]  805 	ld	de, #(_memory_buffer + 0x0007)
+      000323 DD 7E 04         [19]  806 	ld	a, 4 (ix)
+      000326 C5               [11]  807 	push	bc
+      000327 D5               [11]  808 	push	de
+      000328 F5               [11]  809 	push	af
+      000329 33               [ 6]  810 	inc	sp
+      00032A CDr11r02         [17]  811 	call	_convertToStr
+      00032D F1               [10]  812 	pop	af
+      00032E 33               [ 6]  813 	inc	sp
+      00032F C1               [10]  814 	pop	bc
+                                    815 ;device.c:377: char* membufptr = memory_buffer+11;
+      000330 01rA2r01         [10]  816 	ld	bc, #(_memory_buffer + 0x000b)
+                                    817 ;device.c:378: for (int i=0;i<0x10;i++)
+      000333 11 00 00         [10]  818 	ld	de, #0x0000
+      000336                        819 00103$:
+      000336 7B               [ 4]  820 	ld	a, e
+      000337 D6 10            [ 7]  821 	sub	a, #0x10
+      000339 7A               [ 4]  822 	ld	a, d
+      00033A 17               [ 4]  823 	rla
+      00033B 3F               [ 4]  824 	ccf
+      00033C 1F               [ 4]  825 	rra
+      00033D DE 80            [ 7]  826 	sbc	a, #0x80
+      00033F 30 2E            [12]  827 	jr	NC, 00105$
+                                    828 ;device.c:380: convertToStr (host_readByte(address+i),membufptr);
+      000341 DD 6E 04         [19]  829 	ld	l, 4 (ix)
+      000344 DD 66 05         [19]  830 	ld	h, 5 (ix)
+      000347 33               [ 6]  831 	inc	sp
+      000348 33               [ 6]  832 	inc	sp
+      000349 D5               [11]  833 	push	de
+      00034A DD 7E FE         [19]  834 	ld	a, -2 (ix)
+      00034D 85               [ 4]  835 	add	a, l
+      00034E 6F               [ 4]  836 	ld	l, a
+      00034F DD 7E FF         [19]  837 	ld	a, -1 (ix)
+      000352 8C               [ 4]  838 	adc	a, h
+      000353 67               [ 4]  839 	ld	h, a
+      000354 C5               [11]  840 	push	bc
+      000355 D5               [11]  841 	push	de
+      000356 E5               [11]  842 	push	hl
+      000357 CDr00r00         [17]  843 	call	_host_readByte
+      00035A F1               [10]  844 	pop	af
+      00035B 7D               [ 4]  845 	ld	a, l
+      00035C D1               [10]  846 	pop	de
+      00035D C1               [10]  847 	pop	bc
+      00035E C5               [11]  848 	push	bc
+      00035F D5               [11]  849 	push	de
+      000360 C5               [11]  850 	push	bc
+      000361 F5               [11]  851 	push	af
+      000362 33               [ 6]  852 	inc	sp
+      000363 CDr11r02         [17]  853 	call	_convertToStr
+      000366 F1               [10]  854 	pop	af
+      000367 33               [ 6]  855 	inc	sp
+      000368 D1               [10]  856 	pop	de
+      000369 C1               [10]  857 	pop	bc
+                                    858 ;device.c:381: membufptr+=2;
+      00036A 03               [ 6]  859 	inc	bc
+      00036B 03               [ 6]  860 	inc	bc
+                                    861 ;device.c:378: for (int i=0;i<0x10;i++)
+      00036C 13               [ 6]  862 	inc	de
+      00036D 18 C7            [12]  863 	jr	00103$
+      00036F                        864 00105$:
+                                    865 ;device.c:383: }
+      00036F DD F9            [10]  866 	ld	sp, ix
+      000371 DD E1            [14]  867 	pop	ix
+      000373 C9               [10]  868 	ret
+                                    869 ;device.c:398: void read_and_process_data()
+                                    870 ;	---------------------------------
+                                    871 ; Function read_and_process_data
+                                    872 ; ---------------------------------
+      000374                        873 _read_and_process_data::
+      000374 DD E5            [15]  874 	push	ix
+      000376 DD 21 00 00      [14]  875 	ld	ix,#0
+      00037A DD 39            [15]  876 	add	ix,sp
+      00037C F5               [11]  877 	push	af
+      00037D F5               [11]  878 	push	af
+      00037E 3B               [ 6]  879 	dec	sp
+                                    880 ;device.c:402: writeCommand(CH375_CMD_RD_USB_DATA_UNLOCK);
+      00037F 2E 28            [ 7]  881 	ld	l, #0x28
+      000381 CDr00r00         [17]  882 	call	_writeCommand
+                                    883 ;device.c:403: length = readData(); // read length
+      000384 CDr00r00         [17]  884 	call	_readData
+      000387 4D               [ 4]  885 	ld	c, l
+      000388 DD 71 FB         [19]  886 	ld	-5 (ix), c
+                                    887 ;device.c:404: if (length==0)
+      00038B 79               [ 4]  888 	ld	a, c
+      00038C B7               [ 4]  889 	or	a, a
+                                    890 ;device.c:405: return;
+      00038D CArC3r05         [10]  891 	jp	Z,00132$
+                                    892 ;device.c:409: char* resultptr = resultBuffer;
+      000390 DD 36 FDr53      [19]  893 	ld	-3 (ix), #<(_resultBuffer)
+      000394 DD 36 FEs00      [19]  894 	ld	-2 (ix), #>(_resultBuffer)
+                                    895 ;device.c:410: dataToTransfer2 = NULL;
+      000398 21 00 00         [10]  896 	ld	hl, #0x0000
+      00039B 22r02r00         [16]  897 	ld	(_dataToTransfer2), hl
+                                    898 ;device.c:411: dataLength2 = 0;
+      00039E 6C               [ 4]  899 	ld	l, h
+      00039F 22r06r00         [16]  900 	ld	(_dataLength2), hl
+                                    901 ;device.c:413: for (uint8_t i=0;i<length;i++)
+      0003A2 DD 36 FF 00      [19]  902 	ld	-1 (ix), #0
+      0003A6                        903 00130$:
+      0003A6 DD 7E FF         [19]  904 	ld	a, -1 (ix)
+      0003A9 DD 96 FB         [19]  905 	sub	a, -5 (ix)
+      0003AC D2r9Er05         [10]  906 	jp	NC, 00126$
+                                    907 ;device.c:415: value = readData();
+      0003AF CDr00r00         [17]  908 	call	_readData
+      0003B2 DD 75 FC         [19]  909 	ld	-4 (ix), l
+                                    910 ;device.c:417: if (processing_command!=CMD_IHX && value!=':')
+      0003B5 3Ar94r00         [13]  911 	ld	a,(#_processing_command + 0)
+      0003B8 D6 04            [ 7]  912 	sub	a, #0x04
+      0003BA 28 17            [12]  913 	jr	Z, 00104$
+      0003BC DD 7E FC         [19]  914 	ld	a, -4 (ix)
+      0003BF D6 3A            [ 7]  915 	sub	a, #0x3a
+      0003C1 28 10            [12]  916 	jr	Z, 00104$
+                                    917 ;device.c:418: *resultptr++ = value;
+      0003C3 C1               [10]  918 	pop	bc
+      0003C4 E1               [10]  919 	pop	hl
+      0003C5 E5               [11]  920 	push	hl
+      0003C6 C5               [11]  921 	push	bc
+      0003C7 DD 7E FC         [19]  922 	ld	a, -4 (ix)
+      0003CA 77               [ 7]  923 	ld	(hl), a
+      0003CB DD 34 FD         [23]  924 	inc	-3 (ix)
+      0003CE 20 03            [12]  925 	jr	NZ, 00217$
+      0003D0 DD 34 FE         [23]  926 	inc	-2 (ix)
+      0003D3                        927 00217$:
+      0003D3                        928 00104$:
+                                    929 ;device.c:421: switch (toupper(value))
+      0003D3 DD 4E FC         [19]  930 	ld	c, -4 (ix)
+      0003D6 06 00            [ 7]  931 	ld	b, #0x00
+      0003D8 C5               [11]  932 	push	bc
+      0003D9 CDr00r00         [17]  933 	call	_toupper
+      0003DC F1               [10]  934 	pop	af
+      0003DD 5D               [ 4]  935 	ld	e, l
+      0003DE 54               [ 4]  936 	ld	d, h
+                                    937 ;device.c:473: *payloadptr = '\0';
+      0003DF ED 4BrD6r00      [20]  938 	ld	bc, (_payloadptr)
+                                    939 ;device.c:421: switch (toupper(value))
+      0003E3 7B               [ 4]  940 	ld	a, e
+      0003E4 D6 0D            [ 7]  941 	sub	a, #0x0d
+      0003E6 B2               [ 4]  942 	or	a, d
+      0003E7 CAr80r04         [10]  943 	jp	Z,00112$
+      0003EA 7B               [ 4]  944 	ld	a, e
+      0003EB D6 3A            [ 7]  945 	sub	a, #0x3a
+      0003ED B2               [ 4]  946 	or	a, d
+      0003EE 28 79            [12]  947 	jr	Z, 00111$
+      0003F0 7B               [ 4]  948 	ld	a, e
+      0003F1 D6 47            [ 7]  949 	sub	a, #0x47
+      0003F3 B2               [ 4]  950 	or	a, d
+      0003F4 28 1B            [12]  951 	jr	Z, 00106$
+      0003F6 7B               [ 4]  952 	ld	a, e
+      0003F7 D6 48            [ 7]  953 	sub	a, #0x48
+      0003F9 B2               [ 4]  954 	or	a, d
+      0003FA 28 5F            [12]  955 	jr	Z, 00110$
+      0003FC 7B               [ 4]  956 	ld	a, e
+      0003FD D6 4D            [ 7]  957 	sub	a, #0x4d
+      0003FF B2               [ 4]  958 	or	a, d
+      000400 28 26            [12]  959 	jr	Z, 00107$
+      000402 7B               [ 4]  960 	ld	a, e
+      000403 D6 52            [ 7]  961 	sub	a, #0x52
+      000405 B2               [ 4]  962 	or	a, d
+      000406 28 37            [12]  963 	jr	Z, 00108$
+      000408 7B               [ 4]  964 	ld	a, e
+      000409 D6 58            [ 7]  965 	sub	a, #0x58
+      00040B B2               [ 4]  966 	or	a, d
+      00040C 28 3F            [12]  967 	jr	Z, 00109$
+      00040E C3r7Br05         [10]  968 	jp	00121$
+                                    969 ;device.c:423: case 'G': 
+      000411                        970 00106$:
+                                    971 ;device.c:424: processing_command = CMD_GO; 
+      000411 FD 21r94r00      [14]  972 	ld	iy, #_processing_command
+      000415 FD 36 00 01      [19]  973 	ld	0 (iy), #0x01
+                                    974 ;device.c:425: payloadptr = payload;
+      000419 FD 21rD6r00      [14]  975 	ld	iy, #_payloadptr
+      00041D FD 36 00r95      [19]  976 	ld	0 (iy), #<(_payload)
+      000421 FD 36 01s00      [19]  977 	ld	1 (iy), #>(_payload)
+                                    978 ;device.c:426: break;
+      000425 C3r98r05         [10]  979 	jp	00131$
+                                    980 ;device.c:427: case 'M': 
+      000428                        981 00107$:
+                                    982 ;device.c:428: processing_command = CMD_MEMORY; 
+      000428 FD 21r94r00      [14]  983 	ld	iy, #_processing_command
+      00042C FD 36 00 06      [19]  984 	ld	0 (iy), #0x06
+                                    985 ;device.c:429: payloadptr = payload;
+      000430 FD 21rD6r00      [14]  986 	ld	iy, #_payloadptr
+      000434 FD 36 00r95      [19]  987 	ld	0 (iy), #<(_payload)
+      000438 FD 36 01s00      [19]  988 	ld	1 (iy), #>(_payload)
+                                    989 ;device.c:430: break;
+      00043C C3r98r05         [10]  990 	jp	00131$
+                                    991 ;device.c:431: case 'R': 
+      00043F                        992 00108$:
+                                    993 ;device.c:432: processing_command = CMD_RESET; 
+      00043F 21r94r00         [10]  994 	ld	hl, #_processing_command
+      000442 36 02            [10]  995 	ld	(hl), #0x02
+                                    996 ;device.c:433: payloadptr = NULL;
+      000444 21 00 00         [10]  997 	ld	hl, #0x0000
+      000447 22rD6r00         [16]  998 	ld	(_payloadptr), hl
+                                    999 ;device.c:434: break;
+      00044A C3r98r05         [10] 1000 	jp	00131$
+                                   1001 ;device.c:435: case 'X': 
+      00044D                       1002 00109$:
+                                   1003 ;device.c:436: processing_command = CMD_BASIC; 
+      00044D 21r94r00         [10] 1004 	ld	hl, #_processing_command
+      000450 36 03            [10] 1005 	ld	(hl), #0x03
+                                   1006 ;device.c:437: payloadptr = NULL;
+      000452 21 00 00         [10] 1007 	ld	hl, #0x0000
+      000455 22rD6r00         [16] 1008 	ld	(_payloadptr), hl
+                                   1009 ;device.c:438: break;
+      000458 C3r98r05         [10] 1010 	jp	00131$
+                                   1011 ;device.c:439: case 'H': 
+      00045B                       1012 00110$:
+                                   1013 ;device.c:440: processing_command = CMD_HELP; 
+      00045B 21r94r00         [10] 1014 	ld	hl, #_processing_command
+      00045E 36 05            [10] 1015 	ld	(hl), #0x05
+                                   1016 ;device.c:441: payloadptr = NULL;
+      000460 21 00 00         [10] 1017 	ld	hl, #0x0000
+      000463 22rD6r00         [16] 1018 	ld	(_payloadptr), hl
+                                   1019 ;device.c:442: break;
+      000466 C3r98r05         [10] 1020 	jp	00131$
+                                   1021 ;device.c:443: case ':': 
+      000469                       1022 00111$:
+                                   1023 ;device.c:444: processing_command = CMD_IHX; 
+      000469 FD 21r94r00      [14] 1024 	ld	iy, #_processing_command
+      00046D FD 36 00 04      [19] 1025 	ld	0 (iy), #0x04
+                                   1026 ;device.c:445: payloadptr = payload;
+      000471 FD 21rD6r00      [14] 1027 	ld	iy, #_payloadptr
+      000475 FD 36 00r95      [19] 1028 	ld	0 (iy), #<(_payload)
+      000479 FD 36 01s00      [19] 1029 	ld	1 (iy), #>(_payload)
+                                   1030 ;device.c:446: break;
+      00047D C3r98r05         [10] 1031 	jp	00131$
+                                   1032 ;device.c:447: case '\r':
+      000480                       1033 00112$:
+                                   1034 ;device.c:448: switch (processing_command)
+      000480 3E 06            [ 7] 1035 	ld	a, #0x06
+      000482 21r94r00         [10] 1036 	ld	hl, #_processing_command
+      000485 96               [ 7] 1037 	sub	a, (hl)
+      000486 DAr74r05         [10] 1038 	jp	C, 00120$
+                                   1039 ;device.c:451: host_go(convertHex (payload,payloadptr-payload));
+      000489 21rD6r00         [10] 1040 	ld	hl, #_payloadptr
+      00048C 5E               [ 7] 1041 	ld	e, (hl)
+                                   1042 ;device.c:448: switch (processing_command)
+      00048D D5               [11] 1043 	push	de
+      00048E FD 21r94r00      [14] 1044 	ld	iy, #_processing_command
+      000492 FD 5E 00         [19] 1045 	ld	e, 0 (iy)
+      000495 16 00            [ 7] 1046 	ld	d, #0x00
+      000497 21r9Fr04         [10] 1047 	ld	hl, #00225$
+      00049A 19               [11] 1048 	add	hl, de
+      00049B 19               [11] 1049 	add	hl, de
+      00049C 19               [11] 1050 	add	hl, de
+      00049D D1               [10] 1051 	pop	de
+      00049E E9               [ 4] 1052 	jp	(hl)
+      00049F                       1053 00225$:
+      00049F C3r62r05         [10] 1054 	jp	00119$
+      0004A2 C3rB4r04         [10] 1055 	jp	00113$
+      0004A5 C3rF6r04         [10] 1056 	jp	00115$
+      0004A8 C3r0Dr05         [10] 1057 	jp	00116$
+      0004AB C3r38r05         [10] 1058 	jp	00118$
+      0004AE C3r24r05         [10] 1059 	jp	00117$
+      0004B1 C3rDEr04         [10] 1060 	jp	00114$
+                                   1061 ;device.c:450: case CMD_GO:
+      0004B4                       1062 00113$:
+                                   1063 ;device.c:451: host_go(convertHex (payload,payloadptr-payload));
+      0004B4 0Er95            [ 7] 1064 	ld	c, #<(_payload)
+      0004B6 7B               [ 4] 1065 	ld	a, e
+      0004B7 91               [ 4] 1066 	sub	a, c
+      0004B8 47               [ 4] 1067 	ld	b, a
+      0004B9 C5               [11] 1068 	push	bc
+      0004BA 33               [ 6] 1069 	inc	sp
+      0004BB 21r95r00         [10] 1070 	ld	hl, #_payload
+      0004BE E5               [11] 1071 	push	hl
+      0004BF CDrC0r01         [17] 1072 	call	_convertHex
+      0004C2 F1               [10] 1073 	pop	af
+      0004C3 33               [ 6] 1074 	inc	sp
+      0004C4 E5               [11] 1075 	push	hl
+      0004C5 CDr00r00         [17] 1076 	call	_host_go
+      0004C8 F1               [10] 1077 	pop	af
+                                   1078 ;device.c:452: dataToTransfer2 = (uint8_t*) NEWLINE_MSG;
+      0004C9 FD 21r02r00      [14] 1079 	ld	iy, #_dataToTransfer2
+      0004CD FD 36 00r92      [19] 1080 	ld	0 (iy), #<(_NEWLINE_MSG)
+      0004D1 FD 36 01s01      [19] 1081 	ld	1 (iy), #>(_NEWLINE_MSG)
+                                   1082 ;device.c:453: dataLength2 = sizeof (NEWLINE_MSG);
+      0004D5 21 05 00         [10] 1083 	ld	hl, #0x0005
+      0004D8 22r06r00         [16] 1084 	ld	(_dataLength2), hl
+                                   1085 ;device.c:454: break;
+      0004DB C3r74r05         [10] 1086 	jp	00120$
+                                   1087 ;device.c:455: case CMD_MEMORY:
+      0004DE                       1088 00114$:
+                                   1089 ;device.c:456: print_memory(convertHex (payload,payloadptr-payload));
+      0004DE 0Er95            [ 7] 1090 	ld	c, #<(_payload)
+      0004E0 7B               [ 4] 1091 	ld	a, e
+      0004E1 91               [ 4] 1092 	sub	a, c
+      0004E2 47               [ 4] 1093 	ld	b, a
+      0004E3 C5               [11] 1094 	push	bc
+      0004E4 33               [ 6] 1095 	inc	sp
+      0004E5 21r95r00         [10] 1096 	ld	hl, #_payload
+      0004E8 E5               [11] 1097 	push	hl
+      0004E9 CDrC0r01         [17] 1098 	call	_convertHex
+      0004EC F1               [10] 1099 	pop	af
+      0004ED 33               [ 6] 1100 	inc	sp
+      0004EE E5               [11] 1101 	push	hl
+      0004EF CDrF8r02         [17] 1102 	call	_print_memory
+      0004F2 F1               [10] 1103 	pop	af
+                                   1104 ;device.c:457: break;
+      0004F3 C3r74r05         [10] 1105 	jp	00120$
+                                   1106 ;device.c:458: case CMD_RESET:
+      0004F6                       1107 00115$:
+                                   1108 ;device.c:459: host_reset ();
+      0004F6 CDr00r00         [17] 1109 	call	_host_reset
+                                   1110 ;device.c:460: dataToTransfer2 = (uint8_t*) NEWLINE_MSG;
+      0004F9 FD 21r02r00      [14] 1111 	ld	iy, #_dataToTransfer2
+      0004FD FD 36 00r92      [19] 1112 	ld	0 (iy), #<(_NEWLINE_MSG)
+      000501 FD 36 01s01      [19] 1113 	ld	1 (iy), #>(_NEWLINE_MSG)
+                                   1114 ;device.c:461: dataLength2 = sizeof (NEWLINE_MSG);
+      000505 21 05 00         [10] 1115 	ld	hl, #0x0005
+      000508 22r06r00         [16] 1116 	ld	(_dataLength2), hl
+                                   1117 ;device.c:462: break;
+      00050B 18 67            [12] 1118 	jr	00120$
+                                   1119 ;device.c:463: case CMD_BASIC:
+      00050D                       1120 00116$:
+                                   1121 ;device.c:464: host_basic_interpreter();
+      00050D CDr00r00         [17] 1122 	call	_host_basic_interpreter
+                                   1123 ;device.c:465: dataToTransfer2 = (uint8_t*) NEWLINE_MSG;
+      000510 FD 21r02r00      [14] 1124 	ld	iy, #_dataToTransfer2
+      000514 FD 36 00r92      [19] 1125 	ld	0 (iy), #<(_NEWLINE_MSG)
+      000518 FD 36 01s01      [19] 1126 	ld	1 (iy), #>(_NEWLINE_MSG)
+                                   1127 ;device.c:466: dataLength2 = sizeof (NEWLINE_MSG);
+      00051C 21 05 00         [10] 1128 	ld	hl, #0x0005
+      00051F 22r06r00         [16] 1129 	ld	(_dataLength2), hl
+                                   1130 ;device.c:467: break;
+      000522 18 50            [12] 1131 	jr	00120$
+                                   1132 ;device.c:468: case CMD_HELP:
+      000524                       1133 00117$:
+                                   1134 ;device.c:469: dataToTransfer2 = (uint8_t*) WELCOME_MSG;
+      000524 FD 21r02r00      [14] 1135 	ld	iy, #_dataToTransfer2
+      000528 FD 36 00rC3      [19] 1136 	ld	0 (iy), #<(_WELCOME_MSG)
+      00052C FD 36 01s00      [19] 1137 	ld	1 (iy), #>(_WELCOME_MSG)
+                                   1138 ;device.c:470: dataLength2 = sizeof (WELCOME_MSG);
+      000530 21 97 00         [10] 1139 	ld	hl, #0x0097
+      000533 22r06r00         [16] 1140 	ld	(_dataLength2), hl
+                                   1141 ;device.c:471: break;
+      000536 18 3C            [12] 1142 	jr	00120$
+                                   1143 ;device.c:472: case CMD_IHX:
+      000538                       1144 00118$:
+                                   1145 ;device.c:473: *payloadptr = '\0';
+      000538 AF               [ 4] 1146 	xor	a, a
+      000539 02               [ 7] 1147 	ld	(bc), a
+                                   1148 ;device.c:474: uint8_t bytesWritten = handleIHX (payload);
+      00053A 21r95r00         [10] 1149 	ld	hl, #_payload
+      00053D E5               [11] 1150 	push	hl
+      00053E CDr4Cr02         [17] 1151 	call	_handleIHX
+      000541 F1               [10] 1152 	pop	af
+                                   1153 ;device.c:476: convertToStr (bytesWritten,BYTES_MSG+3);
+      000542 11r73r01         [10] 1154 	ld	de, #(_BYTES_MSG + 0x0003)
+      000545 D5               [11] 1155 	push	de
+      000546 7D               [ 4] 1156 	ld	a, l
+      000547 F5               [11] 1157 	push	af
+      000548 33               [ 6] 1158 	inc	sp
+      000549 CDr11r02         [17] 1159 	call	_convertToStr
+      00054C F1               [10] 1160 	pop	af
+      00054D 33               [ 6] 1161 	inc	sp
+                                   1162 ;device.c:477: dataToTransfer2 = (uint8_t*) BYTES_MSG;
+      00054E FD 21r02r00      [14] 1163 	ld	iy, #_dataToTransfer2
+      000552 FD 36 00r70      [19] 1164 	ld	0 (iy), #<(_BYTES_MSG)
+      000556 FD 36 01s01      [19] 1165 	ld	1 (iy), #>(_BYTES_MSG)
+                                   1166 ;device.c:478: dataLength2 = sizeof (BYTES_MSG);
+      00055A 21 22 00         [10] 1167 	ld	hl, #0x0022
+      00055D 22r06r00         [16] 1168 	ld	(_dataLength2), hl
+                                   1169 ;device.c:479: break;
+      000560 18 12            [12] 1170 	jr	00120$
+                                   1171 ;device.c:480: case CMD_NULL:
+      000562                       1172 00119$:
+                                   1173 ;device.c:481: dataToTransfer2 = (uint8_t*) UNKNOWN_MSG;
+      000562 FD 21r02r00      [14] 1174 	ld	iy, #_dataToTransfer2
+      000566 FD 36 00r5A      [19] 1175 	ld	0 (iy), #<(_UNKNOWN_MSG)
+      00056A FD 36 01s01      [19] 1176 	ld	1 (iy), #>(_UNKNOWN_MSG)
+                                   1177 ;device.c:482: dataLength2 = sizeof (UNKNOWN_MSG);
+      00056E 21 16 00         [10] 1178 	ld	hl, #0x0016
+      000571 22r06r00         [16] 1179 	ld	(_dataLength2), hl
+                                   1180 ;device.c:484: }
+      000574                       1181 00120$:
+                                   1182 ;device.c:485: processing_command = CMD_NULL;
+      000574 21r94r00         [10] 1183 	ld	hl, #_processing_command
+      000577 36 00            [10] 1184 	ld	(hl), #0x00
+                                   1185 ;device.c:486: break;
+      000579 18 1D            [12] 1186 	jr	00131$
+                                   1187 ;device.c:487: default:
+      00057B                       1188 00121$:
+                                   1189 ;device.c:488: if (processing_command!=CMD_NULL && payloadptr != NULL)
+      00057B 3Ar94r00         [13] 1190 	ld	a,(#_processing_command + 0)
+      00057E B7               [ 4] 1191 	or	a, a
+      00057F 28 17            [12] 1192 	jr	Z, 00131$
+      000581 FD 21rD6r00      [14] 1193 	ld	iy, #_payloadptr
+      000585 FD 7E 01         [19] 1194 	ld	a, 1 (iy)
+      000588 FD B6 00         [19] 1195 	or	a, 0 (iy)
+      00058B 28 0B            [12] 1196 	jr	Z, 00131$
+                                   1197 ;device.c:489: *(payloadptr++) = value;
+      00058D DD 7E FC         [19] 1198 	ld	a, -4 (ix)
+      000590 02               [ 7] 1199 	ld	(bc), a
+      000591 2ArD6r00         [16] 1200 	ld	hl, (_payloadptr)
+      000594 23               [ 6] 1201 	inc	hl
+      000595 22rD6r00         [16] 1202 	ld	(_payloadptr), hl
+                                   1203 ;device.c:490: }
+      000598                       1204 00131$:
+                                   1205 ;device.c:413: for (uint8_t i=0;i<length;i++)
+      000598 DD 34 FF         [23] 1206 	inc	-1 (ix)
+      00059B C3rA6r03         [10] 1207 	jp	00130$
+      00059E                       1208 00126$:
+                                   1209 ;device.c:494: if (dataToTransfer2==NULL)
+      00059E FD 21r02r00      [14] 1210 	ld	iy, #_dataToTransfer2
+      0005A2 FD 7E 01         [19] 1211 	ld	a, 1 (iy)
+      0005A5 FD B6 00         [19] 1212 	or	a, 0 (iy)
+      0005A8 20 16            [12] 1213 	jr	NZ, 00128$
+                                   1214 ;device.c:497: dataToTransfer2 = (uint8_t*) resultBuffer;
+      0005AA 21r53r00         [10] 1215 	ld	hl, #_resultBuffer
+      0005AD 22r02r00         [16] 1216 	ld	(_dataToTransfer2), hl
+                                   1217 ;device.c:498: dataLength2 = resultptr - resultBuffer;
+      0005B0 21r06r00         [10] 1218 	ld	hl, #_dataLength2
+      0005B3 DD 7E FD         [19] 1219 	ld	a, -3 (ix)
+      0005B6 D6r53            [ 7] 1220 	sub	a, #<(_resultBuffer)
+      0005B8 77               [ 7] 1221 	ld	(hl), a
+      0005B9 DD 7E FE         [19] 1222 	ld	a, -2 (ix)
+      0005BC DEs00            [ 7] 1223 	sbc	a, #>(_resultBuffer)
+      0005BE 23               [ 6] 1224 	inc	hl
+      0005BF 77               [ 7] 1225 	ld	(hl), a
+      0005C0                       1226 00128$:
+                                   1227 ;device.c:500: writeDataForEndpoint2 ();  
+      0005C0 CDrFDr00         [17] 1228 	call	_writeDataForEndpoint2
+      0005C3                       1229 00132$:
+                                   1230 ;device.c:501: }
+      0005C3 DD F9            [10] 1231 	ld	sp, ix
+      0005C5 DD E1            [14] 1232 	pop	ix
+      0005C7 C9               [10] 1233 	ret
+                                   1234 ;device.c:504: void handleInterrupt ()
+                                   1235 ;	---------------------------------
+                                   1236 ; Function handleInterrupt
+                                   1237 ; ---------------------------------
+      0005C8                       1238 _handleInterrupt::
+      0005C8 DD E5            [15] 1239 	push	ix
+      0005CA DD 21 00 00      [14] 1240 	ld	ix,#0
+      0005CE DD 39            [15] 1241 	add	ix,sp
+      0005D0 F5               [11] 1242 	push	af
+      0005D1 F5               [11] 1243 	push	af
+                                   1244 ;device.c:507: writeCommand(CH375_CMD_GET_STATUS);
+      0005D2 2E 22            [ 7] 1245 	ld	l, #0x22
+      0005D4 CDr00r00         [17] 1246 	call	_writeCommand
+                                   1247 ;device.c:508: uint8_t interruptType = readData ();
+      0005D7 CDr00r00         [17] 1248 	call	_readData
+                                   1249 ;device.c:510: if((interruptType & USB_BUS_RESET_MASK) == USB_INT_BUS_RESET)
+      0005DA DD 75 FF         [19] 1250 	ld	-1 (ix), l
+      0005DD 7D               [ 4] 1251 	ld	a, l
+      0005DE E6 03            [ 7] 1252 	and	a, #0x03
+      0005E0 4F               [ 4] 1253 	ld	c, a
+      0005E1 06 00            [ 7] 1254 	ld	b, #0x00
+      0005E3 79               [ 4] 1255 	ld	a, c
+      0005E4 D6 03            [ 7] 1256 	sub	a, #0x03
+      0005E6 B0               [ 4] 1257 	or	a, b
+      0005E7 20 04            [12] 1258 	jr	NZ, 00102$
+                                   1259 ;device.c:511: interruptType = USB_INT_BUS_RESET;
+      0005E9 DD 36 FF 03      [19] 1260 	ld	-1 (ix), #0x03
+      0005ED                       1261 00102$:
+                                   1262 ;device.c:517: switch(interruptType)
+      0005ED 3E 0C            [ 7] 1263 	ld	a, #0x0c
+      0005EF DD 96 FF         [19] 1264 	sub	a, -1 (ix)
+      0005F2 DAr0Dr09         [10] 1265 	jp	C, 00169$
+      0005F5 DD 4E FF         [19] 1266 	ld	c, -1 (ix)
+      0005F8 06 00            [ 7] 1267 	ld	b, #0x00
+      0005FA 21r01r06         [10] 1268 	ld	hl, #00386$
+      0005FD 09               [11] 1269 	add	hl, bc
+      0005FE 09               [11] 1270 	add	hl, bc
+      0005FF 09               [11] 1271 	add	hl, bc
+      000600 E9               [ 4] 1272 	jp	(hl)
+      000601                       1273 00386$:
+      000601 C3r84r08         [10] 1274 	jp	00155$
+      000604 C3rF1r08         [10] 1275 	jp	00166$
+      000607 C3r08r09         [10] 1276 	jp	00168$
+      00060A C3r35r06         [10] 1277 	jp	00104$
+      00060D C3r0Dr09         [10] 1278 	jp	00169$
+      000610 C3r28r06         [10] 1279 	jp	00103$
+      000613 C3r0Dr09         [10] 1280 	jp	00169$
+      000616 C3r0Dr09         [10] 1281 	jp	00169$
+      000619 C3r39r08         [10] 1282 	jp	00146$
+      00061C C3rEAr08         [10] 1283 	jp	00165$
+      00061F C3rFEr08         [10] 1284 	jp	00167$
+      000622 C3r0Dr09         [10] 1285 	jp	00169$
+      000625 C3r40r06         [10] 1286 	jp	00105$
+                                   1287 ;device.c:519: case USB_INT_USB_SUSPEND:
+      000628                       1288 00103$:
+                                   1289 ;device.c:520: writeCommand(CH_CMD_ENTER_SLEEP);
+      000628 2E 03            [ 7] 1290 	ld	l, #0x03
+      00062A CDr00r00         [17] 1291 	call	_writeCommand
+                                   1292 ;device.c:521: writeCommand (CH375_CMD_UNLOCK_USB);
+      00062D 2E 23            [ 7] 1293 	ld	l, #0x23
+      00062F CDr00r00         [17] 1294 	call	_writeCommand
+                                   1295 ;device.c:522: break;
+      000632 C3r12r09         [10] 1296 	jp	00171$
+                                   1297 ;device.c:523: case USB_INT_BUS_RESET:
+      000635                       1298 00104$:
+                                   1299 ;device.c:525: reset ();
+      000635 CDr4Er00         [17] 1300 	call	_reset
+                                   1301 ;device.c:526: writeCommand (CH375_CMD_UNLOCK_USB);
+      000638 2E 23            [ 7] 1302 	ld	l, #0x23
+      00063A CDr00r00         [17] 1303 	call	_writeCommand
+                                   1304 ;device.c:527: break;
+      00063D C3r12r09         [10] 1305 	jp	00171$
+                                   1306 ;device.c:529: case USB_INT_EP0_SETUP:
+      000640                       1307 00105$:
+                                   1308 ;device.c:535: transaction_state = SETUP;
+      000640 21rC2r00         [10] 1309 	ld	hl, #_transaction_state
+      000643 36 00            [10] 1310 	ld	(hl), #0x00
+                                   1311 ;device.c:540: int length = read_usb_data (request.buffer);
+      000645 21r11r00         [10] 1312 	ld	hl, #_request
+      000648 E5               [11] 1313 	push	hl
+      000649 CDr77r01         [17] 1314 	call	_read_usb_data
+      00064C F1               [10] 1315 	pop	af
+                                   1316 ;device.c:549: dataLength = request.r.wLength;
+      00064D 2Ar17r00         [16] 1317 	ld	hl, (#(_request + 0x0006) + 0)
+      000650 22r04r00         [16] 1318 	ld	(_dataLength), hl
+                                   1319 ;device.c:557: if ((request.r.bmRequestType & USB_TYPE_MASK)==USB_TYPE_CLASS)
+      000653 3Ar11r00         [13] 1320 	ld	a, (#_request + 0)
+      000656 E6 60            [ 7] 1321 	and	a, #0x60
+      000658 D6 20            [ 7] 1322 	sub	a, #0x20
+      00065A 20 54            [12] 1323 	jr	NZ, 00116$
+                                   1324 ;device.c:562: switch (request.r.bRequest)              // Analyze the class request code and process it
+      00065C 3Ar12r00         [13] 1325 	ld	a, (#_request + 1)
+      00065F FE 20            [ 7] 1326 	cp	a, #0x20
+      000661 28 4D            [12] 1327 	jr	Z, 00116$
+      000663 FE 21            [ 7] 1328 	cp	a, #0x21
+      000665 28 06            [12] 1329 	jr	Z, 00107$
+      000667 D6 22            [ 7] 1330 	sub	a, #0x22
+      000669 28 1D            [12] 1331 	jr	Z, 00108$
+      00066B 18 43            [12] 1332 	jr	00116$
+                                   1333 ;device.c:571: case GET_LINE_CODING: // GET_LINE_CODING
+      00066D                       1334 00107$:
+                                   1335 ;device.c:575: dataToTransfer = (uint8_t*) &uart_parameters;
+      00066D 21r0Ar00         [10] 1336 	ld	hl, #_uart_parameters+0
+      000670 22r00r00         [16] 1337 	ld	(_dataToTransfer), hl
+                                   1338 ;device.c:576: dataLength = min ((uint16_t) sizeof(UART_PARA),request.r.wLength);;
+      000673 ED 4Br17r00      [20] 1339 	ld	bc, (#(_request + 0x0006) + 0)
+      000677 3E 07            [ 7] 1340 	ld	a, #0x07
+      000679 B9               [ 4] 1341 	cp	a, c
+      00067A 3E 00            [ 7] 1342 	ld	a, #0x00
+      00067C 98               [ 4] 1343 	sbc	a, b
+      00067D 30 03            [12] 1344 	jr	NC, 00173$
+      00067F 01 07 00         [10] 1345 	ld	bc, #0x0007
+      000682                       1346 00173$:
+      000682 ED 43r04r00      [20] 1347 	ld	(_dataLength), bc
+                                   1348 ;device.c:577: break;
+      000686 18 28            [12] 1349 	jr	00116$
+                                   1350 ;device.c:578: case SET_CONTROL_LINE_STATE: // SET_CONTROL_LINE_STATE
+      000688                       1351 00108$:
+                                   1352 ;device.c:582: sendEP0ACK ();
+      000688 CDr6Dr00         [17] 1353 	call	_sendEP0ACK
+                                   1354 ;device.c:583: if (request.r.wValue && 0x01)
+      00068B 2Ar13r00         [16] 1355 	ld	hl, (#_request + 2)
+      00068E 7C               [ 4] 1356 	ld	a, h
+      00068F B5               [ 4] 1357 	or	a, l
+      000690 28 19            [12] 1358 	jr	Z, 00110$
+                                   1359 ;device.c:585: usb_terminal_open = true;   
+      000692 21rC1r00         [10] 1360 	ld	hl, #_usb_terminal_open
+      000695 36 01            [10] 1361 	ld	(hl), #0x01
+                                   1362 ;device.c:587: dataToTransfer2 = (uint8_t*) WELCOME_MSG;
+      000697 01rC3r00         [10] 1363 	ld	bc, #_WELCOME_MSG+0
+      00069A ED 43r02r00      [20] 1364 	ld	(_dataToTransfer2), bc
+                                   1365 ;device.c:588: dataLength2 = strlen (WELCOME_MSG);
+      00069E C5               [11] 1366 	push	bc
+      00069F CDr00r00         [17] 1367 	call	_strlen
+      0006A2 F1               [10] 1368 	pop	af
+      0006A3 22r06r00         [16] 1369 	ld	(_dataLength2), hl
+                                   1370 ;device.c:589: writeDataForEndpoint2 ();
+      0006A6 CDrFDr00         [17] 1371 	call	_writeDataForEndpoint2
+      0006A9 18 05            [12] 1372 	jr	00116$
+      0006AB                       1373 00110$:
+                                   1374 ;device.c:592: usb_terminal_open = false;   
+      0006AB 21rC1r00         [10] 1375 	ld	hl, #_usb_terminal_open
+      0006AE 36 00            [10] 1376 	ld	(hl), #0x00
+                                   1377 ;device.c:600: }                    
+      0006B0                       1378 00116$:
+                                   1379 ;device.c:602: if ((request.r.bmRequestType & USB_TYPE_MASK)==USB_TYPE_STANDARD)
+      0006B0 3Ar11r00         [13] 1380 	ld	a, (#_request + 0)
+      0006B3 E6 60            [ 7] 1381 	and	a, #0x60
+      0006B5 C2r12r09         [10] 1382 	jp	NZ,00171$
+                                   1383 ;device.c:607: if ((request.r.bmRequestType & USB_DIR_MASK) == USB_DIR_IN) // IN
+      0006B8 3Ar11r00         [13] 1384 	ld	a, (#_request + 0)
+      0006BB E6 80            [ 7] 1385 	and	a, #0x80
+      0006BD 4F               [ 4] 1386 	ld	c, a
+      0006BE 06 00            [ 7] 1387 	ld	b, #0x00
+      0006C0 79               [ 4] 1388 	ld	a, c
+      0006C1 D6 80            [ 7] 1389 	sub	a, #0x80
+      0006C3 B0               [ 4] 1390 	or	a, b
+      0006C4 C2r06r08         [10] 1391 	jp	NZ,00142$
+                                   1392 ;device.c:612: switch(request.r.bRequest)
+      0006C7 3Ar12r00         [13] 1393 	ld	a, (#_request + 1)
+      0006CA B7               [ 4] 1394 	or	a, a
+      0006CB CAr12r09         [10] 1395 	jp	Z,00171$
+      0006CE FE 06            [ 7] 1396 	cp	a, #0x06
+      0006D0 28 08            [12] 1397 	jr	Z, 00117$
+      0006D2 D6 08            [ 7] 1398 	sub	a, #0x08
+      0006D4 CArF7r07         [10] 1399 	jp	Z,00128$
+      0006D7 C3r12r09         [10] 1400 	jp	00171$
+                                   1401 ;device.c:614: case USB_REQ_GET_DESCRIPTOR:
+      0006DA                       1402 00117$:
+                                   1403 ;device.c:619: switch (request.r.wValue>>8)
+      0006DA 21r13r00         [10] 1404 	ld	hl, #_request + 2
+      0006DD 7E               [ 7] 1405 	ld	a, (hl)
+      0006DE DD 77 FC         [19] 1406 	ld	-4 (ix), a
+      0006E1 23               [ 6] 1407 	inc	hl
+      0006E2 7E               [ 7] 1408 	ld	a, (hl)
+      0006E3 DD 77 FD         [19] 1409 	ld	-3 (ix), a
+      0006E6 4F               [ 4] 1410 	ld	c, a
+      0006E7 06 00            [ 7] 1411 	ld	b, #0x00
+      0006E9 DD 71 FE         [19] 1412 	ld	-2 (ix), c
+      0006EC DD 70 FF         [19] 1413 	ld	-1 (ix), b
+      0006EF DD 7E FE         [19] 1414 	ld	a, -2 (ix)
+      0006F2 3D               [ 4] 1415 	dec	a
+      0006F3 DD B6 FF         [19] 1416 	or	a, -1 (ix)
+      0006F6 28 17            [12] 1417 	jr	Z, 00118$
+      0006F8 DD 7E FE         [19] 1418 	ld	a, -2 (ix)
+      0006FB D6 02            [ 7] 1419 	sub	a, #0x02
+      0006FD DD B6 FF         [19] 1420 	or	a, -1 (ix)
+      000700 28 3F            [12] 1421 	jr	Z, 00119$
+      000702 DD 7E FE         [19] 1422 	ld	a, -2 (ix)
+      000705 D6 03            [ 7] 1423 	sub	a, #0x03
+      000707 DD B6 FF         [19] 1424 	or	a, -1 (ix)
+      00070A 28 67            [12] 1425 	jr	Z, 00120$
+      00070C C3rF1r07         [10] 1426 	jp	00127$
+                                   1427 ;device.c:621: case USB_DESC_DEVICE: 
+      00070F                       1428 00118$:
+                                   1429 ;device.c:626: dataToTransfer = DevDes;
+      00070F 21r00r00         [10] 1430 	ld	hl, #_DevDes+0
+      000712 22r00r00         [16] 1431 	ld	(_dataToTransfer), hl
+                                   1432 ;device.c:627: dataLength = min ((uint16_t) sizeof(DevDes),request.r.wLength);
+      000715 21r17r00         [10] 1433 	ld	hl, #(_request + 0x0006)
+      000718 7E               [ 7] 1434 	ld	a, (hl)
+      000719 DD 77 FE         [19] 1435 	ld	-2 (ix), a
+      00071C 23               [ 6] 1436 	inc	hl
+      00071D 7E               [ 7] 1437 	ld	a, (hl)
+      00071E DD 77 FF         [19] 1438 	ld	-1 (ix), a
+      000721 3E 12            [ 7] 1439 	ld	a, #0x12
+      000723 DD BE FE         [19] 1440 	cp	a, -2 (ix)
+      000726 3E 00            [ 7] 1441 	ld	a, #0x00
+      000728 DD 9E FF         [19] 1442 	sbc	a, -1 (ix)
+      00072B 30 08            [12] 1443 	jr	NC, 00175$
+      00072D DD 36 FE 12      [19] 1444 	ld	-2 (ix), #0x12
+      000731 AF               [ 4] 1445 	xor	a, a
+      000732 DD 77 FF         [19] 1446 	ld	-1 (ix), a
+      000735                       1447 00175$:
+      000735 DD 6E FE         [19] 1448 	ld	l, -2 (ix)
+      000738 DD 66 FF         [19] 1449 	ld	h, -1 (ix)
+      00073B 22r04r00         [16] 1450 	ld	(_dataLength), hl
+                                   1451 ;device.c:628: break;
+      00073E C3rF1r07         [10] 1452 	jp	00127$
+                                   1453 ;device.c:630: case USB_DESC_CONFIGURATION: 
+      000741                       1454 00119$:
+                                   1455 ;device.c:635: dataToTransfer = ConDes;
+      000741 21r12r00         [10] 1456 	ld	hl, #_ConDes+0
+      000744 22r00r00         [16] 1457 	ld	(_dataToTransfer), hl
+                                   1458 ;device.c:636: dataLength = min ((uint16_t) sizeof(ConDes),request.r.wLength);
+      000747 21r17r00         [10] 1459 	ld	hl, #(_request + 0x0006)
+      00074A 7E               [ 7] 1460 	ld	a, (hl)
+      00074B DD 77 FE         [19] 1461 	ld	-2 (ix), a
+      00074E 23               [ 6] 1462 	inc	hl
+      00074F 7E               [ 7] 1463 	ld	a, (hl)
+      000750 DD 77 FF         [19] 1464 	ld	-1 (ix), a
+      000753 3E 43            [ 7] 1465 	ld	a, #0x43
+      000755 DD BE FE         [19] 1466 	cp	a, -2 (ix)
+      000758 3E 00            [ 7] 1467 	ld	a, #0x00
+      00075A DD 9E FF         [19] 1468 	sbc	a, -1 (ix)
+      00075D 30 08            [12] 1469 	jr	NC, 00177$
+      00075F DD 36 FE 43      [19] 1470 	ld	-2 (ix), #0x43
+      000763 AF               [ 4] 1471 	xor	a, a
+      000764 DD 77 FF         [19] 1472 	ld	-1 (ix), a
+      000767                       1473 00177$:
+      000767 DD 6E FE         [19] 1474 	ld	l, -2 (ix)
+      00076A DD 66 FF         [19] 1475 	ld	h, -1 (ix)
+      00076D 22r04r00         [16] 1476 	ld	(_dataLength), hl
+                                   1477 ;device.c:637: break;
+      000770 C3rF1r07         [10] 1478 	jp	00127$
+                                   1479 ;device.c:639: case USB_DESC_STRING: 
+      000773                       1480 00120$:
+                                   1481 ;device.c:644: uint8_t stringIndex = request.r.wValue&0xff;  
+      000773 DD 7E FC         [19] 1482 	ld	a, -4 (ix)
+                                   1483 ;device.c:645: switch(stringIndex)
+      000776 B7               [ 4] 1484 	or	a, a
+      000777 28 0E            [12] 1485 	jr	Z, 00121$
+      000779 FE 01            [ 7] 1486 	cp	a, #0x01
+      00077B 28 40            [12] 1487 	jr	Z, 00123$
+      00077D FE 02            [ 7] 1488 	cp	a, #0x02
+      00077F 28 21            [12] 1489 	jr	Z, 00122$
+      000781 D6 03            [ 7] 1490 	sub	a, #0x03
+      000783 28 53            [12] 1491 	jr	Z, 00124$
+      000785 18 6A            [12] 1492 	jr	00127$
+                                   1493 ;device.c:647: case 0: 
+      000787                       1494 00121$:
+                                   1495 ;device.c:652: dataToTransfer = LangDes;
+      000787 21r55r00         [10] 1496 	ld	hl, #_LangDes+0
+      00078A 22r00r00         [16] 1497 	ld	(_dataToTransfer), hl
+                                   1498 ;device.c:653: dataLength = min ((uint16_t) sizeof(LangDes),request.r.wLength);
+      00078D ED 4Br17r00      [20] 1499 	ld	bc, (#(_request + 0x0006) + 0)
+      000791 3E 04            [ 7] 1500 	ld	a, #0x04
+      000793 B9               [ 4] 1501 	cp	a, c
+      000794 3E 00            [ 7] 1502 	ld	a, #0x00
+      000796 98               [ 4] 1503 	sbc	a, b
+      000797 30 03            [12] 1504 	jr	NC, 00179$
+      000799 01 04 00         [10] 1505 	ld	bc, #0x0004
+      00079C                       1506 00179$:
+      00079C ED 43r04r00      [20] 1507 	ld	(_dataLength), bc
+                                   1508 ;device.c:654: break;
+      0007A0 18 4F            [12] 1509 	jr	00127$
+                                   1510 ;device.c:656: case STRING_DESC_PRODUCT: 
+      0007A2                       1511 00122$:
+                                   1512 ;device.c:661: dataToTransfer = PRODUCER_Des;
+      0007A2 21r85r00         [10] 1513 	ld	hl, #_PRODUCER_Des+0
+      0007A5 22r00r00         [16] 1514 	ld	(_dataToTransfer), hl
+                                   1515 ;device.c:662: dataLength = min ((uint16_t) sizeof(PRODUCER_Des),request.r.wLength);
+      0007A8 ED 4Br17r00      [20] 1516 	ld	bc, (#(_request + 0x0006) + 0)
+      0007AC 3E 26            [ 7] 1517 	ld	a, #0x26
+      0007AE B9               [ 4] 1518 	cp	a, c
+      0007AF 3E 00            [ 7] 1519 	ld	a, #0x00
+      0007B1 98               [ 4] 1520 	sbc	a, b
+      0007B2 30 03            [12] 1521 	jr	NC, 00181$
+      0007B4 01 26 00         [10] 1522 	ld	bc, #0x0026
+      0007B7                       1523 00181$:
+      0007B7 ED 43r04r00      [20] 1524 	ld	(_dataLength), bc
+                                   1525 ;device.c:663: break;
+      0007BB 18 34            [12] 1526 	jr	00127$
+                                   1527 ;device.c:665: case STRING_DESC_MANUFACTURER: 
+      0007BD                       1528 00123$:
+                                   1529 ;device.c:670: dataToTransfer = MANUFACTURER_Des;
+      0007BD 21r59r00         [10] 1530 	ld	hl, #_MANUFACTURER_Des+0
+      0007C0 22r00r00         [16] 1531 	ld	(_dataToTransfer), hl
+                                   1532 ;device.c:671: dataLength = min ((uint16_t) sizeof(MANUFACTURER_Des),request.r.wLength);
+      0007C3 ED 4Br17r00      [20] 1533 	ld	bc, (#(_request + 0x0006) + 0)
+      0007C7 3E 2C            [ 7] 1534 	ld	a, #0x2c
+      0007C9 B9               [ 4] 1535 	cp	a, c
+      0007CA 3E 00            [ 7] 1536 	ld	a, #0x00
+      0007CC 98               [ 4] 1537 	sbc	a, b
+      0007CD 30 03            [12] 1538 	jr	NC, 00183$
+      0007CF 01 2C 00         [10] 1539 	ld	bc, #0x002c
+      0007D2                       1540 00183$:
+      0007D2 ED 43r04r00      [20] 1541 	ld	(_dataLength), bc
+                                   1542 ;device.c:672: break;
+      0007D6 18 19            [12] 1543 	jr	00127$
+                                   1544 ;device.c:674: case STRING_DESC_SERIAL:
+      0007D8                       1545 00124$:
+                                   1546 ;device.c:679: dataToTransfer = PRODUCER_SN_Des;
+      0007D8 21rABr00         [10] 1547 	ld	hl, #_PRODUCER_SN_Des+0
+      0007DB 22r00r00         [16] 1548 	ld	(_dataToTransfer), hl
+                                   1549 ;device.c:680: dataLength = min ((uint16_t) sizeof(PRODUCER_SN_Des),request.r.wLength);
+      0007DE ED 4Br17r00      [20] 1550 	ld	bc, (#(_request + 0x0006) + 0)
+      0007E2 3E 12            [ 7] 1551 	ld	a, #0x12
+      0007E4 B9               [ 4] 1552 	cp	a, c
+      0007E5 3E 00            [ 7] 1553 	ld	a, #0x00
+      0007E7 98               [ 4] 1554 	sbc	a, b
+      0007E8 30 03            [12] 1555 	jr	NC, 00185$
+      0007EA 01 12 00         [10] 1556 	ld	bc, #0x0012
+      0007ED                       1557 00185$:
+      0007ED ED 43r04r00      [20] 1558 	ld	(_dataLength), bc
+                                   1559 ;device.c:693: }
+      0007F1                       1560 00127$:
+                                   1561 ;device.c:694: writeDataForEndpoint0();
+      0007F1 CDr8Br00         [17] 1562 	call	_writeDataForEndpoint0
+                                   1563 ;device.c:695: break;                   
+      0007F4 C3r12r09         [10] 1564 	jp	00171$
+                                   1565 ;device.c:697: case USB_REQ_GET_CONFIGURATION:
+      0007F7                       1566 00128$:
+                                   1567 ;device.c:701: dataToTransfer = &usb_configuration_id;
+      0007F7 21r09r00         [10] 1568 	ld	hl, #_usb_configuration_id+0
+      0007FA 22r00r00         [16] 1569 	ld	(_dataToTransfer), hl
+                                   1570 ;device.c:702: dataLength = 1;
+      0007FD 21 01 00         [10] 1571 	ld	hl, #0x0001
+      000800 22r04r00         [16] 1572 	ld	(_dataLength), hl
+                                   1573 ;device.c:703: break;
+      000803 C3r12r09         [10] 1574 	jp	00171$
+                                   1575 ;device.c:719: }
+      000806                       1576 00142$:
+                                   1577 ;device.c:726: switch(request.r.bRequest)
+      000806 3Ar12r00         [13] 1578 	ld	a, (#_request + 1)
+      000809 FE 01            [ 7] 1579 	cp	a, #0x01
+      00080B CAr12r09         [10] 1580 	jp	Z,00171$
+      00080E FE 05            [ 7] 1581 	cp	a, #0x05
+      000810 28 07            [12] 1582 	jr	Z, 00133$
+      000812 D6 09            [ 7] 1583 	sub	a, #0x09
+      000814 28 0F            [12] 1584 	jr	Z, 00134$
+      000816 C3r12r09         [10] 1585 	jp	00171$
+                                   1586 ;device.c:728: case USB_REQ_SET_ADDRESS:
+      000819                       1587 00133$:
+                                   1588 ;device.c:730: usb_device_address = request.r.wValue;
+      000819 3Ar13r00         [13] 1589 	ld	a, (#_request + 2)
+      00081C 32r08r00         [13] 1590 	ld	(_usb_device_address+0), a
+                                   1591 ;device.c:735: sendEP0ACK ();
+      00081F CDr6Dr00         [17] 1592 	call	_sendEP0ACK
+                                   1593 ;device.c:736: break;
+      000822 C3r12r09         [10] 1594 	jp	00171$
+                                   1595 ;device.c:738: case USB_REQ_SET_CONFIGURATION:
+      000825                       1596 00134$:
+                                   1597 ;device.c:743: if (request.r.wValue==USB_CONFIGURATION_ID) 
+      000825 2Ar13r00         [16] 1598 	ld	hl, (#_request + 2)
+      000828 4D               [ 4] 1599 	ld	c, l
+      000829 44               [ 4] 1600 	ld	b, h
+      00082A 79               [ 4] 1601 	ld	a, c
+      00082B 3D               [ 4] 1602 	dec	a
+      00082C B0               [ 4] 1603 	or	a, b
+      00082D 20 04            [12] 1604 	jr	NZ, 00136$
+                                   1605 ;device.c:744: usb_configuration_id = request.r.wValue;
+      00082F 7D               [ 4] 1606 	ld	a, l
+      000830 32r09r00         [13] 1607 	ld	(#_usb_configuration_id), a
+      000833                       1608 00136$:
+                                   1609 ;device.c:745: sendEP0ACK ();
+      000833 CDr6Dr00         [17] 1610 	call	_sendEP0ACK
+                                   1611 ;device.c:746: break; 
+      000836 C3r12r09         [10] 1612 	jp	00171$
+                                   1613 ;device.c:774: case USB_INT_EP0_IN:
+      000839                       1614 00146$:
+                                   1615 ;device.c:776: if (transaction_state!=SETUP && transaction_state!=DATA) 
+      000839 FD 21rC2r00      [14] 1616 	ld	iy, #_transaction_state
+      00083D FD 7E 00         [19] 1617 	ld	a, 0 (iy)
+      000840 B7               [ 4] 1618 	or	a, a
+      000841 28 0E            [12] 1619 	jr	Z, 00148$
+      000843 FD 7E 00         [19] 1620 	ld	a, 0 (iy)
+      000846 3D               [ 4] 1621 	dec	a
+      000847 28 08            [12] 1622 	jr	Z, 00148$
+                                   1623 ;device.c:781: writeCommand (CH375_CMD_UNLOCK_USB);
+      000849 2E 23            [ 7] 1624 	ld	l, #0x23
+      00084B CDr00r00         [17] 1625 	call	_writeCommand
+                                   1626 ;device.c:782: break;
+      00084E C3r12r09         [10] 1627 	jp	00171$
+      000851                       1628 00148$:
+                                   1629 ;device.c:784: if (dataLength==0) {
+      000851 FD 21r04r00      [14] 1630 	ld	iy, #_dataLength
+      000855 FD 7E 01         [19] 1631 	ld	a, 1 (iy)
+      000858 FD B6 00         [19] 1632 	or	a, 0 (iy)
+      00085B 20 07            [12] 1633 	jr	NZ, 00151$
+                                   1634 ;device.c:785: transaction_state = STATUS;
+      00085D 21rC2r00         [10] 1635 	ld	hl, #_transaction_state
+      000860 36 02            [10] 1636 	ld	(hl), #0x02
+      000862 18 05            [12] 1637 	jr	00152$
+      000864                       1638 00151$:
+                                   1639 ;device.c:791: transaction_state = DATA;
+      000864 21rC2r00         [10] 1640 	ld	hl, #_transaction_state
+      000867 36 01            [10] 1641 	ld	(hl), #0x01
+      000869                       1642 00152$:
+                                   1643 ;device.c:797: switch(request.r.bRequest)
+      000869 3Ar12r00         [13] 1644 	ld	a, (#(_request + 0x0001) + 0)
+      00086C D6 05            [ 7] 1645 	sub	a, #0x05
+      00086E 20 09            [12] 1646 	jr	NZ, 00154$
+                                   1647 ;device.c:805: set_target_device_address (usb_device_address);
+      000870 3Ar08r00         [13] 1648 	ld	a,(#_usb_device_address + 0)
+      000873 F5               [11] 1649 	push	af
+      000874 33               [ 6] 1650 	inc	sp
+      000875 CDrAFr01         [17] 1651 	call	_set_target_device_address
+      000878 33               [ 6] 1652 	inc	sp
+                                   1653 ;device.c:808: }
+      000879                       1654 00154$:
+                                   1655 ;device.c:810: writeDataForEndpoint0 ();
+      000879 CDr8Br00         [17] 1656 	call	_writeDataForEndpoint0
+                                   1657 ;device.c:811: writeCommand (CH375_CMD_UNLOCK_USB);
+      00087C 2E 23            [ 7] 1658 	ld	l, #0x23
+      00087E CDr00r00         [17] 1659 	call	_writeCommand
+                                   1660 ;device.c:812: break;
+      000881 C3r12r09         [10] 1661 	jp	00171$
+                                   1662 ;device.c:815: case USB_INT_EP0_OUT:
+      000884                       1663 00155$:
+                                   1664 ;device.c:817: if (transaction_state!=SETUP && transaction_state!=DATA) 
+      000884 FD 21rC2r00      [14] 1665 	ld	iy, #_transaction_state
+      000888 FD 7E 00         [19] 1666 	ld	a, 0 (iy)
+      00088B B7               [ 4] 1667 	or	a, a
+      00088C 28 10            [12] 1668 	jr	Z, 00157$
+      00088E FD 7E 00         [19] 1669 	ld	a, 0 (iy)
+      000891 3D               [ 4] 1670 	dec	a
+      000892 28 0A            [12] 1671 	jr	Z, 00157$
+                                   1672 ;device.c:822: sendEP0STALL();
+      000894 CDr81r00         [17] 1673 	call	_sendEP0STALL
+                                   1674 ;device.c:823: writeCommand (CH375_CMD_UNLOCK_USB);
+      000897 2E 23            [ 7] 1675 	ld	l, #0x23
+      000899 CDr00r00         [17] 1676 	call	_writeCommand
+                                   1677 ;device.c:824: break;
+      00089C 18 74            [12] 1678 	jr	00171$
+      00089E                       1679 00157$:
+                                   1680 ;device.c:826: if (dataLength==0) 
+      00089E FD 21r04r00      [14] 1681 	ld	iy, #_dataLength
+      0008A2 FD 7E 01         [19] 1682 	ld	a, 1 (iy)
+      0008A5 FD B6 00         [19] 1683 	or	a, 0 (iy)
+      0008A8 20 07            [12] 1684 	jr	NZ, 00160$
+                                   1685 ;device.c:828: transaction_state = STATUS;
+      0008AA 21rC2r00         [10] 1686 	ld	hl, #_transaction_state
+      0008AD 36 02            [10] 1687 	ld	(hl), #0x02
+      0008AF 18 05            [12] 1688 	jr	00161$
+      0008B1                       1689 00160$:
+                                   1690 ;device.c:835: transaction_state = DATA;
+      0008B1 21rC2r00         [10] 1691 	ld	hl, #_transaction_state
+      0008B4 36 01            [10] 1692 	ld	(hl), #0x01
+      0008B6                       1693 00161$:
+                                   1694 ;device.c:842: uint8_t current_request = request.r.bRequest;
+      0008B6 21r12r00         [10] 1695 	ld	hl, #(_request + 0x0001)
+      0008B9 4E               [ 7] 1696 	ld	c, (hl)
+                                   1697 ;device.c:845: length = read_usb_data (request.buffer);
+      0008BA C5               [11] 1698 	push	bc
+      0008BB 21r11r00         [10] 1699 	ld	hl, #_request
+      0008BE E5               [11] 1700 	push	hl
+      0008BF CDr77r01         [17] 1701 	call	_read_usb_data
+      0008C2 F1               [10] 1702 	pop	af
+      0008C3 C1               [10] 1703 	pop	bc
+      0008C4 22r51r00         [16] 1704 	ld	(_length), hl
+                                   1705 ;device.c:846: length = min (length,request.r.wLength);
+      0008C7 ED 5Br17r00      [20] 1706 	ld	de, (#(_request + 0x0006) + 0)
+      0008CB 2Ar51r00         [16] 1707 	ld	hl, (_length)
+      0008CE 7D               [ 4] 1708 	ld	a, l
+      0008CF 93               [ 4] 1709 	sub	a, e
+      0008D0 7C               [ 4] 1710 	ld	a, h
+      0008D1 9A               [ 4] 1711 	sbc	a, d
+      0008D2 30 02            [12] 1712 	jr	NC, 00187$
+      0008D4 5D               [ 4] 1713 	ld	e, l
+      0008D5 54               [ 4] 1714 	ld	d, h
+      0008D6                       1715 00187$:
+      0008D6 ED 53r51r00      [20] 1716 	ld	(_length), de
+                                   1717 ;device.c:858: dataLength = 0;
+      0008DA 21 00 00         [10] 1718 	ld	hl, #0x0000
+      0008DD 22r04r00         [16] 1719 	ld	(_dataLength), hl
+                                   1720 ;device.c:859: switch(current_request)
+      0008E0 79               [ 4] 1721 	ld	a, c
+      0008E1 D6 20            [ 7] 1722 	sub	a, #0x20
+      0008E3 20 2D            [12] 1723 	jr	NZ, 00171$
+                                   1724 ;device.c:867: sendEP0ACK ();
+      0008E5 CDr6Dr00         [17] 1725 	call	_sendEP0ACK
+                                   1726 ;device.c:868: break;
+      0008E8 18 28            [12] 1727 	jr	00171$
+                                   1728 ;device.c:879: case USB_INT_EP1_IN:
+      0008EA                       1729 00165$:
+                                   1730 ;device.c:883: writeCommand (CH375_CMD_UNLOCK_USB);
+      0008EA 2E 23            [ 7] 1731 	ld	l, #0x23
+      0008EC CDr00r00         [17] 1732 	call	_writeCommand
+                                   1733 ;device.c:884: break;
+      0008EF 18 21            [12] 1734 	jr	00171$
+                                   1735 ;device.c:885: case USB_INT_EP1_OUT:
+      0008F1                       1736 00166$:
+                                   1737 ;device.c:890: length = read_usb_data (request.buffer);
+      0008F1 21r11r00         [10] 1738 	ld	hl, #_request
+      0008F4 E5               [11] 1739 	push	hl
+      0008F5 CDr77r01         [17] 1740 	call	_read_usb_data
+      0008F8 F1               [10] 1741 	pop	af
+      0008F9 22r51r00         [16] 1742 	ld	(_length), hl
+                                   1743 ;device.c:899: break;
+      0008FC 18 14            [12] 1744 	jr	00171$
+                                   1745 ;device.c:901: case USB_INT_EP2_IN:
+      0008FE                       1746 00167$:
+                                   1747 ;device.c:904: writeDataForEndpoint2 ();
+      0008FE CDrFDr00         [17] 1748 	call	_writeDataForEndpoint2
+                                   1749 ;device.c:905: writeCommand (CH375_CMD_UNLOCK_USB);
+      000901 2E 23            [ 7] 1750 	ld	l, #0x23
+      000903 CDr00r00         [17] 1751 	call	_writeCommand
+                                   1752 ;device.c:906: break;
+      000906 18 0A            [12] 1753 	jr	00171$
+                                   1754 ;device.c:907: case USB_INT_EP2_OUT:
+      000908                       1755 00168$:
+                                   1756 ;device.c:908: read_and_process_data ();
+      000908 CDr74r03         [17] 1757 	call	_read_and_process_data
+                                   1758 ;device.c:909: break;
+      00090B 18 05            [12] 1759 	jr	00171$
+                                   1760 ;device.c:910: default:
+      00090D                       1761 00169$:
+                                   1762 ;device.c:914: writeCommand (CH375_CMD_UNLOCK_USB);
+      00090D 2E 23            [ 7] 1763 	ld	l, #0x23
+      00090F CDr00r00         [17] 1764 	call	_writeCommand
+                                   1765 ;device.c:916: }
+      000912                       1766 00171$:
+                                   1767 ;device.c:917: }
+      000912 DD F9            [10] 1768 	ld	sp, ix
+      000914 DD E1            [14] 1769 	pop	ix
+      000916 C9               [10] 1770 	ret
+                                   1771 ;device.c:919: bool check_exists ()
+                                   1772 ;	---------------------------------
+                                   1773 ; Function check_exists
+                                   1774 ; ---------------------------------
+      000917                       1775 _check_exists::
+                                   1776 ;device.c:923: writeCommand (CH375_CMD_CHECK_EXIST);
+      000917 2E 06            [ 7] 1777 	ld	l, #0x06
+      000919 CDr00r00         [17] 1778 	call	_writeCommand
+                                   1779 ;device.c:924: writeData(value);
+      00091C 2E BE            [ 7] 1780 	ld	l, #0xbe
+      00091E CDr00r00         [17] 1781 	call	_writeData
+                                   1782 ;device.c:925: new_value = readData ();
+      000921 CDr00r00         [17] 1783 	call	_readData
+      000924 7D               [ 4] 1784 	ld	a, l
+                                   1785 ;device.c:931: return new_value==value;
+      000925 D6 41            [ 7] 1786 	sub	a, #0x41
+      000927 3E 01            [ 7] 1787 	ld	a, #0x01
+      000929 28 01            [12] 1788 	jr	Z, 00104$
+      00092B AF               [ 4] 1789 	xor	a, a
+      00092C                       1790 00104$:
+      00092C 6F               [ 4] 1791 	ld	l, a
+                                   1792 ;device.c:932: }
+      00092D C9               [10] 1793 	ret
+                                   1794 ;device.c:934: bool set_usb_host_mode (uint8_t mode)
+                                   1795 ;	---------------------------------
+                                   1796 ; Function set_usb_host_mode
+                                   1797 ; ---------------------------------
+      00092E                       1798 _set_usb_host_mode::
+                                   1799 ;device.c:936: writeCommand(CH375_CMD_SET_USB_MODE);
+      00092E 2E 15            [ 7] 1800 	ld	l, #0x15
+      000930 CDr00r00         [17] 1801 	call	_writeCommand
+                                   1802 ;device.c:937: writeData(mode);
+      000933 FD 21 02 00      [14] 1803 	ld	iy, #2
+      000937 FD 39            [15] 1804 	add	iy, sp
+      000939 FD 6E 00         [19] 1805 	ld	l, 0 (iy)
+      00093C CDr00r00         [17] 1806 	call	_writeData
+                                   1807 ;device.c:940: for(int i=0; i!=200; i++ )
+      00093F 01 00 00         [10] 1808 	ld	bc, #0x0000
+      000942                       1809 00105$:
+      000942 79               [ 4] 1810 	ld	a, c
+      000943 D6 C8            [ 7] 1811 	sub	a, #0xc8
+      000945 B0               [ 4] 1812 	or	a, b
+      000946 28 10            [12] 1813 	jr	Z, 00103$
+                                   1814 ;device.c:942: value = readData();
+      000948 C5               [11] 1815 	push	bc
+      000949 CDr00r00         [17] 1816 	call	_readData
+      00094C 7D               [ 4] 1817 	ld	a, l
+      00094D C1               [10] 1818 	pop	bc
+                                   1819 ;device.c:943: if ( value == CH_ST_RET_SUCCESS )
+      00094E D6 51            [ 7] 1820 	sub	a, #0x51
+      000950 20 03            [12] 1821 	jr	NZ, 00106$
+                                   1822 ;device.c:944: return true;
+      000952 2E 01            [ 7] 1823 	ld	l, #0x01
+      000954 C9               [10] 1824 	ret
+      000955                       1825 00106$:
+                                   1826 ;device.c:940: for(int i=0; i!=200; i++ )
+      000955 03               [ 6] 1827 	inc	bc
+      000956 18 EA            [12] 1828 	jr	00105$
+      000958                       1829 00103$:
+                                   1830 ;device.c:947: return false;
+      000958 2E 00            [ 7] 1831 	ld	l, #0x00
+                                   1832 ;device.c:948: }
+      00095A C9               [10] 1833 	ret
+                                   1834 ;device.c:950: bool initDevice ()
+                                   1835 ;	---------------------------------
+                                   1836 ; Function initDevice
+                                   1837 ; ---------------------------------
+      00095B                       1838 _initDevice::
+                                   1839 ;device.c:952: if (!check_exists())
+      00095B CDr17r09         [17] 1840 	call	_check_exists
+      00095E 7D               [ 4] 1841 	ld	a, l
+                                   1842 ;device.c:953: return false;
+      00095F B7               [ 4] 1843 	or	a,a
+      000960 20 02            [12] 1844 	jr	NZ, 00102$
+      000962 6F               [ 4] 1845 	ld	l,a
+      000963 C9               [10] 1846 	ret
+      000964                       1847 00102$:
+                                   1848 ;device.c:955: writeCommand (CH375_CMD_RESET_ALL);
+      000964 2E 05            [ 7] 1849 	ld	l, #0x05
+      000966 CDr00r00         [17] 1850 	call	_writeCommand
+                                   1851 ;device.c:956: msdelay (500);
+      000969 21 F4 01         [10] 1852 	ld	hl, #0x01f4
+      00096C E5               [11] 1853 	push	hl
+      00096D CDr2Cr00         [17] 1854 	call	_msdelay
+                                   1855 ;device.c:959: if (!set_usb_host_mode(CH375_USB_MODE_DEVICE_OUTER_FW))
+      000970 26 01            [ 7] 1856 	ld	h,#0x01
+      000972 E3               [19] 1857 	ex	(sp),hl
+      000973 33               [ 6] 1858 	inc	sp
+      000974 CDr2Er09         [17] 1859 	call	_set_usb_host_mode
+      000977 7D               [ 4] 1860 	ld	a, l
+      000978 33               [ 6] 1861 	inc	sp
+                                   1862 ;device.c:964: return false;
+      000979 B7               [ 4] 1863 	or	a,a
+      00097A 20 02            [12] 1864 	jr	NZ, 00104$
+      00097C 6F               [ 4] 1865 	ld	l,a
+      00097D C9               [10] 1866 	ret
+      00097E                       1867 00104$:
+                                   1868 ;device.c:969: return true;
+      00097E 2E 01            [ 7] 1869 	ld	l, #0x01
+                                   1870 ;device.c:970: }
+      000980 C9               [10] 1871 	ret
+                                   1872 	.area _CODE
+                                   1873 	.area _INITIALIZER
+      000000                       1874 __xinit__DevDes:
+      000000 12                    1875 	.db #0x12	; 18
+      000001 01                    1876 	.db #0x01	; 1
+      000002 10                    1877 	.db #0x10	; 16
+      000003 01                    1878 	.db #0x01	; 1
+      000004 02                    1879 	.db #0x02	; 2
+      000005 00                    1880 	.db #0x00	; 0
+      000006 00                    1881 	.db #0x00	; 0
+      000007 08                    1882 	.db #0x08	; 8
+      000008 C0                    1883 	.db #0xc0	; 192
+      000009 16                    1884 	.db #0x16	; 22
+      00000A 83                    1885 	.db #0x83	; 131
+      00000B 04                    1886 	.db #0x04	; 4
+      00000C 00                    1887 	.db #0x00	; 0
+      00000D 01                    1888 	.db #0x01	; 1
+      00000E 01                    1889 	.db #0x01	; 1
+      00000F 02                    1890 	.db #0x02	; 2
+      000010 03                    1891 	.db #0x03	; 3
+      000011 01                    1892 	.db #0x01	; 1
+      000012                       1893 __xinit__ConDes:
+      000012 09                    1894 	.db #0x09	; 9
+      000013 02                    1895 	.db #0x02	; 2
+      000014 43                    1896 	.db #0x43	; 67	'C'
+      000015 00                    1897 	.db #0x00	; 0
+      000016 02                    1898 	.db #0x02	; 2
+      000017 01                    1899 	.db #0x01	; 1
+      000018 00                    1900 	.db #0x00	; 0
+      000019 C0                    1901 	.db #0xc0	; 192
+      00001A 19                    1902 	.db #0x19	; 25
+      00001B 09                    1903 	.db #0x09	; 9
+      00001C 04                    1904 	.db #0x04	; 4
+      00001D 00                    1905 	.db #0x00	; 0
+      00001E 00                    1906 	.db #0x00	; 0
+      00001F 01                    1907 	.db #0x01	; 1
+      000020 02                    1908 	.db #0x02	; 2
+      000021 02                    1909 	.db #0x02	; 2
+      000022 01                    1910 	.db #0x01	; 1
+      000023 00                    1911 	.db #0x00	; 0
+      000024 05                    1912 	.db #0x05	; 5
+      000025 24                    1913 	.db #0x24	; 36
+      000026 00                    1914 	.db #0x00	; 0
+      000027 10                    1915 	.db #0x10	; 16
+      000028 01                    1916 	.db #0x01	; 1
+      000029 04                    1917 	.db #0x04	; 4
+      00002A 24                    1918 	.db #0x24	; 36
+      00002B 02                    1919 	.db #0x02	; 2
+      00002C 02                    1920 	.db #0x02	; 2
+      00002D 05                    1921 	.db #0x05	; 5
+      00002E 24                    1922 	.db #0x24	; 36
+      00002F 06                    1923 	.db #0x06	; 6
+      000030 00                    1924 	.db #0x00	; 0
+      000031 01                    1925 	.db #0x01	; 1
+      000032 05                    1926 	.db #0x05	; 5
+      000033 24                    1927 	.db #0x24	; 36
+      000034 01                    1928 	.db #0x01	; 1
+      000035 03                    1929 	.db #0x03	; 3
+      000036 01                    1930 	.db #0x01	; 1
+      000037 07                    1931 	.db #0x07	; 7
+      000038 05                    1932 	.db #0x05	; 5
+      000039 81                    1933 	.db #0x81	; 129
+      00003A 03                    1934 	.db #0x03	; 3
+      00003B 08                    1935 	.db #0x08	; 8
+      00003C 00                    1936 	.db #0x00	; 0
+      00003D 14                    1937 	.db #0x14	; 20
+      00003E 09                    1938 	.db #0x09	; 9
+      00003F 04                    1939 	.db #0x04	; 4
+      000040 01                    1940 	.db #0x01	; 1
+      000041 00                    1941 	.db #0x00	; 0
+      000042 02                    1942 	.db #0x02	; 2
+      000043 0A                    1943 	.db #0x0a	; 10
+      000044 00                    1944 	.db #0x00	; 0
+      000045 00                    1945 	.db #0x00	; 0
+      000046 00                    1946 	.db #0x00	; 0
+      000047 07                    1947 	.db #0x07	; 7
+      000048 05                    1948 	.db #0x05	; 5
+      000049 02                    1949 	.db #0x02	; 2
+      00004A 02                    1950 	.db #0x02	; 2
+      00004B 40                    1951 	.db #0x40	; 64
+      00004C 00                    1952 	.db #0x00	; 0
+      00004D 00                    1953 	.db #0x00	; 0
+      00004E 07                    1954 	.db #0x07	; 7
+      00004F 05                    1955 	.db #0x05	; 5
+      000050 82                    1956 	.db #0x82	; 130
+      000051 02                    1957 	.db #0x02	; 2
+      000052 40                    1958 	.db #0x40	; 64
+      000053 00                    1959 	.db #0x00	; 0
+      000054 00                    1960 	.db #0x00	; 0
+      000055                       1961 __xinit__LangDes:
+      000055 04                    1962 	.db #0x04	; 4
+      000056 03                    1963 	.db #0x03	; 3
+      000057 09                    1964 	.db #0x09	; 9
+      000058 04                    1965 	.db #0x04	; 4
+      000059                       1966 __xinit__MANUFACTURER_Des:
+      000059 2C                    1967 	.db #0x2c	; 44
+      00005A 03                    1968 	.db #0x03	; 3
+      00005B 77                    1969 	.db #0x77	; 119	'w'
+      00005C 00                    1970 	.db #0x00	; 0
+      00005D 77                    1971 	.db #0x77	; 119	'w'
+      00005E 00                    1972 	.db #0x00	; 0
+      00005F 77                    1973 	.db #0x77	; 119	'w'
+      000060 00                    1974 	.db #0x00	; 0
+      000061 2E                    1975 	.db #0x2e	; 46
+      000062 00                    1976 	.db #0x00	; 0
+      000063 74                    1977 	.db #0x74	; 116	't'
+      000064 00                    1978 	.db #0x00	; 0
+      000065 65                    1979 	.db #0x65	; 101	'e'
+      000066 00                    1980 	.db #0x00	; 0
+      000067 6D                    1981 	.db #0x6d	; 109	'm'
+      000068 00                    1982 	.db #0x00	; 0
+      000069 63                    1983 	.db #0x63	; 99	'c'
+      00006A 00                    1984 	.db #0x00	; 0
+      00006B 6F                    1985 	.db #0x6f	; 111	'o'
+      00006C 00                    1986 	.db #0x00	; 0
+      00006D 63                    1987 	.db #0x63	; 99	'c'
+      00006E 00                    1988 	.db #0x00	; 0
+      00006F 6F                    1989 	.db #0x6f	; 111	'o'
+      000070 00                    1990 	.db #0x00	; 0
+      000071 6E                    1991 	.db #0x6e	; 110	'n'
+      000072 00                    1992 	.db #0x00	; 0
+      000073 74                    1993 	.db #0x74	; 116	't'
+      000074 00                    1994 	.db #0x00	; 0
+      000075 72                    1995 	.db #0x72	; 114	'r'
+      000076 00                    1996 	.db #0x00	; 0
+      000077 6F                    1997 	.db #0x6f	; 111	'o'
+      000078 00                    1998 	.db #0x00	; 0
+      000079 6C                    1999 	.db #0x6c	; 108	'l'
+      00007A 00                    2000 	.db #0x00	; 0
+      00007B 73                    2001 	.db #0x73	; 115	's'
+      00007C 00                    2002 	.db #0x00	; 0
+      00007D 2E                    2003 	.db #0x2e	; 46
+      00007E 00                    2004 	.db #0x00	; 0
+      00007F 63                    2005 	.db #0x63	; 99	'c'
+      000080 00                    2006 	.db #0x00	; 0
+      000081 6F                    2007 	.db #0x6f	; 111	'o'
+      000082 00                    2008 	.db #0x00	; 0
+      000083 6D                    2009 	.db #0x6d	; 109	'm'
+      000084 00                    2010 	.db #0x00	; 0
+      000085                       2011 __xinit__PRODUCER_Des:
+      000085 26                    2012 	.db #0x26	; 38
+      000086 03                    2013 	.db #0x03	; 3
+      000087 4E                    2014 	.db #0x4e	; 78	'N'
+      000088 00                    2015 	.db #0x00	; 0
+      000089 65                    2016 	.db #0x65	; 101	'e'
+      00008A 00                    2017 	.db #0x00	; 0
+      00008B 74                    2018 	.db #0x74	; 116	't'
+      00008C 00                    2019 	.db #0x00	; 0
+      00008D 77                    2020 	.db #0x77	; 119	'w'
+      00008E 00                    2021 	.db #0x00	; 0
+      00008F 6F                    2022 	.db #0x6f	; 111	'o'
+      000090 00                    2023 	.db #0x00	; 0
+      000091 72                    2024 	.db #0x72	; 114	'r'
+      000092 00                    2025 	.db #0x00	; 0
+      000093 6B                    2026 	.db #0x6b	; 107	'k'
+      000094 00                    2027 	.db #0x00	; 0
+      000095 20                    2028 	.db #0x20	; 32
+      000096 00                    2029 	.db #0x00	; 0
+      000097 43                    2030 	.db #0x43	; 67	'C'
+      000098 00                    2031 	.db #0x00	; 0
+      000099 6F                    2032 	.db #0x6f	; 111	'o'
+      00009A 00                    2033 	.db #0x00	; 0
+      00009B 6E                    2034 	.db #0x6e	; 110	'n'
+      00009C 00                    2035 	.db #0x00	; 0
+      00009D 74                    2036 	.db #0x74	; 116	't'
+      00009E 00                    2037 	.db #0x00	; 0
+      00009F 72                    2038 	.db #0x72	; 114	'r'
+      0000A0 00                    2039 	.db #0x00	; 0
+      0000A1 6F                    2040 	.db #0x6f	; 111	'o'
+      0000A2 00                    2041 	.db #0x00	; 0
+      0000A3 6C                    2042 	.db #0x6c	; 108	'l'
+      0000A4 00                    2043 	.db #0x00	; 0
+      0000A5 6C                    2044 	.db #0x6c	; 108	'l'
+      0000A6 00                    2045 	.db #0x00	; 0
+      0000A7 65                    2046 	.db #0x65	; 101	'e'
+      0000A8 00                    2047 	.db #0x00	; 0
+      0000A9 72                    2048 	.db #0x72	; 114	'r'
+      0000AA 00                    2049 	.db #0x00	; 0
+      0000AB                       2050 __xinit__PRODUCER_SN_Des:
+      0000AB 10                    2051 	.db #0x10	; 16
+      0000AC 03                    2052 	.db #0x03	; 3
+      0000AD 32                    2053 	.db #0x32	; 50	'2'
+      0000AE 00                    2054 	.db #0x00	; 0
+      0000AF 30                    2055 	.db #0x30	; 48	'0'
+      0000B0 00                    2056 	.db #0x00	; 0
+      0000B1 32                    2057 	.db #0x32	; 50	'2'
+      0000B2 00                    2058 	.db #0x00	; 0
+      0000B3 31                    2059 	.db #0x31	; 49	'1'
+      0000B4 00                    2060 	.db #0x00	; 0
+      0000B5 30                    2061 	.db #0x30	; 48	'0'
+      0000B6 00                    2062 	.db #0x00	; 0
+      0000B7 37                    2063 	.db #0x37	; 55	'7'
+      0000B8 00                    2064 	.db #0x00	; 0
+      0000B9 30                    2065 	.db #0x30	; 48	'0'
+      0000BA 00                    2066 	.db #0x00	; 0
+      0000BB 31                    2067 	.db #0x31	; 49	'1'
+      0000BC 00                    2068 	.db #0x00	; 0
+      0000BD                       2069 __xinit__oneOneByte:
+      0000BD 01                    2070 	.db #0x01	; 1
+      0000BE                       2071 __xinit__oneZeroByte:
+      0000BE 00                    2072 	.db #0x00	; 0
+      0000BF                       2073 __xinit__twoZeroBytes:
+      0000BF 00                    2074 	.db #0x00	; 0
+      0000C0 00                    2075 	.db #0x00	; 0
+      0000C1                       2076 __xinit__usb_terminal_open:
+      0000C1 00                    2077 	.db #0x00	;  0
+      0000C2                       2078 __xinit__transaction_state:
+      0000C2 02                    2079 	.db #0x02	; 2
+      0000C3                       2080 __xinit__WELCOME_MSG:
+      0000C3 0D                    2081 	.db 0x0d
+      0000C4 0A                    2082 	.db 0x0a
+      0000C5 4D 53 58 55 53 42 20  2083 	.ascii "MSXUSB Monitor"
+             4D 6F 6E 69 74 6F 72
+      0000D3 0D                    2084 	.db 0x0d
+      0000D4 0A                    2085 	.db 0x0a
+      0000D5 4D 78 78 78 78 20 2D  2086 	.ascii "Mxxxx - display memory"
+             20 64 69 73 70 6C 61
+             79 20 6D 65 6D 6F 72
+             79
+      0000EB 0D                    2087 	.db 0x0d
+      0000EC 0A                    2088 	.db 0x0a
+      0000ED 47 78 78 78 78 20 2D  2089 	.ascii "Gxxxx - goto address"
+             20 67 6F 74 6F 20 61
+             64 64 72 65 73 73
+      000101 0D                    2090 	.db 0x0d
+      000102 0A                    2091 	.db 0x0a
+      000103 52 20 2D 20 52 65 73  2092 	.ascii "R - Reset"
+             65 74
+      00010C 0D                    2093 	.db 0x0d
+      00010D 0A                    2094 	.db 0x0a
+      00010E 58 20 2D 20 65 78 69  2095 	.ascii "X - exit to BASIC"
+             74 20 74 6F 20 42 41
+             53 49 43
+      00011F 0D                    2096 	.db 0x0d
+      000120 0A                    2097 	.db 0x0a
+      000121 48 20 2D 20 73 68 6F  2098 	.ascii "H - show this help text"
+             77 20 74 68 69 73 20
+             68 65 6C 70 20 74 65
+             78 74
+      000138 0D                    2099 	.db 0x0d
+      000139 0A                    2100 	.db 0x0a
+      00013A 6F 72 2C 20 70 61 73  2101 	.ascii "or, paste Intel HEX lines"
+             74 65 20 49 6E 74 65
+             6C 20 48 45 58 20 6C
+             69 6E 65 73
+      000153 0D                    2102 	.db 0x0d
+      000154 0A                    2103 	.db 0x0a
+      000155 0D                    2104 	.db 0x0d
+      000156 0A                    2105 	.db 0x0a
+      000157 24 20                 2106 	.ascii "$ "
+      000159 00                    2107 	.db 0x00
+      00015A                       2108 __xinit__UNKNOWN_MSG:
+      00015A 0D                    2109 	.db 0x0d
+      00015B 0A                    2110 	.db 0x0a
+      00015C 49 6E 76 61 6C 69 64  2111 	.ascii "Invalid command"
+             20 63 6F 6D 6D 61 6E
+             64
+      00016B 0D                    2112 	.db 0x0d
+      00016C 0A                    2113 	.db 0x0a
+      00016D 24 20                 2114 	.ascii "$ "
+      00016F 00                    2115 	.db 0x00
+      000170                       2116 __xinit__BYTES_MSG:
+      000170 0D                    2117 	.db 0x0d
+      000171 30 78 30 30 20 62 79  2118 	.ascii "0x00 bytes written to memory"
+             74 65 73 20 77 72 69
+             74 74 65 6E 20 74 6F
+             20 6D 65 6D 6F 72 79
+      00018D 0D                    2119 	.db 0x0d
+      00018E 0A                    2120 	.db 0x0a
+      00018F 24 20                 2121 	.ascii "$ "
+      000191 00                    2122 	.db 0x00
+      000192                       2123 __xinit__NEWLINE_MSG:
+      000192 0D                    2124 	.db 0x0d
+      000193 0A                    2125 	.db 0x0a
+      000194 24 20                 2126 	.ascii "$ "
+      000196 00                    2127 	.db 0x00
+      000197                       2128 __xinit__memory_buffer:
+      000197 0D                    2129 	.db 0x0d
+      000198 0A                    2130 	.db 0x0a
+      000199 3A 31 30 41 30 30 30  2131 	.ascii ":10A000002110A0CD07A0C97EA7C8CDA2002318F700"
+             30 30 32 31 31 30 41
+             30 43 44 30 37 41 30
+             43 39 37 45 41 37 43
+             38 43 44 41 32 30 30
+             32 33 31 38 46 37 30
+             30
+      0001C4 0D                    2132 	.db 0x0d
+      0001C5 0A                    2133 	.db 0x0a
+      0001C6 24 20                 2134 	.ascii "$ "
+      0001C8 00                    2135 	.db 0x00
+                                   2136 	.area _CABS (ABS)

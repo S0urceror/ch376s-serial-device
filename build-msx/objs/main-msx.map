@@ -1,0 +1,134 @@
+ASxxxx Linker V03.00 + NoICE + sdld,  page 1.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+.  .ABS.                            00000000    00000000 =           0. bytes (ABS,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+     00000000  .__.ABS.                           
+     00000000  l__CABS                         
+     00000000  l__DABS                         
+     00000000  l__GSFINAL                      
+     00000000  l__GSINIT                       
+     00000000  l__HOME                         
+     00000000  s__CABS                         
+     00000000  s__DABS                         
+     000000C2  l__INITIALIZED                  
+     000000C2  l__INITIALIZER                  
+     0000014E  l__DATA                         
+     00000776  l__CODE                         
+     0000401C  s__CODE                         
+     0000C000  s__DATA                         
+     0000C14E  s__INITIALIZED                  
+     0000C210  s__GSFINAL                      
+     0000C210  s__GSINIT                       
+     0000C210  s__HOME                         
+     0000C210  s__INITIALIZER                  
+
+ASxxxx Linker V03.00 + NoICE + sdld,  page 2.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_CODE                               0000401C    00000776 =        1910. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+     0000401C  _strupr                            main_msx
+     00004041  __print                            main_msx
+     00004061  _writeCommand                      main_msx
+     00004065  _writeData                         main_msx
+     00004069  _readData                          main_msx
+     0000406D  _readStatus                        main_msx
+     00004071  _msx_enable_interrupt              main_msx
+     00004073  _msx_disable_interrupt             main_msx
+     00004075  _msx_wait                          main_msx
+     0000407C  _print                             main_msx
+     00004088  _reset                             main_msx
+     0000409D  _sendEP0ACK                        main_msx
+     000040A7  _sendEP0NAK                        main_msx
+     000040B1  _sendEP0STALL                      main_msx
+     000040BB  _writeDataForEndpoint0             main_msx
+     0000412D  _read_usb_data                     main_msx
+     00004165  _set_target_device_address         main_msx
+     00004176  _printInterruptName                main_msx
+     0000428B  _handleInterrupt                   main_msx
+     000045F2  _check_exists                      main_msx
+     00004608  _set_usb_host_mode                 main_msx
+     00004635  _main                              main_msx
+     00004703  _onCallMONITOR                     main_msx
+     00004710  _onDeviceMON_getId                 main_msx
+     00004743  _onDeviceMON_IO                    main_msx
+     00004771  _toupper                           toupper
+     00004783  _strlen                            
+ASxxxx Linker V03.00 + NoICE + sdld,  page 3.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_DATA                               0000C000    0000014E =         334. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+     0000C000  _uart_parameters                   main_msx
+     0000C007  _dataToTransfer                    main_msx
+     0000C009  _dataLength                        main_msx
+     0000C00B  _usb_device_address                main_msx
+     0000C00C  _usb_configuration_id              main_msx
+     0000C00D  _request                           main_msx
+     0000C04D  _length                            main_msx
+     0000C04F  _characterBuffer                   main_msx
+
+ASxxxx Linker V03.00 + NoICE + sdld,  page 4.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_INITIALIZED                        0000C14E    000000C2 =         194. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+     0000C14E  _DevDes                            main_msx
+     0000C160  _ConDes                            main_msx
+     0000C1A3  _LangDes                           main_msx
+     0000C1A7  _MANUFACTURER_Des                  main_msx
+     0000C1D3  _PRODUCER_Des                      main_msx
+     0000C1F9  _PRODUCER_SN_Des                   main_msx
+     0000C20B  _oneOneByte                        main_msx
+     0000C20C  _oneZeroByte                       main_msx
+     0000C20D  _twoZeroBytes                      main_msx
+     0000C20F  _transaction_state                 main_msx
+
+ASxxxx Linker V03.00 + NoICE + sdld,  page 5.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_INITIALIZER                        0000C210    000000C2 =         194. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+ASxxxx Linker V03.00 + NoICE + sdld,  page 6.
+
+Files Linked                              [ module(s) ]
+
+build-msx/objs/main-msx.rel               [ main_msx ]
+
+
+Libraries Linked                          [ object file ]
+
+/Users/mario/Development/msx/Compilers/sdcc/bin/../share/sdcc/lib/z80/z80.lib
+                                          [ toupper.rel ]
+/Users/mario/Development/msx/Compilers/sdcc/bin/../share/sdcc/lib/z80/z80.lib
+                                          [ strlen.rel ]
+
+ASxxxx Linker V03.00 + NoICE + sdld,  page 7.
+
+User Base Address Definitions
+
+_CODE = 0x401c
+_DATA = 0xc000
+
+

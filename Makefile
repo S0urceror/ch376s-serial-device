@@ -1,7 +1,14 @@
-TARGET  = usb_device
-ARDUINO_VERSION = 10813
-ARDUINO_DIR   = /Applications/Teensyduino.app/Contents/Java
-BOARD_TAG     = teensy2
-ARDUINO_LIBS = SPI
+MAKE := make
 
-include build-system/Teensy.mk
+.PHONY: Teensy
+Teensy:
+	$(MAKE) -f ./build-system/Teensy.mk all
+
+.PHONY: MacOS
+MacOS: 
+	$(MAKE) -f ./build-system/MacOS.mk all
+	
+.PHONY: MSX
+MSX: 
+	$(MAKE) -f ./build-system/MSX.mk all
+	
