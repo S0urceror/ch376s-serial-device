@@ -229,7 +229,7 @@ struct
 {
   char filename[11];
 } FCB;
-void host_load (uint16_t address, uint16_t in_filename)
+void host_load (uint16_t address, char* in_filename)
 {
   memset (FCB.filename,' ',sizeof(FCB.filename));
   char* dot = strchr ((char*) in_filename,'.');
@@ -245,7 +245,7 @@ void host_load (uint16_t address, uint16_t in_filename)
   }
   printf ("reading [%s] into address: 0x%04X\n",(char*)FCB.filename,address);
 }
-void host_save (uint16_t address, uint16_t size, uint16_t in_filename)
+void host_save (uint16_t address, uint16_t size, char* in_filename)
 {
   memset (FCB.filename,' ',sizeof(FCB.filename));
   char* dot = strchr ((char*) in_filename,'.');

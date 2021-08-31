@@ -357,7 +357,7 @@ void device_send (WORKAREA* wrk,char* buffer,uint16_t length)
 }
 void device_send_welcome (WORKAREA* wrk)
 {
-    device_send (wrk,WELCOME_MSG,sizeof (WELCOME_MSG));
+    device_send (wrk,(char*) WELCOME_MSG,sizeof (WELCOME_MSG));
 }
 
 void read_and_send_host()

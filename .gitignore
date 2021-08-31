@@ -2,6 +2,7 @@
 /.vscode
 /build-teensy2
 /build-macos
-/build-msx
+/build-msx/objs
+/build-msx/bin
 /usb_device.code-workspace
 /test/bin/
