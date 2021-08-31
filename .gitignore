@@ -1,4 +1,7 @@
 /.DS_Store
 /.vscode
 /build-teensy2
+/build-macos
+/build-msx
 /usb_device.code-workspace
+/test/bin/
