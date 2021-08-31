@@ -1,6 +1,6 @@
                                       1 ;--------------------------------------------------------
                                       2 ; File Created by SDCC : free open source ANSI-C Compiler
-                                      3 ; Version 4.0.3 #11868 (Mac OS X x86_64)
+                                      3 ; Version 4.1.0 #12072 (Mac OS X x86_64)
                                       4 ;--------------------------------------------------------
                                       5 	.module main_msx
                                       6 	.optsdcc -mz80
@@ -12,607 +12,1197 @@
                                      12 	.globl _onDeviceMON_getId
                                      13 	.globl _onCallMONITOR
                                      14 	.globl _main
-                                     15 	.globl _print
-                                     16 	.globl _msx_disable_interrupt
-                                     17 	.globl _msx_enable_interrupt
-                                     18 	.globl __print
-                                     19 	.globl _handleInterrupt
-                                     20 	.globl _initDevice
-                                     21 	.globl _bDeviceOk
-                                     22 	.globl _writeCommand
-                                     23 	.globl _writeData
-                                     24 	.globl _readData
-                                     25 	.globl _readStatus
-                                     26 	.globl _host_reset
-                                     27 	.globl _host_basic_interpreter
-                                     28 	.globl _host_go
-                                     29 	.globl _host_writeByte
-                                     30 	.globl _host_readByte
-                                     31 ;--------------------------------------------------------
-                                     32 ; special function registers
-                                     33 ;--------------------------------------------------------
-                                     34 ;--------------------------------------------------------
-                                     35 ; ram data
-                                     36 ;--------------------------------------------------------
-                                     37 	.area _DATA
-                                     38 ;--------------------------------------------------------
-                                     39 ; ram data
-                                     40 ;--------------------------------------------------------
-                                     41 	.area _INITIALIZED
-      000000                         42 _bDeviceOk::
-      000000                         43 	.ds 1
-                                     44 ;--------------------------------------------------------
-                                     45 ; absolute external ram data
-                                     46 ;--------------------------------------------------------
-                                     47 	.area _DABS (ABS)
-                                     48 ;--------------------------------------------------------
-                                     49 ; global & static initialisations
-                                     50 ;--------------------------------------------------------
-                                     51 	.area _HOME
-                                     52 	.area _GSINIT
-                                     53 	.area _GSFINAL
-                                     54 	.area _GSINIT
-                                     55 ;--------------------------------------------------------
-                                     56 ; Home
-                                     57 ;--------------------------------------------------------
-                                     58 	.area _HOME
-                                     59 	.area _HOME
-                                     60 ;--------------------------------------------------------
-                                     61 ; code
-                                     62 ;--------------------------------------------------------
-                                     63 	.area _CODE
-                                     64 ;main-msx.c:13: void _print(const char* msg) {
-                                     65 ;	---------------------------------
-                                     66 ; Function _print
-                                     67 ; ---------------------------------
-      000000                         68 __print::
-                                     69 ;main-msx.c:35: __endasm;
-      000000 21 02 00         [10]   70 	ld	hl, #2; retrieve address from stack
-      000003 39               [11]   71 	add	hl, sp
-      000004 46               [ 7]   72 	ld	b, (hl)
-      000005 23               [ 6]   73 	inc	hl
-      000006 66               [ 7]   74 	ld	h, (hl)
-      000007 68               [ 4]   75 	ld	l, b
-      000008                         76 	  _printMSG_loop	:
-      000008 7E               [ 7]   77 	ld	a, (hl); print
-      000009 B7               [ 4]   78 	or	a
-      00000A C8               [11]   79 	ret	z
-      00000B E5               [11]   80 	push	hl
-      00000C DD E5            [15]   81 	push	ix
-      00000E FD 2A C0 FC      [20]   82 	ld	iy, (#0xfcc0)
-      000012 DD 21 A2 00      [14]   83 	ld	ix, #0x00a2
-      000016 CD 1C 00         [17]   84 	call	#0x001c
-      000019 DD E1            [14]   85 	pop	ix
-      00001B E1               [10]   86 	pop	hl
-      00001C 23               [ 6]   87 	inc	hl
-      00001D 18 E9            [12]   88 	jr	_printMSG_loop
-                                     89 ;main-msx.c:37: return;
-                                     90 ;main-msx.c:38: }
-      00001F C9               [10]   91 	ret
-                                     92 ;main-msx.c:40: void writeCommand (uint8_t data) __z88dk_fastcall __naked
-                                     93 ;	---------------------------------
-                                     94 ; Function writeCommand
-                                     95 ; ---------------------------------
-      000020                         96 _writeCommand::
-                                     97 ;main-msx.c:46: __endasm;
-      000020 7D               [ 4]   98 	ld	a, l
-      000021 D3 11            [11]   99 	out	(#0x11),a
-      000023 C9               [10]  100 	ret
-                                    101 ;main-msx.c:47: }
-                                    102 ;main-msx.c:48: void writeData (uint8_t data) __z88dk_fastcall __naked
-                                    103 ;	---------------------------------
-                                    104 ; Function writeData
-                                    105 ; ---------------------------------
-      000024                        106 _writeData::
-                                    107 ;main-msx.c:54: __endasm;
-      000024 7D               [ 4]  108 	ld	a, l
-      000025 D3 10            [11]  109 	out	(#0x10),a
-      000027 C9               [10]  110 	ret
-                                    111 ;main-msx.c:55: }
-                                    112 ;main-msx.c:56: uint8_t readData () __naked
-                                    113 ;	---------------------------------
-                                    114 ; Function readData
-                                    115 ; ---------------------------------
-      000028                        116 _readData::
-                                    117 ;main-msx.c:62: __endasm;
-      000028 DB 10            [11]  118 	in	a, (#0x10)
-      00002A 6F               [ 4]  119 	ld	l, a
-      00002B C9               [10]  120 	ret
-                                    121 ;main-msx.c:63: }
-                                    122 ;main-msx.c:64: uint8_t readStatus () __naked
-                                    123 ;	---------------------------------
-                                    124 ; Function readStatus
-                                    125 ; ---------------------------------
-      00002C                        126 _readStatus::
-                                    127 ;main-msx.c:70: __endasm;
-      00002C DB 11            [11]  128 	in	a, (#0x11)
-      00002E 6F               [ 4]  129 	ld	l, a
-      00002F C9               [10]  130 	ret
-                                    131 ;main-msx.c:71: }
-                                    132 ;main-msx.c:77: void msx_enable_interrupt () __naked
-                                    133 ;	---------------------------------
-                                    134 ; Function msx_enable_interrupt
-                                    135 ; ---------------------------------
-      000030                        136 _msx_enable_interrupt::
-                                    137 ;main-msx.c:82: __endasm;
-      000030 FB               [ 4]  138 	ei
-      000031 C9               [10]  139 	ret
-                                    140 ;main-msx.c:83: }
-                                    141 ;main-msx.c:84: void msx_disable_interrupt () __naked
-                                    142 ;	---------------------------------
-                                    143 ; Function msx_disable_interrupt
-                                    144 ; ---------------------------------
-      000032                        145 _msx_disable_interrupt::
-                                    146 ;main-msx.c:89: __endasm;
-      000032 F3               [ 4]  147 	di
-      000033 C9               [10]  148 	ret
-                                    149 ;main-msx.c:90: }
-                                    150 ;main-msx.c:96: void print(const char* msg) {
+                                     15 	.globl _initialize_himsav
+                                     16 	.globl _basic_start
+                                     17 	.globl _run_serial_monitor
+                                     18 	.globl _run_serial_terminal
+                                     19 	.globl _unhook_terminal
+                                     20 	.globl _hook_terminal
+                                     21 	.globl _init_serial_device
+                                     22 	.globl _new_timi
+                                     23 	.globl _jump_address
+                                     24 	.globl _new_chget
+                                     25 	.globl _new_chput
+                                     26 	.globl _getRegA
+                                     27 	.globl _device_send_welcome
+                                     28 	.globl _device_send
+                                     29 	.globl _device_monitor_reset
+                                     30 	.globl _device_reset
+                                     31 	.globl _device_interrupt
+                                     32 	.globl _device_init
+                                     33 	.globl _print
+                                     34 	.globl _msx_wait
+                                     35 	.globl _memsave
+                                     36 	.globl _memload
+                                     37 	.globl _get_workarea
+                                     38 	.globl _init_workarea
+                                     39 	.globl _allocate_workarea
+                                     40 	.globl _unhook
+                                     41 	.globl _hook
+                                     42 	.globl _himsav
+                                     43 	.globl _himem
+                                     44 	.globl _h_phyd
+                                     45 	.globl _bootup_workarea
+                                     46 	.globl _HLOPD
+                                     47 	.globl _HSTKE
+                                     48 	.globl _HCLEA
+                                     49 	.globl _HTIMI
+                                     50 	.globl _HCHGE
+                                     51 	.globl _HCHPU
+                                     52 	.globl _MSG_LICENSE
+                                     53 	.globl _MSG_MSXUSB
+                                     54 	.globl _writeCommand
+                                     55 	.globl _writeData
+                                     56 	.globl _readData
+                                     57 	.globl _readStatus
+                                     58 	.globl _host_reset
+                                     59 	.globl _host_go
+                                     60 	.globl _host_writeByte
+                                     61 	.globl _host_readByte
+                                     62 	.globl _host_putchar
+                                     63 	.globl _host_save
+                                     64 	.globl _host_load
+                                     65 	.globl _host_delay
+                                     66 	.globl _host_millis_elapsed
+                                     67 ;--------------------------------------------------------
+                                     68 ; special function registers
+                                     69 ;--------------------------------------------------------
+                                     70 ;--------------------------------------------------------
+                                     71 ; ram data
+                                     72 ;--------------------------------------------------------
+                                     73 	.area _DATA
+                           00FDA4    74 _HCHPU	=	0xfda4
+                           00FDC2    75 _HCHGE	=	0xfdc2
+                           00FD9F    76 _HTIMI	=	0xfd9f
+                           00FED0    77 _HCLEA	=	0xfed0
+                           00FEDA    78 _HSTKE	=	0xfeda
+                           00FED5    79 _HLOPD	=	0xfed5
+      000000                         80 _bootup_workarea::
+      000000                         81 	.ds 81
+                           00FC9E    82 _host_millis_elapsed_FRAME_COUNTER_65536_100	=	0xfc9e
+                           00FFA7    83 _h_phyd	=	0xffa7
+                           00FC4A    84 _himem	=	0xfc4a
+                           00F349    85 _himsav	=	0xf349
+                                     86 ;--------------------------------------------------------
+                                     87 ; ram data
+                                     88 ;--------------------------------------------------------
+                                     89 	.area _INITIALIZED
+                                     90 ;--------------------------------------------------------
+                                     91 ; absolute external ram data
+                                     92 ;--------------------------------------------------------
+                                     93 	.area _DABS (ABS)
+                                     94 ;--------------------------------------------------------
+                                     95 ; global & static initialisations
+                                     96 ;--------------------------------------------------------
+                                     97 	.area _HOME
+                                     98 	.area _GSINIT
+                                     99 	.area _GSFINAL
+                                    100 	.area _GSINIT
+                                    101 ;--------------------------------------------------------
+                                    102 ; Home
+                                    103 ;--------------------------------------------------------
+                                    104 	.area _HOME
+                                    105 	.area _HOME
+                                    106 ;--------------------------------------------------------
+                                    107 ; code
+                                    108 ;--------------------------------------------------------
+                                    109 	.area _CODE
+                                    110 ;main-msx.c:34: void writeCommand (uint8_t data) __z88dk_fastcall __naked
+                                    111 ;	---------------------------------
+                                    112 ; Function writeCommand
+                                    113 ; ---------------------------------
+      000000                        114 _writeCommand::
+                                    115 ;main-msx.c:40: __endasm;
+      000000 7D               [ 4]  116 	ld	a, l
+      000001 D3 11            [11]  117 	out	(#0x11),a
+      000003 C9               [10]  118 	ret
+                                    119 ;main-msx.c:41: }
+                                    120 ;main-msx.c:42: void writeData (uint8_t data) __z88dk_fastcall __naked
+                                    121 ;	---------------------------------
+                                    122 ; Function writeData
+                                    123 ; ---------------------------------
+      000004                        124 _writeData::
+                                    125 ;main-msx.c:48: __endasm;
+      000004 7D               [ 4]  126 	ld	a, l
+      000005 D3 10            [11]  127 	out	(#0x10),a
+      000007 C9               [10]  128 	ret
+                                    129 ;main-msx.c:49: }
+                                    130 ;main-msx.c:50: uint8_t readData () __naked
+                                    131 ;	---------------------------------
+                                    132 ; Function readData
+                                    133 ; ---------------------------------
+      000008                        134 _readData::
+                                    135 ;main-msx.c:56: __endasm;
+      000008 DB 10            [11]  136 	in	a, (#0x10)
+      00000A 6F               [ 4]  137 	ld	l, a
+      00000B C9               [10]  138 	ret
+                                    139 ;main-msx.c:57: }
+                                    140 ;main-msx.c:58: uint8_t readStatus () __naked
+                                    141 ;	---------------------------------
+                                    142 ; Function readStatus
+                                    143 ; ---------------------------------
+      00000C                        144 _readStatus::
+                                    145 ;main-msx.c:64: __endasm;
+      00000C DB 11            [11]  146 	in	a, (#0x11)
+      00000E 6F               [ 4]  147 	ld	l, a
+      00000F C9               [10]  148 	ret
+                                    149 ;main-msx.c:65: }
+                                    150 ;main-msx.c:73: void host_reset () __naked
                                     151 ;	---------------------------------
-                                    152 ; Function print
+                                    152 ; Function host_reset
                                     153 ; ---------------------------------
-      000034                        154 _print::
-                                    155 ;main-msx.c:97: _print(msg);
-      000034 C1               [10]  156 	pop	bc
-      000035 E1               [10]  157 	pop	hl
-      000036 E5               [11]  158 	push	hl
-      000037 C5               [11]  159 	push	bc
-      000038 E5               [11]  160 	push	hl
-      000039 CDr00r00         [17]  161 	call	__print
-      00003C F1               [10]  162 	pop	af
-                                    163 ;main-msx.c:98: msx_enable_interrupt ();
-                                    164 ;main-msx.c:99: return;
-                                    165 ;main-msx.c:100: }
-      00003D C3r30r00         [10]  166 	jp	_msx_enable_interrupt
-                                    167 ;main-msx.c:103: void host_reset () __naked
+      000010                        154 _host_reset::
+                                    155 ;main-msx.c:77: __endasm;
+      000010 C3 00 00         [10]  156 	jp	0
+                                    157 ;main-msx.c:78: }
+                                    158 ;main-msx.c:80: void host_go (uint16_t address) __z88dk_fastcall __naked
+                                    159 ;	---------------------------------
+                                    160 ; Function host_go
+                                    161 ; ---------------------------------
+      000013                        162 _host_go::
+                                    163 ;main-msx.c:85: __endasm;
+      000013 E5               [11]  164 	push	hl
+      000014 C9               [10]  165 	ret
+                                    166 ;main-msx.c:86: }
+                                    167 ;main-msx.c:88: void host_writeByte (uint16_t address, uint8_t value) __naked
                                     168 ;	---------------------------------
-                                    169 ; Function host_reset
+                                    169 ; Function host_writeByte
                                     170 ; ---------------------------------
-      000040                        171 _host_reset::
-                                    172 ;main-msx.c:107: __endasm;
-      000040 C3 00 00         [10]  173 	jp	0
-                                    174 ;main-msx.c:108: }
-                                    175 ;main-msx.c:109: void host_basic_interpreter ()
-                                    176 ;	---------------------------------
-                                    177 ; Function host_basic_interpreter
-                                    178 ; ---------------------------------
-      000043                        179 _host_basic_interpreter::
-                                    180 ;main-msx.c:112: bDeviceOk = false;
-      000043 21r00r00         [10]  181 	ld	hl, #_bDeviceOk
-      000046 36 00            [10]  182 	ld	(hl), #0x00
-                                    183 ;main-msx.c:113: }
-      000048 C9               [10]  184 	ret
-                                    185 ;main-msx.c:114: void host_go (uint16_t address) __z88dk_fastcall __naked
-                                    186 ;	---------------------------------
-                                    187 ; Function host_go
-                                    188 ; ---------------------------------
-      000049                        189 _host_go::
-                                    190 ;main-msx.c:119: __endasm;
-      000049 E5               [11]  191 	push	hl
-      00004A C9               [10]  192 	ret
-                                    193 ;main-msx.c:120: }
-                                    194 ;main-msx.c:121: void host_writeByte (uint16_t address, uint8_t value) __naked
-                                    195 ;	---------------------------------
-                                    196 ; Function host_writeByte
-                                    197 ; ---------------------------------
-      00004B                        198 _host_writeByte::
-                                    199 ;main-msx.c:134: __endasm;
-      00004B FD 21 02 00      [14]  200 	ld	iy, #2
-      00004F FD 39            [15]  201 	add	iy, sp
-      000051 FD 6E 00         [19]  202 	ld	l,(iy) ; retrieve [address] from stack
-      000054 FD 66 01         [19]  203 	ld	h,1(iy)
-      000057 FD 7E 02         [19]  204 	ld	a,2(iy) ; retrieve [value] from stack
-      00005A 77               [ 7]  205 	ld	(hl),a ; write to memory
-      00005B C9               [10]  206 	ret
-                                    207 ;main-msx.c:135: }
-                                    208 ;main-msx.c:136: uint8_t host_readByte (uint16_t address) __z88dk_fastcall __naked
-                                    209 ;	---------------------------------
-                                    210 ; Function host_readByte
-                                    211 ; ---------------------------------
-      00005C                        212 _host_readByte::
-                                    213 ;main-msx.c:142: __endasm;
-      00005C 7E               [ 7]  214 	ld	a, (hl)
-      00005D 6F               [ 4]  215 	ld	l, a
-      00005E C9               [10]  216 	ret
-                                    217 ;main-msx.c:143: }
-                                    218 ;main-msx.c:145: void main (void)
-                                    219 ;	---------------------------------
-                                    220 ; Function main
-                                    221 ; ---------------------------------
-      00005F                        222 _main::
-                                    223 ;main-msx.c:148: print ("MSXUSB v0.1 serial monitor\r\n");
-      00005F 21rBDr00         [10]  224 	ld	hl, #___str_0
-      000062 E5               [11]  225 	push	hl
-      000063 CDr34r00         [17]  226 	call	_print
-                                    227 ;main-msx.c:149: print ("GNU General Public License\r\n");
-      000066 21rDAr00         [10]  228 	ld	hl, #___str_1
-      000069 E3               [19]  229 	ex	(sp),hl
-      00006A CDr34r00         [17]  230 	call	_print
-                                    231 ;main-msx.c:150: print ("(c) Sourceror\r\n");
-      00006D 21rF7r00         [10]  232 	ld	hl, #___str_2
-      000070 E3               [19]  233 	ex	(sp),hl
-      000071 CDr34r00         [17]  234 	call	_print
-                                    235 ;main-msx.c:151: print ("-----------------------------\r\n");
-      000074 21r07r01         [10]  236 	ld	hl, #___str_3
-      000077 E3               [19]  237 	ex	(sp),hl
-      000078 CDr34r00         [17]  238 	call	_print
-      00007B F1               [10]  239 	pop	af
-                                    240 ;main-msx.c:154: bDeviceOk = initDevice ();
-      00007C CDr00r00         [17]  241 	call	_initDevice
-      00007F 7D               [ 4]  242 	ld	a, l
-      000080 32r00r00         [13]  243 	ld	(_bDeviceOk+0), a
-                                    244 ;main-msx.c:155: if (bDeviceOk)
-      000083 21r00r00         [10]  245 	ld	hl, #_bDeviceOk
-      000086 CB 46            [12]  246 	bit	0, (hl)
-      000088 28 18            [12]  247 	jr	Z, 00102$
-                                    248 ;main-msx.c:157: print ("+CH376s recognised\r\n");
-      00008A 21r27r01         [10]  249 	ld	hl, #___str_4
-      00008D E5               [11]  250 	push	hl
-      00008E CDr34r00         [17]  251 	call	_print
-                                    252 ;main-msx.c:158: print ("+Connect to your serial port\r\n");
-      000091 21r3Cr01         [10]  253 	ld	hl, #___str_5
-      000094 E3               [19]  254 	ex	(sp),hl
-      000095 CDr34r00         [17]  255 	call	_print
-                                    256 ;main-msx.c:159: print (" and type H for help\r\n\r\n");
-      000098 21r5Br01         [10]  257 	ld	hl, #___str_6
-      00009B E3               [19]  258 	ex	(sp),hl
-      00009C CDr34r00         [17]  259 	call	_print
-      00009F F1               [10]  260 	pop	af
-      0000A0 18 09            [12]  261 	jr	00106$
-      0000A2                        262 00102$:
-                                    263 ;main-msx.c:163: print ("-CH376s not inserted\r\n");
-      0000A2 21r74r01         [10]  264 	ld	hl, #___str_7
-      0000A5 E5               [11]  265 	push	hl
-      0000A6 CDr34r00         [17]  266 	call	_print
-      0000A9 F1               [10]  267 	pop	af
-                                    268 ;main-msx.c:164: return;
-      0000AA C9               [10]  269 	ret
-                                    270 ;main-msx.c:167: while (bDeviceOk)
-      0000AB                        271 00106$:
-      0000AB 21r00r00         [10]  272 	ld	hl, #_bDeviceOk
-      0000AE CB 46            [12]  273 	bit	0, (hl)
-      0000B0 C8               [11]  274 	ret	Z
-                                    275 ;main-msx.c:169: if((readStatus() & 0x80) == 0) 
-      0000B1 CDr2Cr00         [17]  276 	call	_readStatus
-      0000B4 7D               [ 4]  277 	ld	a, l
-      0000B5 07               [ 4]  278 	rlca
-      0000B6 38 F3            [12]  279 	jr	C, 00106$
-                                    280 ;main-msx.c:170: handleInterrupt(); 
-      0000B8 CDr00r00         [17]  281 	call	_handleInterrupt
-                                    282 ;main-msx.c:173: return;
-                                    283 ;main-msx.c:174: }
-      0000BB 18 EE            [12]  284 	jr	00106$
-      0000BD                        285 ___str_0:
-      0000BD 4D 53 58 55 53 42 20   286 	.ascii "MSXUSB v0.1 serial monitor"
-             76 30 2E 31 20 73 65
-             72 69 61 6C 20 6D 6F
-             6E 69 74 6F 72
-      0000D7 0D                     287 	.db 0x0d
-      0000D8 0A                     288 	.db 0x0a
-      0000D9 00                     289 	.db 0x00
-      0000DA                        290 ___str_1:
-      0000DA 47 4E 55 20 47 65 6E   291 	.ascii "GNU General Public License"
+      000015                        171 _host_writeByte::
+                                    172 ;main-msx.c:101: __endasm;
+      000015 FD 21 02 00      [14]  173 	ld	iy, #2
+      000019 FD 39            [15]  174 	add	iy, sp
+      00001B FD 6E 00         [19]  175 	ld	l,(iy) ; retrieve [address] from stack
+      00001E FD 66 01         [19]  176 	ld	h,1(iy)
+      000021 FD 7E 02         [19]  177 	ld	a,2(iy) ; retrieve [value] from stack
+      000024 77               [ 7]  178 	ld	(hl),a ; write to memory
+      000025 C9               [10]  179 	ret
+                                    180 ;main-msx.c:102: }
+                                    181 ;main-msx.c:104: uint8_t host_readByte (uint16_t address) __z88dk_fastcall __naked
+                                    182 ;	---------------------------------
+                                    183 ; Function host_readByte
+                                    184 ; ---------------------------------
+      000026                        185 _host_readByte::
+                                    186 ;main-msx.c:110: __endasm;
+      000026 7E               [ 7]  187 	ld	a, (hl)
+      000027 6F               [ 4]  188 	ld	l, a
+      000028 C9               [10]  189 	ret
+                                    190 ;main-msx.c:111: }
+                                    191 ;main-msx.c:113: void host_putchar (uint8_t character) __z88dk_fastcall __naked
+                                    192 ;	---------------------------------
+                                    193 ; Function host_putchar
+                                    194 ; ---------------------------------
+      000029                        195 _host_putchar::
+                                    196 ;main-msx.c:156: __endasm;
+      000029 7D               [ 4]  197 	ld	a, l
+      00002A FE 14            [ 7]  198 	cp	#0x14 ; CTRL-T is CTRL-STOP
+      00002C 28 0C            [12]  199 	jr	z, CTRLSTOP
+      00002E FE 0F            [ 7]  200 	cp	#0x0F ; CTRL-O is STOP
+      000030 28 02            [12]  201 	jr	z, STOP
+      000032 18 0C            [12]  202 	jr	C0F55
+      000034                        203 	STOP:
+      000034 3E 04            [ 7]  204 	ld	a, #4
+      000036 32 9B FC         [13]  205 	ld	(#0xfc9b),a
+      000039 C9               [10]  206 	ret
+      00003A                        207 	CTRLSTOP:
+      00003A 3E 03            [ 7]  208 	ld	a, #3
+      00003C 32 9B FC         [13]  209 	ld	(#0xfc9b),a
+      00003F C9               [10]  210 	ret
+                                    211 ;	Subroutine put keycode in keyboardbuffer
+                                    212 ;	Inputs A = keycode
+                                    213 ;	Outputs ________________________
+                                    214 ;	Remark entrypoint compatible among keyboard layout versions
+      000040                        215 	C0F55:
+      000040 2A F8 F3         [16]  216 	LD	HL,(#0xf3f8)
+      000043 77               [ 7]  217 	LD	(HL),A ; put in keyboardbuffer
+      000044 CDr50r00         [17]  218 	CALL	C10C2 ; next postition in keyboardbuffer with roundtrip
+      000047 3A FA F3         [13]  219 	LD	A,(#0xf3fa)
+      00004A BD               [ 4]  220 	CP	L ; keyboard buffer full ?
+      00004B C8               [11]  221 	RET	Z ; yep, quit
+      00004C 22 F8 F3         [16]  222 	LD	(#0xf3f8),HL ; update put pointer
+      00004F C9               [10]  223 	RET
+                                    224 ;	Subroutine increase keyboardbuffer pointer
+                                    225 ;	Inputs ________________________
+                                    226 ;	Outputs ________________________
+      000050                        227 	C10C2:
+      000050 23               [ 6]  228 	INC	HL ; increase pointer
+      000051 7D               [ 4]  229 	LD	A,L
+      000052 FE 18            [ 7]  230 	CP	#0xfbf0 +40
+      000054 C0               [11]  231 	RET	NZ ; not the end of buffer, quit
+      000055 21 F0 FB         [10]  232 	LD	HL,#0xfbf0 ; wrap around to start of buffer
+      000058 C9               [10]  233 	RET
+                                    234 ;main-msx.c:157: }
+                                    235 ;main-msx.c:159: void host_save (uint16_t address, uint16_t size, char* in_filename)
+                                    236 ;	---------------------------------
+                                    237 ; Function host_save
+                                    238 ; ---------------------------------
+      000059                        239 _host_save::
+                                    240 ;main-msx.c:161: memsave (address, size, in_filename);
+      000059 FD 21 06 00      [14]  241 	ld	iy, #6
+      00005D FD 39            [15]  242 	add	iy, sp
+      00005F FD 6E 00         [19]  243 	ld	l, 0 (iy)
+      000062 FD 66 01         [19]  244 	ld	h, 1 (iy)
+      000065 E5               [11]  245 	push	hl
+      000066 FD 6E FE         [19]  246 	ld	l, -2 (iy)
+      000069 FD 66 FF         [19]  247 	ld	h, -1 (iy)
+      00006C FD 2B            [10]  248 	dec	iy
+      00006E FD 2B            [10]  249 	dec	iy
+      000070 E5               [11]  250 	push	hl
+      000071 FD 6E FE         [19]  251 	ld	l, -2 (iy)
+      000074 FD 66 FF         [19]  252 	ld	h, -1 (iy)
+      000077 E5               [11]  253 	push	hl
+      000078 CDr00r00         [17]  254 	call	_memsave
+      00007B 21 06 00         [10]  255 	ld	hl, #6
+      00007E 39               [11]  256 	add	hl, sp
+      00007F F9               [ 6]  257 	ld	sp, hl
+                                    258 ;main-msx.c:162: }
+      000080 C9               [10]  259 	ret
+      000081                        260 _MSG_MSXUSB:
+      000081 4D 53 58 55 53 42 20   261 	.ascii "MSXUSB Terminal version 0.5"
+             54 65 72 6D 69 6E 61
+             6C 20 76 65 72 73 69
+             6F 6E 20 30 2E 35
+      00009C 0D                     262 	.db 0x0d
+      00009D 0A                     263 	.db 0x0a
+      00009E 00                     264 	.db 0x00
+      00009F                        265 _MSG_LICENSE:
+      00009F 47 4E 55 20 47 65 6E   266 	.ascii "GNU General Public License"
              65 72 61 6C 20 50 75
              62 6C 69 63 20 4C 69
              63 65 6E 73 65
-      0000F4 0D                     292 	.db 0x0d
-      0000F5 0A                     293 	.db 0x0a
-      0000F6 00                     294 	.db 0x00
-      0000F7                        295 ___str_2:
-      0000F7 28 63 29 20 53 6F 75   296 	.ascii "(c) Sourceror"
+      0000B9 0D                     267 	.db 0x0d
+      0000BA 0A                     268 	.db 0x0a
+      0000BB 28 63 29 20 53 6F 75   269 	.ascii "(c) Sourceror"
              72 63 65 72 6F 72
-      000104 0D                     297 	.db 0x0d
-      000105 0A                     298 	.db 0x0a
-      000106 00                     299 	.db 0x00
-      000107                        300 ___str_3:
-      000107 2D 2D 2D 2D 2D 2D 2D   301 	.ascii "-----------------------------"
-             2D 2D 2D 2D 2D 2D 2D
-             2D 2D 2D 2D 2D 2D 2D
-             2D 2D 2D 2D 2D 2D 2D
-             2D
-      000124 0D                     302 	.db 0x0d
-      000125 0A                     303 	.db 0x0a
-      000126 00                     304 	.db 0x00
-      000127                        305 ___str_4:
-      000127 2B 43 48 33 37 36 73   306 	.ascii "+CH376s recognised"
+      0000C8 0D                     270 	.db 0x0d
+      0000C9 0A                     271 	.db 0x0a
+      0000CA 0D                     272 	.db 0x0d
+      0000CB 0A                     273 	.db 0x0a
+      0000CC 00                     274 	.db 0x00
+                                    275 ;main-msx.c:163: void host_load (uint16_t address, char* in_filename)
+                                    276 ;	---------------------------------
+                                    277 ; Function host_load
+                                    278 ; ---------------------------------
+      0000CD                        279 _host_load::
+                                    280 ;main-msx.c:165: memload (address,in_filename);
+      0000CD FD 21 04 00      [14]  281 	ld	iy, #4
+      0000D1 FD 39            [15]  282 	add	iy, sp
+      0000D3 FD 6E 00         [19]  283 	ld	l, 0 (iy)
+      0000D6 FD 66 01         [19]  284 	ld	h, 1 (iy)
+      0000D9 E5               [11]  285 	push	hl
+      0000DA FD 6E FE         [19]  286 	ld	l, -2 (iy)
+      0000DD FD 66 FF         [19]  287 	ld	h, -1 (iy)
+      0000E0 E5               [11]  288 	push	hl
+      0000E1 CDr00r00         [17]  289 	call	_memload
+      0000E4 F1               [10]  290 	pop	af
+      0000E5 F1               [10]  291 	pop	af
+                                    292 ;main-msx.c:166: }
+      0000E6 C9               [10]  293 	ret
+                                    294 ;main-msx.c:168: void host_delay (int milliseconds)
+                                    295 ;	---------------------------------
+                                    296 ; Function host_delay
+                                    297 ; ---------------------------------
+      0000E7                        298 _host_delay::
+                                    299 ;main-msx.c:170: msx_wait (milliseconds/20);
+      0000E7 21 14 00         [10]  300 	ld	hl, #0x0014
+      0000EA E5               [11]  301 	push	hl
+      0000EB 21 04 00         [10]  302 	ld	hl, #4
+      0000EE 39               [11]  303 	add	hl, sp
+      0000EF 4E               [ 7]  304 	ld	c, (hl)
+      0000F0 23               [ 6]  305 	inc	hl
+      0000F1 46               [ 7]  306 	ld	b, (hl)
+      0000F2 C5               [11]  307 	push	bc
+      0000F3 CDr00r00         [17]  308 	call	__divsint
+      0000F6 F1               [10]  309 	pop	af
+      0000F7 F1               [10]  310 	pop	af
+                                    311 ;main-msx.c:171: }
+      0000F8 C3r00r00         [10]  312 	jp	_msx_wait
+                                    313 ;main-msx.c:173: uint32_t host_millis_elapsed () 
+                                    314 ;	---------------------------------
+                                    315 ; Function host_millis_elapsed
+                                    316 ; ---------------------------------
+      0000FB                        317 _host_millis_elapsed::
+                                    318 ;main-msx.c:176: return FRAME_COUNTER*20;
+      0000FB 2A 9E FC         [16]  319 	ld	hl, (_host_millis_elapsed_FRAME_COUNTER_65536_100)
+      0000FE 4D               [ 4]  320 	ld	c, l
+      0000FF 44               [ 4]  321 	ld	b, h
+      000100 29               [11]  322 	add	hl, hl
+      000101 29               [11]  323 	add	hl, hl
+      000102 09               [11]  324 	add	hl, bc
+      000103 29               [11]  325 	add	hl, hl
+      000104 29               [11]  326 	add	hl, hl
+      000105 11 00 00         [10]  327 	ld	de, #0x0000
+                                    328 ;main-msx.c:177: }
+      000108 C9               [10]  329 	ret
+                                    330 ;main-msx.c:186: uint8_t getRegA () __z88dk_fastcall __naked
+                                    331 ;	---------------------------------
+                                    332 ; Function getRegA
+                                    333 ; ---------------------------------
+      000109                        334 _getRegA::
+                                    335 ;main-msx.c:191: __endasm;
+      000109 6F               [ 4]  336 	ld	l,a
+      00010A C9               [10]  337 	ret
+                                    338 ;main-msx.c:192: }
+                                    339 ;main-msx.c:194: void new_chput () __z88dk_fastcall 
+                                    340 ;	---------------------------------
+                                    341 ; Function new_chput
+                                    342 ; ---------------------------------
+      00010B                        343 _new_chput::
+      00010B DD E5            [15]  344 	push	ix
+      00010D DD 21 00 00      [14]  345 	ld	ix,#0
+      000111 DD 39            [15]  346 	add	ix,sp
+      000113 3B               [ 6]  347 	dec	sp
+                                    348 ;main-msx.c:196: uint8_t regA = getRegA ();
+      000114 CDr09r01         [17]  349 	call	_getRegA
+      000117 DD 75 FF         [19]  350 	ld	-1 (ix), l
+                                    351 ;main-msx.c:197: WORKAREA* chput = get_workarea ();
+      00011A CDr00r00         [17]  352 	call	_get_workarea
+                                    353 ;main-msx.c:198: if (chput->pos_in_char_buffer<(chput->char_buffer+sizeof(((WORKAREA*)0)->char_buffer)))
+      00011D 01 28 00         [10]  354 	ld	bc, #0x0028
+      000120 09               [11]  355 	add	hl, bc
+      000121 4E               [ 7]  356 	ld	c, (hl)
+      000122 23               [ 6]  357 	inc	hl
+      000123 46               [ 7]  358 	ld	b, (hl)
+      000124 2B               [ 6]  359 	dec	hl
+      000125 79               [ 4]  360 	ld	a, c
+      000126 95               [ 4]  361 	sub	a, l
+      000127 78               [ 4]  362 	ld	a, b
+      000128 9C               [ 4]  363 	sbc	a, h
+      000129 30 0A            [12]  364 	jr	NC, 00103$
+                                    365 ;main-msx.c:199: *(chput->pos_in_char_buffer++)=regA;
+      00012B 59               [ 4]  366 	ld	e, c
+      00012C 50               [ 4]  367 	ld	d, b
+      00012D 13               [ 6]  368 	inc	de
+      00012E 73               [ 7]  369 	ld	(hl), e
+      00012F 23               [ 6]  370 	inc	hl
+      000130 72               [ 7]  371 	ld	(hl), d
+      000131 DD 7E FF         [19]  372 	ld	a, -1 (ix)
+      000134 02               [ 7]  373 	ld	(bc), a
+      000135                        374 00103$:
+                                    375 ;main-msx.c:200: }
+      000135 33               [ 6]  376 	inc	sp
+      000136 DD E1            [14]  377 	pop	ix
+      000138 C9               [10]  378 	ret
+                                    379 ;main-msx.c:202: void new_chget ()
+                                    380 ;	---------------------------------
+                                    381 ; Function new_chget
+                                    382 ; ---------------------------------
+      000139                        383 _new_chget::
+                                    384 ;main-msx.c:244: __endasm;
+                                    385 ;	we can destroy HL, DE, BC, AF
+                                    386 ;	check or wait for something in the buffer
+                                    387 ;	---------------------------------------------------
+      000139 CD 9C 00         [17]  388 	CALL	0x009c ; CHSNS - Tests the status of the keyboard buffer
+      00013C 20 1B            [12]  389 	JR	NZ, SKIP_WAIT
+                                    390 ;	DANGEROUS, dont want to directly call into BIOS but it works, checked on MSX1,2,2+,TR. Alternative is to copy these functions
+      00013E 21 2D 00         [10]  391 	LD	HL, #0x002d ; check MSX version (1=0, 2,2+,TR > 0)
+      000141 7E               [ 7]  392 	LD	A, (HL)
+      000142 A7               [ 4]  393 	AND	A
+      000143 C4 37 0A         [17]  394 	CALL	NZ,0x0A37 ; MSX 2 - Display cursor when disabled, store contents under cursor
+      000146 CC DA 09         [17]  395 	CALL	Z,0x09DA ; MSX 1
+      000149                        396 	CHECK_AGAIN:
+      000149 CD 9C 00         [17]  397 	CALL	0x009c ; CHSNS - Tests the status of the keyboard buffer
+      00014C 28 FB            [12]  398 	JR	Z, CHECK_AGAIN ; Nothing? Check again
+                                    399 ;	DANGEROUS
+      00014E 21 2D 00         [10]  400 	LD	HL, #0x002d ; check MSX version (1=0, 2,2+,TR > 0)
+      000151 7E               [ 7]  401 	LD	A, (HL)
+      000152 A7               [ 4]  402 	AND	A
+      000153 C4 84 0A         [17]  403 	CALL	NZ,0x0A84 ; Remove cursor when disabled, restore previous contents back to screen
+      000156 CC 27 0A         [17]  404 	CALL	Z,0x0A27 ; MSX 1
+      000159                        405 	SKIP_WAIT:
+                                    406 ;	read the value, leave it in the buffer for CHGET upon return
+                                    407 ;	---------------------------------------------------
+      000159 2A FA F3         [16]  408 	LD	HL,(#0xf3fa)
+      00015C 7E               [ 7]  409 	LD	A,(HL)
+                                    410 ;	is it of interest?
+      00015D FE 08            [ 7]  411 	CP	#0x08 ; backspace
+      00015F 28 05            [12]  412 	JR	Z, HANDLE_BACKSPACE
+      000161 FE 7F            [ 7]  413 	CP	#0x7F ; handle delete
+      000163 28 04            [12]  414 	JR	Z, HANDLE_DELETE
+                                    415 ;	return
+      000165 C9               [10]  416 	RET
+      000166                        417 	HANDLE_BACKSPACE:
+      000166 C3r0Br01         [10]  418 	JP	_new_chput ; add it to the send buffer
+      000169                        419 	HANDLE_DELETE:
+      000169 C3r0Br01         [10]  420 	JP	_new_chput ; add it to the send buffer
+                                    421 ;main-msx.c:245: }
+      00016C C9               [10]  422 	ret
+                                    423 ;main-msx.c:247: void jump_address (void* address) __z88dk_fastcall __naked
+                                    424 ;	---------------------------------
+                                    425 ; Function jump_address
+                                    426 ; ---------------------------------
+      00016D                        427 _jump_address::
+                                    428 ;main-msx.c:251: __endasm;
+      00016D E9               [ 4]  429 	jp	(hl)
+                                    430 ;main-msx.c:252: }
+                                    431 ;main-msx.c:254: void new_timi ()
+                                    432 ;	---------------------------------
+                                    433 ; Function new_timi
+                                    434 ; ---------------------------------
+      00016E                        435 _new_timi::
+                                    436 ;main-msx.c:256: WORKAREA* wrk = get_workarea ();
+      00016E CDr00r00         [17]  437 	call	_get_workarea
+      000171 EB               [ 4]  438 	ex	de, hl
+                                    439 ;main-msx.c:257: if (wrk->pos_in_char_buffer!=wrk->char_buffer)
+      000172 21 28 00         [10]  440 	ld	hl, #0x0028
+      000175 19               [11]  441 	add	hl, de
+      000176 4E               [ 7]  442 	ld	c, (hl)
+      000177 23               [ 6]  443 	inc	hl
+      000178 46               [ 7]  444 	ld	b, (hl)
+      000179 2B               [ 6]  445 	dec	hl
+      00017A 79               [ 4]  446 	ld	a, c
+      00017B 93               [ 4]  447 	sub	a, e
+      00017C 20 04            [12]  448 	jr	NZ, 00117$
+      00017E 78               [ 4]  449 	ld	a, b
+      00017F 92               [ 4]  450 	sub	a, d
+      000180 28 18            [12]  451 	jr	Z, 00102$
+      000182                        452 00117$:
+                                    453 ;main-msx.c:259: device_send (wrk,wrk->char_buffer,wrk->pos_in_char_buffer-wrk->char_buffer);
+      000182 79               [ 4]  454 	ld	a, c
+      000183 93               [ 4]  455 	sub	a, e
+      000184 4F               [ 4]  456 	ld	c, a
+      000185 78               [ 4]  457 	ld	a, b
+      000186 9A               [ 4]  458 	sbc	a, d
+      000187 47               [ 4]  459 	ld	b, a
+      000188 E5               [11]  460 	push	hl
+      000189 D5               [11]  461 	push	de
+      00018A C5               [11]  462 	push	bc
+      00018B D5               [11]  463 	push	de
+      00018C D5               [11]  464 	push	de
+      00018D CDr00r00         [17]  465 	call	_device_send
+      000190 21 06 00         [10]  466 	ld	hl, #6
+      000193 39               [11]  467 	add	hl, sp
+      000194 F9               [ 6]  468 	ld	sp, hl
+      000195 D1               [10]  469 	pop	de
+      000196 E1               [10]  470 	pop	hl
+                                    471 ;main-msx.c:260: wrk->pos_in_char_buffer = wrk->char_buffer;
+      000197 73               [ 7]  472 	ld	(hl), e
+      000198 23               [ 6]  473 	inc	hl
+      000199 72               [ 7]  474 	ld	(hl), d
+      00019A                        475 00102$:
+                                    476 ;main-msx.c:262: if((readStatus() & 0x80) == 0) 
+      00019A D5               [11]  477 	push	de
+      00019B CDr0Cr00         [17]  478 	call	_readStatus
+      00019E 7D               [ 4]  479 	ld	a, l
+      00019F D1               [10]  480 	pop	de
+      0001A0 07               [ 4]  481 	rlca
+      0001A1 38 0C            [12]  482 	jr	C, 00104$
+                                    483 ;main-msx.c:263: device_interrupt(wrk,TERMINAL_MODE); 
+      0001A3 D5               [11]  484 	push	de
+      0001A4 3E 01            [ 7]  485 	ld	a, #0x01
+      0001A6 F5               [11]  486 	push	af
+      0001A7 33               [ 6]  487 	inc	sp
+      0001A8 D5               [11]  488 	push	de
+      0001A9 CDr00r00         [17]  489 	call	_device_interrupt
+      0001AC F1               [10]  490 	pop	af
+      0001AD 33               [ 6]  491 	inc	sp
+      0001AE D1               [10]  492 	pop	de
+      0001AF                        493 00104$:
+                                    494 ;main-msx.c:265: jump_address (&(wrk->HTIMI_original));
+      0001AF 21 34 00         [10]  495 	ld	hl, #0x0034
+      0001B2 19               [11]  496 	add	hl, de
+                                    497 ;main-msx.c:266: }
+      0001B3 C3r6Dr01         [10]  498 	jp	_jump_address
+                                    499 ;main-msx.c:271: bool init_serial_device (WORKAREA* wrk)
+                                    500 ;	---------------------------------
+                                    501 ; Function init_serial_device
+                                    502 ; ---------------------------------
+      0001B6                        503 _init_serial_device::
+                                    504 ;main-msx.c:273: device_reset (wrk);
+      0001B6 C1               [10]  505 	pop	bc
+      0001B7 E1               [10]  506 	pop	hl
+      0001B8 E5               [11]  507 	push	hl
+      0001B9 C5               [11]  508 	push	bc
+      0001BA E5               [11]  509 	push	hl
+      0001BB CDr00r00         [17]  510 	call	_device_reset
+      0001BE F1               [10]  511 	pop	af
+                                    512 ;main-msx.c:275: if (device_init ())
+      0001BF CDr00r00         [17]  513 	call	_device_init
+      0001C2 CB 45            [ 8]  514 	bit	0, l
+      0001C4 28 12            [12]  515 	jr	Z, 00102$
+                                    516 ;main-msx.c:277: print ("+CH376s recognised\r\n");
+      0001C6 21rE3r01         [10]  517 	ld	hl, #___str_2
+      0001C9 E5               [11]  518 	push	hl
+      0001CA CDr00r00         [17]  519 	call	_print
+                                    520 ;main-msx.c:278: print ("+Connect MSX to PC via USB\r\n");
+      0001CD 21rF8r01         [10]  521 	ld	hl, #___str_3
+      0001D0 E3               [19]  522 	ex	(sp),hl
+      0001D1 CDr00r00         [17]  523 	call	_print
+      0001D4 F1               [10]  524 	pop	af
+                                    525 ;main-msx.c:279: return true;
+      0001D5 2E 01            [ 7]  526 	ld	l, #0x01
+      0001D7 C9               [10]  527 	ret
+      0001D8                        528 00102$:
+                                    529 ;main-msx.c:283: print ("-CH376s not inserted\r\n");
+      0001D8 21r15r02         [10]  530 	ld	hl, #___str_4
+      0001DB E5               [11]  531 	push	hl
+      0001DC CDr00r00         [17]  532 	call	_print
+      0001DF F1               [10]  533 	pop	af
+                                    534 ;main-msx.c:284: return false;
+      0001E0 2E 00            [ 7]  535 	ld	l, #0x00
+                                    536 ;main-msx.c:286: }
+      0001E2 C9               [10]  537 	ret
+      0001E3                        538 ___str_2:
+      0001E3 2B 43 48 33 37 36 73   539 	.ascii "+CH376s recognised"
              20 72 65 63 6F 67 6E
              69 73 65 64
-      000139 0D                     307 	.db 0x0d
-      00013A 0A                     308 	.db 0x0a
-      00013B 00                     309 	.db 0x00
-      00013C                        310 ___str_5:
-      00013C 2B 43 6F 6E 6E 65 63   311 	.ascii "+Connect to your serial port"
-             74 20 74 6F 20 79 6F
-             75 72 20 73 65 72 69
-             61 6C 20 70 6F 72 74
-      000158 0D                     312 	.db 0x0d
-      000159 0A                     313 	.db 0x0a
-      00015A 00                     314 	.db 0x00
-      00015B                        315 ___str_6:
-      00015B 20 61 6E 64 20 74 79   316 	.ascii " and type H for help"
-             70 65 20 48 20 66 6F
-             72 20 68 65 6C 70
-      00016F 0D                     317 	.db 0x0d
-      000170 0A                     318 	.db 0x0a
-      000171 0D                     319 	.db 0x0d
-      000172 0A                     320 	.db 0x0a
-      000173 00                     321 	.db 0x00
-      000174                        322 ___str_7:
-      000174 2D 43 48 33 37 36 73   323 	.ascii "-CH376s not inserted"
+      0001F5 0D                     540 	.db 0x0d
+      0001F6 0A                     541 	.db 0x0a
+      0001F7 00                     542 	.db 0x00
+      0001F8                        543 ___str_3:
+      0001F8 2B 43 6F 6E 6E 65 63   544 	.ascii "+Connect MSX to PC via USB"
+             74 20 4D 53 58 20 74
+             6F 20 50 43 20 76 69
+             61 20 55 53 42
+      000212 0D                     545 	.db 0x0d
+      000213 0A                     546 	.db 0x0a
+      000214 00                     547 	.db 0x00
+      000215                        548 ___str_4:
+      000215 2D 43 48 33 37 36 73   549 	.ascii "-CH376s not inserted"
              20 6E 6F 74 20 69 6E
              73 65 72 74 65 64
-      000188 0D                     324 	.db 0x0d
-      000189 0A                     325 	.db 0x0a
-      00018A 00                     326 	.db 0x00
-                                    327 ;main-msx.c:187: char* onCallMONITOR(char* param) {
-                                    328 ;	---------------------------------
-                                    329 ; Function onCallMONITOR
-                                    330 ; ---------------------------------
-      00018B                        331 _onCallMONITOR::
-                                    332 ;main-msx.c:188: print("CALL MONITOR\r\n\0");
-      00018B 21rA0r01         [10]  333 	ld	hl, #___str_8
-      00018E E5               [11]  334 	push	hl
-      00018F CDr34r00         [17]  335 	call	_print
-      000192 F1               [10]  336 	pop	af
-                                    337 ;main-msx.c:190: while ((*param != 0) && (*param != 0x3a)) {
-      000193 C1               [10]  338 	pop	bc
-      000194 E1               [10]  339 	pop	hl
-      000195 E5               [11]  340 	push	hl
-      000196 C5               [11]  341 	push	bc
-      000197                        342 00102$:
-      000197 7E               [ 7]  343 	ld	a, (hl)
-      000198 B7               [ 4]  344 	or	a, a
-      000199 C8               [11]  345 	ret	Z
-      00019A D6 3A            [ 7]  346 	sub	a, #0x3a
-      00019C C8               [11]  347 	ret	Z
-                                    348 ;main-msx.c:191: param++;
-      00019D 23               [ 6]  349 	inc	hl
-                                    350 ;main-msx.c:194: return param;
-                                    351 ;main-msx.c:195: }
-      00019E 18 F7            [12]  352 	jr	00102$
-      0001A0                        353 ___str_8:
-      0001A0 43 41 4C 4C 20 4D 4F   354 	.ascii "CALL MONITOR"
-             4E 49 54 4F 52
-      0001AC 0D                     355 	.db 0x0d
-      0001AD 0A                     356 	.db 0x0a
-      0001AE 00                     357 	.db 0x00
-      0001AF 00                     358 	.db 0x00
-                                    359 ;main-msx.c:208: char onDeviceMON_getId() {
-                                    360 ;	---------------------------------
-                                    361 ; Function onDeviceMON_getId
-                                    362 ; ---------------------------------
-      0001B0                        363 _onDeviceMON_getId::
-                                    364 ;main-msx.c:209: print("The C handler for MON_getId says hi!\r\n\0");
-      0001B0 21rBBr01         [10]  365 	ld	hl, #___str_9
-      0001B3 E5               [11]  366 	push	hl
-      0001B4 CDr34r00         [17]  367 	call	_print
-      0001B7 F1               [10]  368 	pop	af
-                                    369 ;main-msx.c:210: return 0; // we're the first device so we return 0
-      0001B8 2E 00            [ 7]  370 	ld	l, #0x00
-                                    371 ;main-msx.c:211: }
-      0001BA C9               [10]  372 	ret
-      0001BB                        373 ___str_9:
-      0001BB 54 68 65 20 43 20 68   374 	.ascii "The C handler for MON_getId says hi!"
+      000229 0D                     550 	.db 0x0d
+      00022A 0A                     551 	.db 0x0a
+      00022B 00                     552 	.db 0x00
+                                    553 ;main-msx.c:288: void hook_terminal (WORKAREA* wrk)
+                                    554 ;	---------------------------------
+                                    555 ; Function hook_terminal
+                                    556 ; ---------------------------------
+      00022C                        557 _hook_terminal::
+      00022C DD E5            [15]  558 	push	ix
+      00022E DD 21 00 00      [14]  559 	ld	ix,#0
+      000232 DD 39            [15]  560 	add	ix,sp
+      000234 F5               [11]  561 	push	af
+                                    562 ;main-msx.c:292: hook((HOOK*) HTIMI,&(wrk->HTIMI_original),(uint16_t*) &new_timi);
+      000235 01r6Er01         [10]  563 	ld	bc, #_new_timi
+      000238 DD 5E 04         [19]  564 	ld	e, 4 (ix)
+      00023B DD 56 05         [19]  565 	ld	d, 5 (ix)
+      00023E 21 34 00         [10]  566 	ld	hl, #0x0034
+      000241 19               [11]  567 	add	hl, de
+      000242 E3               [19]  568 	ex	(sp), hl
+      000243 D5               [11]  569 	push	de
+      000244 C5               [11]  570 	push	bc
+      000245 DD 6E FE         [19]  571 	ld	l, -2 (ix)
+      000248 DD 66 FF         [19]  572 	ld	h, -1 (ix)
+      00024B E5               [11]  573 	push	hl
+      00024C 21 9F FD         [10]  574 	ld	hl, #_HTIMI
+      00024F E5               [11]  575 	push	hl
+      000250 CDr00r00         [17]  576 	call	_hook
+      000253 21 06 00         [10]  577 	ld	hl, #6
+      000256 39               [11]  578 	add	hl, sp
+      000257 F9               [ 6]  579 	ld	sp, hl
+      000258 D1               [10]  580 	pop	de
+                                    581 ;main-msx.c:293: hook((HOOK*) HCHPU,&(wrk->HCHPU_original),(uint16_t*) &new_chput);
+      000259 01r0Br01         [10]  582 	ld	bc, #_new_chput
+      00025C 21 2A 00         [10]  583 	ld	hl, #0x002a
+      00025F 19               [11]  584 	add	hl, de
+      000260 E3               [19]  585 	ex	(sp), hl
+      000261 D5               [11]  586 	push	de
+      000262 C5               [11]  587 	push	bc
+      000263 DD 6E FE         [19]  588 	ld	l, -2 (ix)
+      000266 DD 66 FF         [19]  589 	ld	h, -1 (ix)
+      000269 E5               [11]  590 	push	hl
+      00026A 21 A4 FD         [10]  591 	ld	hl, #_HCHPU
+      00026D E5               [11]  592 	push	hl
+      00026E CDr00r00         [17]  593 	call	_hook
+      000271 21 06 00         [10]  594 	ld	hl, #6
+      000274 39               [11]  595 	add	hl, sp
+      000275 F9               [ 6]  596 	ld	sp, hl
+      000276 D1               [10]  597 	pop	de
+                                    598 ;main-msx.c:294: hook((HOOK*) HCHGE,&(wrk->HCHGE_original),(uint16_t*) &new_chget);
+      000277 01r39r01         [10]  599 	ld	bc, #_new_chget
+      00027A 21 2F 00         [10]  600 	ld	hl, #0x002f
+      00027D 19               [11]  601 	add	hl, de
+      00027E C5               [11]  602 	push	bc
+      00027F E5               [11]  603 	push	hl
+      000280 21 C2 FD         [10]  604 	ld	hl, #_HCHGE
+      000283 E5               [11]  605 	push	hl
+      000284 CDr00r00         [17]  606 	call	_hook
+      000287 21 06 00         [10]  607 	ld	hl, #6
+      00028A 39               [11]  608 	add	hl, sp
+                                    609 ;main-msx.c:295: }
+      00028B DD F9            [10]  610 	ld	sp, ix
+      00028D DD E1            [14]  611 	pop	ix
+      00028F C9               [10]  612 	ret
+                                    613 ;main-msx.c:297: void unhook_terminal (WORKAREA* wrk)
+                                    614 ;	---------------------------------
+                                    615 ; Function unhook_terminal
+                                    616 ; ---------------------------------
+      000290                        617 _unhook_terminal::
+      000290 DD E5            [15]  618 	push	ix
+      000292 DD 21 00 00      [14]  619 	ld	ix,#0
+      000296 DD 39            [15]  620 	add	ix,sp
+                                    621 ;main-msx.c:299: unhook ((HOOK*) HTIMI,&(get_workarea ()->HTIMI_original));
+      000298 CDr00r00         [17]  622 	call	_get_workarea
+      00029B 11 34 00         [10]  623 	ld	de, #0x0034
+      00029E 19               [11]  624 	add	hl, de
+      00029F E5               [11]  625 	push	hl
+      0002A0 21 9F FD         [10]  626 	ld	hl, #_HTIMI
+      0002A3 E5               [11]  627 	push	hl
+      0002A4 CDr00r00         [17]  628 	call	_unhook
+      0002A7 F1               [10]  629 	pop	af
+      0002A8 F1               [10]  630 	pop	af
+                                    631 ;main-msx.c:300: unhook ((HOOK*) HCHPU,&(get_workarea ()->HCHPU_original));
+      0002A9 CDr00r00         [17]  632 	call	_get_workarea
+      0002AC 11 2A 00         [10]  633 	ld	de, #0x002a
+      0002AF 19               [11]  634 	add	hl, de
+      0002B0 E5               [11]  635 	push	hl
+      0002B1 21 A4 FD         [10]  636 	ld	hl, #_HCHPU
+      0002B4 E5               [11]  637 	push	hl
+      0002B5 CDr00r00         [17]  638 	call	_unhook
+      0002B8 F1               [10]  639 	pop	af
+      0002B9 F1               [10]  640 	pop	af
+                                    641 ;main-msx.c:301: unhook ((HOOK*) HCHGE,&(get_workarea ()->HCHGE_original));
+      0002BA CDr00r00         [17]  642 	call	_get_workarea
+      0002BD 11 2F 00         [10]  643 	ld	de, #0x002f
+      0002C0 19               [11]  644 	add	hl, de
+      0002C1 E5               [11]  645 	push	hl
+      0002C2 21 C2 FD         [10]  646 	ld	hl, #_HCHGE
+      0002C5 E5               [11]  647 	push	hl
+      0002C6 CDr00r00         [17]  648 	call	_unhook
+      0002C9 F1               [10]  649 	pop	af
+      0002CA F1               [10]  650 	pop	af
+                                    651 ;main-msx.c:302: }
+      0002CB DD E1            [14]  652 	pop	ix
+      0002CD C9               [10]  653 	ret
+                                    654 ;main-msx.c:304: void run_serial_terminal()
+                                    655 ;	---------------------------------
+                                    656 ; Function run_serial_terminal
+                                    657 ; ---------------------------------
+      0002CE                        658 _run_serial_terminal::
+                                    659 ;main-msx.c:306: WORKAREA* wrk = get_workarea ();
+      0002CE CDr00r00         [17]  660 	call	_get_workarea
+      0002D1 EB               [ 4]  661 	ex	de, hl
+                                    662 ;main-msx.c:309: while (true)
+      0002D2                        663 00108$:
+                                    664 ;main-msx.c:311: if((readStatus() & 0x80) == 0) 
+      0002D2 D5               [11]  665 	push	de
+      0002D3 CDr0Cr00         [17]  666 	call	_readStatus
+      0002D6 7D               [ 4]  667 	ld	a, l
+      0002D7 D1               [10]  668 	pop	de
+      0002D8 07               [ 4]  669 	rlca
+      0002D9 38 F7            [12]  670 	jr	C, 00108$
+                                    671 ;main-msx.c:313: INTERRUPT_RESULT intres = device_interrupt(wrk,TERMINAL_MODE);
+      0002DB D5               [11]  672 	push	de
+      0002DC 3E 01            [ 7]  673 	ld	a, #0x01
+      0002DE F5               [11]  674 	push	af
+      0002DF 33               [ 6]  675 	inc	sp
+      0002E0 D5               [11]  676 	push	de
+      0002E1 CDr00r00         [17]  677 	call	_device_interrupt
+      0002E4 F1               [10]  678 	pop	af
+      0002E5 33               [ 6]  679 	inc	sp
+      0002E6 D1               [10]  680 	pop	de
+                                    681 ;main-msx.c:314: if (intres==DEVICE_CONFIGURATION_SET)
+      0002E7 7D               [ 4]  682 	ld	a, l
+      0002E8 D6 03            [ 7]  683 	sub	a, #0x03
+      0002EA 20 0C            [12]  684 	jr	NZ, 00102$
+                                    685 ;main-msx.c:315: print ("+Start Terminal program\r\n"); 
+      0002EC E5               [11]  686 	push	hl
+      0002ED D5               [11]  687 	push	de
+      0002EE 01r03r03         [10]  688 	ld	bc, #___str_5
+      0002F1 C5               [11]  689 	push	bc
+      0002F2 CDr00r00         [17]  690 	call	_print
+      0002F5 F1               [10]  691 	pop	af
+      0002F6 D1               [10]  692 	pop	de
+      0002F7 E1               [10]  693 	pop	hl
+      0002F8                        694 00102$:
+                                    695 ;main-msx.c:316: if (intres==DEVICE_SERIAL_CONNECTED)
+      0002F8 7D               [ 4]  696 	ld	a, l
+      0002F9 D6 04            [ 7]  697 	sub	a, #0x04
+      0002FB 20 D5            [12]  698 	jr	NZ, 00108$
+                                    699 ;main-msx.c:321: hook_terminal (wrk);
+      0002FD D5               [11]  700 	push	de
+      0002FE CDr2Cr02         [17]  701 	call	_hook_terminal
+      000301 F1               [10]  702 	pop	af
+                                    703 ;main-msx.c:322: }
+      000302 C9               [10]  704 	ret
+      000303                        705 ___str_5:
+      000303 2B 53 74 61 72 74 20   706 	.ascii "+Start Terminal program"
+             54 65 72 6D 69 6E 61
+             6C 20 70 72 6F 67 72
+             61 6D
+      00031A 0D                     707 	.db 0x0d
+      00031B 0A                     708 	.db 0x0a
+      00031C 00                     709 	.db 0x00
+                                    710 ;main-msx.c:324: void run_serial_monitor()
+                                    711 ;	---------------------------------
+                                    712 ; Function run_serial_monitor
+                                    713 ; ---------------------------------
+      00031D                        714 _run_serial_monitor::
+                                    715 ;main-msx.c:326: WORKAREA* wrk = get_workarea ();
+      00031D CDr00r00         [17]  716 	call	_get_workarea
+                                    717 ;main-msx.c:327: unhook_terminal (wrk);
+      000320 E5               [11]  718 	push	hl
+      000321 E5               [11]  719 	push	hl
+      000322 CDr90r02         [17]  720 	call	_unhook_terminal
+      000325 F1               [10]  721 	pop	af
+      000326 E1               [10]  722 	pop	hl
+                                    723 ;main-msx.c:329: print ("+Use Monitor from host PC\r\n");
+      000327 01r6Er03         [10]  724 	ld	bc, #___str_6+0
+      00032A E5               [11]  725 	push	hl
+      00032B C5               [11]  726 	push	bc
+      00032C CDr00r00         [17]  727 	call	_print
+      00032F F1               [10]  728 	pop	af
+      000330 E1               [10]  729 	pop	hl
+                                    730 ;main-msx.c:330: print ("+H for Help\r\n");
+      000331 01r8Ar03         [10]  731 	ld	bc, #___str_7+0
+      000334 E5               [11]  732 	push	hl
+      000335 C5               [11]  733 	push	bc
+      000336 CDr00r00         [17]  734 	call	_print
+      000339 F1               [10]  735 	pop	af
+      00033A E1               [10]  736 	pop	hl
+                                    737 ;main-msx.c:331: print ("+B to go back to BASIC\r\n");
+      00033B 01r98r03         [10]  738 	ld	bc, #___str_8+0
+      00033E E5               [11]  739 	push	hl
+      00033F C5               [11]  740 	push	bc
+      000340 CDr00r00         [17]  741 	call	_print
+      000343 F1               [10]  742 	pop	af
+      000344 CDr00r00         [17]  743 	call	_device_monitor_reset
+      000347 E1               [10]  744 	pop	hl
+                                    745 ;main-msx.c:335: device_send_welcome (wrk);
+      000348 E5               [11]  746 	push	hl
+      000349 E5               [11]  747 	push	hl
+      00034A CDr00r00         [17]  748 	call	_device_send_welcome
+      00034D F1               [10]  749 	pop	af
+      00034E E1               [10]  750 	pop	hl
+                                    751 ;main-msx.c:338: while (true)
+      00034F                        752 00106$:
+                                    753 ;main-msx.c:340: if((readStatus() & 0x80) == 0) 
+      00034F E5               [11]  754 	push	hl
+      000350 CDr0Cr00         [17]  755 	call	_readStatus
+      000353 7D               [ 4]  756 	ld	a, l
+      000354 E1               [10]  757 	pop	hl
+      000355 07               [ 4]  758 	rlca
+      000356 38 F7            [12]  759 	jr	C, 00106$
+                                    760 ;main-msx.c:342: if (device_interrupt(wrk,MONITOR_MODE)==MONITOR_EXIT_BASIC)
+      000358 E5               [11]  761 	push	hl
+      000359 AF               [ 4]  762 	xor	a, a
+      00035A F5               [11]  763 	push	af
+      00035B 33               [ 6]  764 	inc	sp
+      00035C E5               [11]  765 	push	hl
+      00035D CDr00r00         [17]  766 	call	_device_interrupt
+      000360 F1               [10]  767 	pop	af
+      000361 7D               [ 4]  768 	ld	a, l
+      000362 33               [ 6]  769 	inc	sp
+      000363 E1               [10]  770 	pop	hl
+      000364 D6 06            [ 7]  771 	sub	a, #0x06
+      000366 20 E7            [12]  772 	jr	NZ, 00106$
+                                    773 ;main-msx.c:350: hook_terminal (wrk);
+      000368 E5               [11]  774 	push	hl
+      000369 CDr2Cr02         [17]  775 	call	_hook_terminal
+      00036C F1               [10]  776 	pop	af
+                                    777 ;main-msx.c:351: }
+      00036D C9               [10]  778 	ret
+      00036E                        779 ___str_6:
+      00036E 2B 55 73 65 20 4D 6F   780 	.ascii "+Use Monitor from host PC"
+             6E 69 74 6F 72 20 66
+             72 6F 6D 20 68 6F 73
+             74 20 50 43
+      000387 0D                     781 	.db 0x0d
+      000388 0A                     782 	.db 0x0a
+      000389 00                     783 	.db 0x00
+      00038A                        784 ___str_7:
+      00038A 2B 48 20 66 6F 72 20   785 	.ascii "+H for Help"
+             48 65 6C 70
+      000395 0D                     786 	.db 0x0d
+      000396 0A                     787 	.db 0x0a
+      000397 00                     788 	.db 0x00
+      000398                        789 ___str_8:
+      000398 2B 42 20 74 6F 20 67   790 	.ascii "+B to go back to BASIC"
+             6F 20 62 61 63 6B 20
+             74 6F 20 42 41 53 49
+             43
+      0003AE 0D                     791 	.db 0x0d
+      0003AF 0A                     792 	.db 0x0a
+      0003B0 00                     793 	.db 0x00
+                                    794 ;main-msx.c:354: void basic_start ()
+                                    795 ;	---------------------------------
+                                    796 ; Function basic_start
+                                    797 ; ---------------------------------
+      0003B1                        798 _basic_start::
+                                    799 ;main-msx.c:363: __endasm;
+      0003B1 DD E5            [15]  800 	push	ix
+      0003B3 FD E5            [15]  801 	push	iy
+      0003B5 E5               [11]  802 	push	hl ; save BASIC pointer
+      0003B6 D5               [11]  803 	push	de
+      0003B7 C5               [11]  804 	push	bc
+      0003B8 F5               [11]  805 	push	af
+                                    806 ;main-msx.c:366: unhook ((HOOK*) HCLEA,&(bootup_workarea.HCLEA_original));
+      0003B9 21r39r00         [10]  807 	ld	hl, #(_bootup_workarea + 0x0039)
+      0003BC E5               [11]  808 	push	hl
+      0003BD 21 D0 FE         [10]  809 	ld	hl, #_HCLEA
+      0003C0 E5               [11]  810 	push	hl
+      0003C1 CDr00r00         [17]  811 	call	_unhook
+      0003C4 F1               [10]  812 	pop	af
+                                    813 ;main-msx.c:368: print (MSG_MSXUSB);
+      0003C5 21r81r00         [10]  814 	ld	hl, #_MSG_MSXUSB
+      0003C8 E3               [19]  815 	ex	(sp),hl
+      0003C9 CDr00r00         [17]  816 	call	_print
+      0003CC F1               [10]  817 	pop	af
+                                    818 ;main-msx.c:370: allocate_workarea (sizeof (WORKAREA));
+      0003CD 21 51 00         [10]  819 	ld	hl, #0x0051
+      0003D0 CDr00r00         [17]  820 	call	_allocate_workarea
+                                    821 ;main-msx.c:372: init_workarea();
+      0003D3 CDr00r00         [17]  822 	call	_init_workarea
+                                    823 ;main-msx.c:374: if (init_serial_device (get_workarea()))
+      0003D6 CDr00r00         [17]  824 	call	_get_workarea
+      0003D9 E5               [11]  825 	push	hl
+      0003DA CDrB6r01         [17]  826 	call	_init_serial_device
+      0003DD F1               [10]  827 	pop	af
+      0003DE CB 45            [ 8]  828 	bit	0, l
+      0003E0 28 03            [12]  829 	jr	Z, 00102$
+                                    830 ;main-msx.c:375: run_serial_terminal();
+      0003E2 CDrCEr02         [17]  831 	call	_run_serial_terminal
+      0003E5                        832 00102$:
+                                    833 ;main-msx.c:384: __endasm;
+      0003E5 F1               [10]  834 	pop	af
+      0003E6 C1               [10]  835 	pop	bc
+      0003E7 D1               [10]  836 	pop	de
+      0003E8 E1               [10]  837 	pop	hl ; restore BASIC pointer
+      0003E9 FD E1            [14]  838 	pop	iy
+      0003EB DD E1            [14]  839 	pop	ix
+                                    840 ;main-msx.c:385: }
+      0003ED C9               [10]  841 	ret
+                                    842 ;main-msx.c:391: void initialize_himsav ()
+                                    843 ;	---------------------------------
+                                    844 ; Function initialize_himsav
+                                    845 ; ---------------------------------
+      0003EE                        846 _initialize_himsav::
+                                    847 ;main-msx.c:397: __endasm;
+      0003EE E5               [11]  848 	push	hl ; save BASIC pointer
+      0003EF D5               [11]  849 	push	de
+      0003F0 C5               [11]  850 	push	bc
+                                    851 ;main-msx.c:399: unhook ((HOOK*) HLOPD,&(bootup_workarea.HLOPD_original));
+      0003F1 21r3Er00         [10]  852 	ld	hl, #(_bootup_workarea + 0x003e)
+      0003F4 E5               [11]  853 	push	hl
+      0003F5 21 D5 FE         [10]  854 	ld	hl, #_HLOPD
+      0003F8 E5               [11]  855 	push	hl
+      0003F9 CDr00r00         [17]  856 	call	_unhook
+      0003FC F1               [10]  857 	pop	af
+      0003FD F1               [10]  858 	pop	af
+                                    859 ;main-msx.c:400: if (h_phyd!=0xc9)
+      0003FE FD 21 A7 FF      [14]  860 	ld	iy, #_h_phyd
+      000402 FD 7E 00         [19]  861 	ld	a, 0 (iy)
+      000405 D6 C9            [ 7]  862 	sub	a, #0xc9
+      000407 28 0E            [12]  863 	jr	Z, 00102$
+                                    864 ;main-msx.c:402: print ("hello");
+      000409 21r1Br04         [10]  865 	ld	hl, #___str_9
+      00040C E5               [11]  866 	push	hl
+      00040D CDr00r00         [17]  867 	call	_print
+      000410 F1               [10]  868 	pop	af
+                                    869 ;main-msx.c:403: himsav = himem;
+      000411 2A 4A FC         [16]  870 	ld	hl, (_himem)
+      000414 22 49 F3         [16]  871 	ld	(_himsav), hl
+      000417                        872 00102$:
+                                    873 ;main-msx.c:410: __endasm;
+      000417 C1               [10]  874 	pop	bc
+      000418 D1               [10]  875 	pop	de
+      000419 E1               [10]  876 	pop	hl
+                                    877 ;main-msx.c:411: }
+      00041A C9               [10]  878 	ret
+      00041B                        879 ___str_9:
+      00041B 68 65 6C 6C 6F         880 	.ascii "hello"
+      000420 00                     881 	.db 0x00
+                                    882 ;main-msx.c:414: void main (void)
+                                    883 ;	---------------------------------
+                                    884 ; Function main
+                                    885 ; ---------------------------------
+      000421                        886 _main::
+                                    887 ;main-msx.c:416: print (MSG_MSXUSB);
+      000421 21r81r00         [10]  888 	ld	hl, #_MSG_MSXUSB
+      000424 E5               [11]  889 	push	hl
+      000425 CDr00r00         [17]  890 	call	_print
+                                    891 ;main-msx.c:417: print (MSG_LICENSE);
+      000428 21r9Fr00         [10]  892 	ld	hl, #_MSG_LICENSE
+      00042B E3               [19]  893 	ex	(sp),hl
+      00042C CDr00r00         [17]  894 	call	_print
+      00042F F1               [10]  895 	pop	af
+                                    896 ;main-msx.c:420: hook((HOOK*) HCLEA,&(bootup_workarea.HCLEA_original),(uint16_t*) &basic_start);
+      000430 01rB1r03         [10]  897 	ld	bc, #_basic_start
+      000433 C5               [11]  898 	push	bc
+      000434 21r39r00         [10]  899 	ld	hl, #(_bootup_workarea + 0x0039)
+      000437 E5               [11]  900 	push	hl
+      000438 21 D0 FE         [10]  901 	ld	hl, #_HCLEA
+      00043B E5               [11]  902 	push	hl
+      00043C CDr00r00         [17]  903 	call	_hook
+      00043F 21 06 00         [10]  904 	ld	hl, #6
+      000442 39               [11]  905 	add	hl, sp
+      000443 F9               [ 6]  906 	ld	sp, hl
+                                    907 ;main-msx.c:421: hook((HOOK*) HLOPD,&(bootup_workarea.HLOPD_original),(uint16_t*) &initialize_himsav);
+      000444 01rEEr03         [10]  908 	ld	bc, #_initialize_himsav
+      000447 C5               [11]  909 	push	bc
+      000448 21r3Er00         [10]  910 	ld	hl, #(_bootup_workarea + 0x003e)
+      00044B E5               [11]  911 	push	hl
+      00044C 21 D5 FE         [10]  912 	ld	hl, #_HLOPD
+      00044F E5               [11]  913 	push	hl
+      000450 CDr00r00         [17]  914 	call	_hook
+      000453 21 06 00         [10]  915 	ld	hl, #6
+      000456 39               [11]  916 	add	hl, sp
+      000457 F9               [ 6]  917 	ld	sp, hl
+                                    918 ;main-msx.c:423: return;
+                                    919 ;main-msx.c:424: }
+      000458 C9               [10]  920 	ret
+                                    921 ;main-msx.c:437: char* onCallMONITOR(char* param) {
+                                    922 ;	---------------------------------
+                                    923 ; Function onCallMONITOR
+                                    924 ; ---------------------------------
+      000459                        925 _onCallMONITOR::
+                                    926 ;main-msx.c:439: while ((*param != 0) && (*param != 0x3a)) 
+      000459 C1               [10]  927 	pop	bc
+      00045A E1               [10]  928 	pop	hl
+      00045B E5               [11]  929 	push	hl
+      00045C C5               [11]  930 	push	bc
+      00045D                        931 00102$:
+      00045D 7E               [ 7]  932 	ld	a, (hl)
+      00045E B7               [ 4]  933 	or	a, a
+      00045F 28 07            [12]  934 	jr	Z, 00104$
+      000461 D6 3A            [ 7]  935 	sub	a, #0x3a
+      000463 28 03            [12]  936 	jr	Z, 00104$
+                                    937 ;main-msx.c:440: param++;
+      000465 23               [ 6]  938 	inc	hl
+      000466 18 F5            [12]  939 	jr	00102$
+      000468                        940 00104$:
+                                    941 ;main-msx.c:442: run_serial_monitor ();
+      000468 E5               [11]  942 	push	hl
+      000469 CDr1Dr03         [17]  943 	call	_run_serial_monitor
+      00046C E1               [10]  944 	pop	hl
+                                    945 ;main-msx.c:444: return param;
+                                    946 ;main-msx.c:445: }
+      00046D C9               [10]  947 	ret
+                                    948 ;main-msx.c:458: char onDeviceMON_getId() {
+                                    949 ;	---------------------------------
+                                    950 ; Function onDeviceMON_getId
+                                    951 ; ---------------------------------
+      00046E                        952 _onDeviceMON_getId::
+                                    953 ;main-msx.c:459: print("The C handler for MON_getId says hi!\r\n\0");
+      00046E 21r79r04         [10]  954 	ld	hl, #___str_10
+      000471 E5               [11]  955 	push	hl
+      000472 CDr00r00         [17]  956 	call	_print
+      000475 F1               [10]  957 	pop	af
+                                    958 ;main-msx.c:460: return 0; // we're the first device so we return 0
+      000476 2E 00            [ 7]  959 	ld	l, #0x00
+                                    960 ;main-msx.c:461: }
+      000478 C9               [10]  961 	ret
+      000479                        962 ___str_10:
+      000479 54 68 65 20 43 20 68   963 	.ascii "The C handler for MON_getId says hi!"
              61 6E 64 6C 65 72 20
              66 6F 72 20 4D 4F 4E
              5F 67 65 74 49 64 20
              73 61 79 73 20 68 69
              21
-      0001DF 0D                     375 	.db 0x0d
-      0001E0 0A                     376 	.db 0x0a
-      0001E1 00                     377 	.db 0x00
-      0001E2 00                     378 	.db 0x00
-                                    379 ;main-msx.c:224: void onDeviceMON_IO(char cmd,char* param) {
-                                    380 ;	---------------------------------
-                                    381 ; Function onDeviceMON_IO
-                                    382 ; ---------------------------------
-      0001E3                        383 _onDeviceMON_IO::
-      0001E3 DD E5            [15]  384 	push	ix
-      0001E5 DD 21 00 00      [14]  385 	ld	ix,#0
-      0001E9 DD 39            [15]  386 	add	ix,sp
-                                    387 ;main-msx.c:225: switch (cmd)
-      0001EB DD 7E 04         [19]  388 	ld	a, 4 (ix)
-      0001EE B7               [ 4]  389 	or	a, a
-      0001EF 28 47            [12]  390 	jr	Z, 00101$
-      0001F1 DD 7E 04         [19]  391 	ld	a, 4 (ix)
-      0001F4 D6 02            [ 7]  392 	sub	a, #0x02
-      0001F6 28 4A            [12]  393 	jr	Z, 00102$
-      0001F8 DD 7E 04         [19]  394 	ld	a, 4 (ix)
-      0001FB D6 04            [ 7]  395 	sub	a, #0x04
-      0001FD 28 4D            [12]  396 	jr	Z, 00103$
-      0001FF DD 7E 04         [19]  397 	ld	a, 4 (ix)
-      000202 D6 06            [ 7]  398 	sub	a, #0x06
-      000204 28 50            [12]  399 	jr	Z, 00104$
-      000206 DD 7E 04         [19]  400 	ld	a, 4 (ix)
-      000209 D6 08            [ 7]  401 	sub	a, #0x08
-      00020B 28 53            [12]  402 	jr	Z, 00105$
-      00020D DD 7E 04         [19]  403 	ld	a, 4 (ix)
-      000210 D6 0A            [ 7]  404 	sub	a, #0x0a
-      000212 28 56            [12]  405 	jr	Z, 00106$
-      000214 DD 7E 04         [19]  406 	ld	a, 4 (ix)
-      000217 D6 0C            [ 7]  407 	sub	a, #0x0c
-      000219 28 59            [12]  408 	jr	Z, 00107$
-      00021B DD 7E 04         [19]  409 	ld	a, 4 (ix)
-      00021E D6 0E            [ 7]  410 	sub	a, #0x0e
-      000220 28 5C            [12]  411 	jr	Z, 00108$
-      000222 DD 7E 04         [19]  412 	ld	a, 4 (ix)
-      000225 D6 10            [ 7]  413 	sub	a, #0x10
-      000227 28 5F            [12]  414 	jr	Z, 00109$
-      000229 DD 7E 04         [19]  415 	ld	a, 4 (ix)
-      00022C D6 12            [ 7]  416 	sub	a, #0x12
-      00022E 28 62            [12]  417 	jr	Z, 00110$
-      000230 DD 7E 04         [19]  418 	ld	a, 4 (ix)
-      000233 3C               [ 4]  419 	inc	a
-      000234 28 66            [12]  420 	jr	Z, 00111$
-      000236 18 6E            [12]  421 	jr	00112$
-                                    422 ;main-msx.c:227: case 0: print ("OPEN\r\n");break;
-      000238                        423 00101$:
-      000238 21rB9r02         [10]  424 	ld	hl, #___str_10
-      00023B E5               [11]  425 	push	hl
-      00023C CDr34r00         [17]  426 	call	_print
-      00023F F1               [10]  427 	pop	af
-      000240 18 6C            [12]  428 	jr	00113$
-                                    429 ;main-msx.c:228: case 2: print ("CLOSE\r\n");break;
-      000242                        430 00102$:
-      000242 21rC0r02         [10]  431 	ld	hl, #___str_11
-      000245 E5               [11]  432 	push	hl
-      000246 CDr34r00         [17]  433 	call	_print
-      000249 F1               [10]  434 	pop	af
-      00024A 18 62            [12]  435 	jr	00113$
-                                    436 ;main-msx.c:229: case 4: print ("RANDOM ACCESS\r\n");break;
-      00024C                        437 00103$:
-      00024C 21rC8r02         [10]  438 	ld	hl, #___str_12
-      00024F E5               [11]  439 	push	hl
-      000250 CDr34r00         [17]  440 	call	_print
-      000253 F1               [10]  441 	pop	af
-      000254 18 58            [12]  442 	jr	00113$
-                                    443 ;main-msx.c:230: case 6: print ("SEQ OUTPUT\r\n");break;
-      000256                        444 00104$:
-      000256 21rD8r02         [10]  445 	ld	hl, #___str_13
-      000259 E5               [11]  446 	push	hl
-      00025A CDr34r00         [17]  447 	call	_print
-      00025D F1               [10]  448 	pop	af
-      00025E 18 4E            [12]  449 	jr	00113$
-                                    450 ;main-msx.c:231: case 8: print ("SEQ INPUT\r\n");break;
-      000260                        451 00105$:
-      000260 21rE5r02         [10]  452 	ld	hl, #___str_14
-      000263 E5               [11]  453 	push	hl
-      000264 CDr34r00         [17]  454 	call	_print
-      000267 F1               [10]  455 	pop	af
-      000268 18 44            [12]  456 	jr	00113$
-                                    457 ;main-msx.c:232: case 10: print ("LOC\r\n");break;
-      00026A                        458 00106$:
-      00026A 21rF1r02         [10]  459 	ld	hl, #___str_15
-      00026D E5               [11]  460 	push	hl
-      00026E CDr34r00         [17]  461 	call	_print
-      000271 F1               [10]  462 	pop	af
-      000272 18 3A            [12]  463 	jr	00113$
-                                    464 ;main-msx.c:233: case 12: print ("LOF\r\n");break;
-      000274                        465 00107$:
-      000274 21rF7r02         [10]  466 	ld	hl, #___str_16
-      000277 E5               [11]  467 	push	hl
-      000278 CDr34r00         [17]  468 	call	_print
-      00027B F1               [10]  469 	pop	af
-      00027C 18 30            [12]  470 	jr	00113$
-                                    471 ;main-msx.c:234: case 14: print ("EOF\r\n");break;
-      00027E                        472 00108$:
-      00027E 21rFDr02         [10]  473 	ld	hl, #___str_17
-      000281 E5               [11]  474 	push	hl
-      000282 CDr34r00         [17]  475 	call	_print
-      000285 F1               [10]  476 	pop	af
-      000286 18 26            [12]  477 	jr	00113$
-                                    478 ;main-msx.c:235: case 16: print ("FPOS\r\n");break;
-      000288                        479 00109$:
-      000288 21r03r03         [10]  480 	ld	hl, #___str_18
-      00028B E5               [11]  481 	push	hl
-      00028C CDr34r00         [17]  482 	call	_print
-      00028F F1               [10]  483 	pop	af
-      000290 18 1C            [12]  484 	jr	00113$
-                                    485 ;main-msx.c:236: case 18: print ("BACKUP\r\n");break;
-      000292                        486 00110$:
-      000292 21r0Ar03         [10]  487 	ld	hl, #___str_19
-      000295 E5               [11]  488 	push	hl
-      000296 CDr34r00         [17]  489 	call	_print
-      000299 F1               [10]  490 	pop	af
-      00029A 18 12            [12]  491 	jr	00113$
-                                    492 ;main-msx.c:237: case 255: print ("INQUIRE\r\n");break;
-      00029C                        493 00111$:
-      00029C 21r13r03         [10]  494 	ld	hl, #___str_20
-      00029F E5               [11]  495 	push	hl
-      0002A0 CDr34r00         [17]  496 	call	_print
-      0002A3 F1               [10]  497 	pop	af
-      0002A4 18 08            [12]  498 	jr	00113$
-                                    499 ;main-msx.c:238: default: print ("UNKNOWN\r\n");break;
-      0002A6                        500 00112$:
-      0002A6 21r1Dr03         [10]  501 	ld	hl, #___str_21
-      0002A9 E5               [11]  502 	push	hl
-      0002AA CDr34r00         [17]  503 	call	_print
-      0002AD F1               [10]  504 	pop	af
-                                    505 ;main-msx.c:239: }
-      0002AE                        506 00113$:
-                                    507 ;main-msx.c:240: print("The C handler for MON_IO says hi!\r\n\0");
-      0002AE 21r27r03         [10]  508 	ld	hl, #___str_22
-      0002B1 E5               [11]  509 	push	hl
-      0002B2 CDr34r00         [17]  510 	call	_print
-      0002B5 F1               [10]  511 	pop	af
-                                    512 ;main-msx.c:241: }
-      0002B6 DD E1            [14]  513 	pop	ix
-      0002B8 C9               [10]  514 	ret
-      0002B9                        515 ___str_10:
-      0002B9 4F 50 45 4E            516 	.ascii "OPEN"
-      0002BD 0D                     517 	.db 0x0d
-      0002BE 0A                     518 	.db 0x0a
-      0002BF 00                     519 	.db 0x00
-      0002C0                        520 ___str_11:
-      0002C0 43 4C 4F 53 45         521 	.ascii "CLOSE"
-      0002C5 0D                     522 	.db 0x0d
-      0002C6 0A                     523 	.db 0x0a
-      0002C7 00                     524 	.db 0x00
-      0002C8                        525 ___str_12:
-      0002C8 52 41 4E 44 4F 4D 20   526 	.ascii "RANDOM ACCESS"
+      00049D 0D                     964 	.db 0x0d
+      00049E 0A                     965 	.db 0x0a
+      00049F 00                     966 	.db 0x00
+      0004A0 00                     967 	.db 0x00
+                                    968 ;main-msx.c:474: void onDeviceMON_IO(char cmd,char* param) {
+                                    969 ;	---------------------------------
+                                    970 ; Function onDeviceMON_IO
+                                    971 ; ---------------------------------
+      0004A1                        972 _onDeviceMON_IO::
+      0004A1 DD E5            [15]  973 	push	ix
+      0004A3 DD 21 00 00      [14]  974 	ld	ix,#0
+      0004A7 DD 39            [15]  975 	add	ix,sp
+                                    976 ;main-msx.c:475: switch (cmd)
+      0004A9 DD 7E 04         [19]  977 	ld	a, 4 (ix)
+      0004AC B7               [ 4]  978 	or	a, a
+      0004AD 28 47            [12]  979 	jr	Z, 00101$
+      0004AF DD 7E 04         [19]  980 	ld	a, 4 (ix)
+      0004B2 D6 02            [ 7]  981 	sub	a, #0x02
+      0004B4 28 4A            [12]  982 	jr	Z, 00102$
+      0004B6 DD 7E 04         [19]  983 	ld	a, 4 (ix)
+      0004B9 D6 04            [ 7]  984 	sub	a, #0x04
+      0004BB 28 4D            [12]  985 	jr	Z, 00103$
+      0004BD DD 7E 04         [19]  986 	ld	a, 4 (ix)
+      0004C0 D6 06            [ 7]  987 	sub	a, #0x06
+      0004C2 28 50            [12]  988 	jr	Z, 00104$
+      0004C4 DD 7E 04         [19]  989 	ld	a, 4 (ix)
+      0004C7 D6 08            [ 7]  990 	sub	a, #0x08
+      0004C9 28 53            [12]  991 	jr	Z, 00105$
+      0004CB DD 7E 04         [19]  992 	ld	a, 4 (ix)
+      0004CE D6 0A            [ 7]  993 	sub	a, #0x0a
+      0004D0 28 56            [12]  994 	jr	Z, 00106$
+      0004D2 DD 7E 04         [19]  995 	ld	a, 4 (ix)
+      0004D5 D6 0C            [ 7]  996 	sub	a, #0x0c
+      0004D7 28 59            [12]  997 	jr	Z, 00107$
+      0004D9 DD 7E 04         [19]  998 	ld	a, 4 (ix)
+      0004DC D6 0E            [ 7]  999 	sub	a, #0x0e
+      0004DE 28 5C            [12] 1000 	jr	Z, 00108$
+      0004E0 DD 7E 04         [19] 1001 	ld	a, 4 (ix)
+      0004E3 D6 10            [ 7] 1002 	sub	a, #0x10
+      0004E5 28 5F            [12] 1003 	jr	Z, 00109$
+      0004E7 DD 7E 04         [19] 1004 	ld	a, 4 (ix)
+      0004EA D6 12            [ 7] 1005 	sub	a, #0x12
+      0004EC 28 62            [12] 1006 	jr	Z, 00110$
+      0004EE DD 7E 04         [19] 1007 	ld	a, 4 (ix)
+      0004F1 3C               [ 4] 1008 	inc	a
+      0004F2 28 66            [12] 1009 	jr	Z, 00111$
+      0004F4 18 6E            [12] 1010 	jr	00112$
+                                   1011 ;main-msx.c:477: case 0: print ("OPEN\r\n");break;
+      0004F6                       1012 00101$:
+      0004F6 21r77r05         [10] 1013 	ld	hl, #___str_11
+      0004F9 E5               [11] 1014 	push	hl
+      0004FA CDr00r00         [17] 1015 	call	_print
+      0004FD F1               [10] 1016 	pop	af
+      0004FE 18 6C            [12] 1017 	jr	00113$
+                                   1018 ;main-msx.c:478: case 2: print ("CLOSE\r\n");break;
+      000500                       1019 00102$:
+      000500 21r7Er05         [10] 1020 	ld	hl, #___str_12
+      000503 E5               [11] 1021 	push	hl
+      000504 CDr00r00         [17] 1022 	call	_print
+      000507 F1               [10] 1023 	pop	af
+      000508 18 62            [12] 1024 	jr	00113$
+                                   1025 ;main-msx.c:479: case 4: print ("RANDOM ACCESS\r\n");break;
+      00050A                       1026 00103$:
+      00050A 21r86r05         [10] 1027 	ld	hl, #___str_13
+      00050D E5               [11] 1028 	push	hl
+      00050E CDr00r00         [17] 1029 	call	_print
+      000511 F1               [10] 1030 	pop	af
+      000512 18 58            [12] 1031 	jr	00113$
+                                   1032 ;main-msx.c:480: case 6: print ("SEQ OUTPUT\r\n");break;
+      000514                       1033 00104$:
+      000514 21r96r05         [10] 1034 	ld	hl, #___str_14
+      000517 E5               [11] 1035 	push	hl
+      000518 CDr00r00         [17] 1036 	call	_print
+      00051B F1               [10] 1037 	pop	af
+      00051C 18 4E            [12] 1038 	jr	00113$
+                                   1039 ;main-msx.c:481: case 8: print ("SEQ INPUT\r\n");break;
+      00051E                       1040 00105$:
+      00051E 21rA3r05         [10] 1041 	ld	hl, #___str_15
+      000521 E5               [11] 1042 	push	hl
+      000522 CDr00r00         [17] 1043 	call	_print
+      000525 F1               [10] 1044 	pop	af
+      000526 18 44            [12] 1045 	jr	00113$
+                                   1046 ;main-msx.c:482: case 10: print ("LOC\r\n");break;
+      000528                       1047 00106$:
+      000528 21rAFr05         [10] 1048 	ld	hl, #___str_16
+      00052B E5               [11] 1049 	push	hl
+      00052C CDr00r00         [17] 1050 	call	_print
+      00052F F1               [10] 1051 	pop	af
+      000530 18 3A            [12] 1052 	jr	00113$
+                                   1053 ;main-msx.c:483: case 12: print ("LOF\r\n");break;
+      000532                       1054 00107$:
+      000532 21rB5r05         [10] 1055 	ld	hl, #___str_17
+      000535 E5               [11] 1056 	push	hl
+      000536 CDr00r00         [17] 1057 	call	_print
+      000539 F1               [10] 1058 	pop	af
+      00053A 18 30            [12] 1059 	jr	00113$
+                                   1060 ;main-msx.c:484: case 14: print ("EOF\r\n");break;
+      00053C                       1061 00108$:
+      00053C 21rBBr05         [10] 1062 	ld	hl, #___str_18
+      00053F E5               [11] 1063 	push	hl
+      000540 CDr00r00         [17] 1064 	call	_print
+      000543 F1               [10] 1065 	pop	af
+      000544 18 26            [12] 1066 	jr	00113$
+                                   1067 ;main-msx.c:485: case 16: print ("FPOS\r\n");break;
+      000546                       1068 00109$:
+      000546 21rC1r05         [10] 1069 	ld	hl, #___str_19
+      000549 E5               [11] 1070 	push	hl
+      00054A CDr00r00         [17] 1071 	call	_print
+      00054D F1               [10] 1072 	pop	af
+      00054E 18 1C            [12] 1073 	jr	00113$
+                                   1074 ;main-msx.c:486: case 18: print ("BACKUP\r\n");break;
+      000550                       1075 00110$:
+      000550 21rC8r05         [10] 1076 	ld	hl, #___str_20
+      000553 E5               [11] 1077 	push	hl
+      000554 CDr00r00         [17] 1078 	call	_print
+      000557 F1               [10] 1079 	pop	af
+      000558 18 12            [12] 1080 	jr	00113$
+                                   1081 ;main-msx.c:487: case 255: print ("INQUIRE\r\n");break;
+      00055A                       1082 00111$:
+      00055A 21rD1r05         [10] 1083 	ld	hl, #___str_21
+      00055D E5               [11] 1084 	push	hl
+      00055E CDr00r00         [17] 1085 	call	_print
+      000561 F1               [10] 1086 	pop	af
+      000562 18 08            [12] 1087 	jr	00113$
+                                   1088 ;main-msx.c:488: default: print ("UNKNOWN\r\n");break;
+      000564                       1089 00112$:
+      000564 21rDBr05         [10] 1090 	ld	hl, #___str_22
+      000567 E5               [11] 1091 	push	hl
+      000568 CDr00r00         [17] 1092 	call	_print
+      00056B F1               [10] 1093 	pop	af
+                                   1094 ;main-msx.c:489: }
+      00056C                       1095 00113$:
+                                   1096 ;main-msx.c:490: print("The C handler for MON_IO says hi!\r\n\0");
+      00056C 21rE5r05         [10] 1097 	ld	hl, #___str_23
+      00056F E5               [11] 1098 	push	hl
+      000570 CDr00r00         [17] 1099 	call	_print
+      000573 F1               [10] 1100 	pop	af
+                                   1101 ;main-msx.c:491: }
+      000574 DD E1            [14] 1102 	pop	ix
+      000576 C9               [10] 1103 	ret
+      000577                       1104 ___str_11:
+      000577 4F 50 45 4E           1105 	.ascii "OPEN"
+      00057B 0D                    1106 	.db 0x0d
+      00057C 0A                    1107 	.db 0x0a
+      00057D 00                    1108 	.db 0x00
+      00057E                       1109 ___str_12:
+      00057E 43 4C 4F 53 45        1110 	.ascii "CLOSE"
+      000583 0D                    1111 	.db 0x0d
+      000584 0A                    1112 	.db 0x0a
+      000585 00                    1113 	.db 0x00
+      000586                       1114 ___str_13:
+      000586 52 41 4E 44 4F 4D 20  1115 	.ascii "RANDOM ACCESS"
              41 43 43 45 53 53
-      0002D5 0D                     527 	.db 0x0d
-      0002D6 0A                     528 	.db 0x0a
-      0002D7 00                     529 	.db 0x00
-      0002D8                        530 ___str_13:
-      0002D8 53 45 51 20 4F 55 54   531 	.ascii "SEQ OUTPUT"
+      000593 0D                    1116 	.db 0x0d
+      000594 0A                    1117 	.db 0x0a
+      000595 00                    1118 	.db 0x00
+      000596                       1119 ___str_14:
+      000596 53 45 51 20 4F 55 54  1120 	.ascii "SEQ OUTPUT"
              50 55 54
-      0002E2 0D                     532 	.db 0x0d
-      0002E3 0A                     533 	.db 0x0a
-      0002E4 00                     534 	.db 0x00
-      0002E5                        535 ___str_14:
-      0002E5 53 45 51 20 49 4E 50   536 	.ascii "SEQ INPUT"
+      0005A0 0D                    1121 	.db 0x0d
+      0005A1 0A                    1122 	.db 0x0a
+      0005A2 00                    1123 	.db 0x00
+      0005A3                       1124 ___str_15:
+      0005A3 53 45 51 20 49 4E 50  1125 	.ascii "SEQ INPUT"
              55 54
-      0002EE 0D                     537 	.db 0x0d
-      0002EF 0A                     538 	.db 0x0a
-      0002F0 00                     539 	.db 0x00
-      0002F1                        540 ___str_15:
-      0002F1 4C 4F 43               541 	.ascii "LOC"
-      0002F4 0D                     542 	.db 0x0d
-      0002F5 0A                     543 	.db 0x0a
-      0002F6 00                     544 	.db 0x00
-      0002F7                        545 ___str_16:
-      0002F7 4C 4F 46               546 	.ascii "LOF"
-      0002FA 0D                     547 	.db 0x0d
-      0002FB 0A                     548 	.db 0x0a
-      0002FC 00                     549 	.db 0x00
-      0002FD                        550 ___str_17:
-      0002FD 45 4F 46               551 	.ascii "EOF"
-      000300 0D                     552 	.db 0x0d
-      000301 0A                     553 	.db 0x0a
-      000302 00                     554 	.db 0x00
-      000303                        555 ___str_18:
-      000303 46 50 4F 53            556 	.ascii "FPOS"
-      000307 0D                     557 	.db 0x0d
-      000308 0A                     558 	.db 0x0a
-      000309 00                     559 	.db 0x00
-      00030A                        560 ___str_19:
-      00030A 42 41 43 4B 55 50      561 	.ascii "BACKUP"
-      000310 0D                     562 	.db 0x0d
-      000311 0A                     563 	.db 0x0a
-      000312 00                     564 	.db 0x00
-      000313                        565 ___str_20:
-      000313 49 4E 51 55 49 52 45   566 	.ascii "INQUIRE"
-      00031A 0D                     567 	.db 0x0d
-      00031B 0A                     568 	.db 0x0a
-      00031C 00                     569 	.db 0x00
-      00031D                        570 ___str_21:
-      00031D 55 4E 4B 4E 4F 57 4E   571 	.ascii "UNKNOWN"
-      000324 0D                     572 	.db 0x0d
-      000325 0A                     573 	.db 0x0a
-      000326 00                     574 	.db 0x00
-      000327                        575 ___str_22:
-      000327 54 68 65 20 43 20 68   576 	.ascii "The C handler for MON_IO says hi!"
+      0005AC 0D                    1126 	.db 0x0d
+      0005AD 0A                    1127 	.db 0x0a
+      0005AE 00                    1128 	.db 0x00
+      0005AF                       1129 ___str_16:
+      0005AF 4C 4F 43              1130 	.ascii "LOC"
+      0005B2 0D                    1131 	.db 0x0d
+      0005B3 0A                    1132 	.db 0x0a
+      0005B4 00                    1133 	.db 0x00
+      0005B5                       1134 ___str_17:
+      0005B5 4C 4F 46              1135 	.ascii "LOF"
+      0005B8 0D                    1136 	.db 0x0d
+      0005B9 0A                    1137 	.db 0x0a
+      0005BA 00                    1138 	.db 0x00
+      0005BB                       1139 ___str_18:
+      0005BB 45 4F 46              1140 	.ascii "EOF"
+      0005BE 0D                    1141 	.db 0x0d
+      0005BF 0A                    1142 	.db 0x0a
+      0005C0 00                    1143 	.db 0x00
+      0005C1                       1144 ___str_19:
+      0005C1 46 50 4F 53           1145 	.ascii "FPOS"
+      0005C5 0D                    1146 	.db 0x0d
+      0005C6 0A                    1147 	.db 0x0a
+      0005C7 00                    1148 	.db 0x00
+      0005C8                       1149 ___str_20:
+      0005C8 42 41 43 4B 55 50     1150 	.ascii "BACKUP"
+      0005CE 0D                    1151 	.db 0x0d
+      0005CF 0A                    1152 	.db 0x0a
+      0005D0 00                    1153 	.db 0x00
+      0005D1                       1154 ___str_21:
+      0005D1 49 4E 51 55 49 52 45  1155 	.ascii "INQUIRE"
+      0005D8 0D                    1156 	.db 0x0d
+      0005D9 0A                    1157 	.db 0x0a
+      0005DA 00                    1158 	.db 0x00
+      0005DB                       1159 ___str_22:
+      0005DB 55 4E 4B 4E 4F 57 4E  1160 	.ascii "UNKNOWN"
+      0005E2 0D                    1161 	.db 0x0d
+      0005E3 0A                    1162 	.db 0x0a
+      0005E4 00                    1163 	.db 0x00
+      0005E5                       1164 ___str_23:
+      0005E5 54 68 65 20 43 20 68  1165 	.ascii "The C handler for MON_IO says hi!"
              61 6E 64 6C 65 72 20
              66 6F 72 20 4D 4F 4E
              5F 49 4F 20 73 61 79
              73 20 68 69 21
-      000348 0D                     577 	.db 0x0d
-      000349 0A                     578 	.db 0x0a
-      00034A 00                     579 	.db 0x00
-      00034B 00                     580 	.db 0x00
-                                    581 	.area _CODE
-                                    582 	.area _INITIALIZER
-      000000                        583 __xinit__bDeviceOk:
-      000000 00                     584 	.db #0x00	;  0
-                                    585 	.area _CABS (ABS)
+      000606 0D                    1166 	.db 0x0d
+      000607 0A                    1167 	.db 0x0a
+      000608 00                    1168 	.db 0x00
+      000609 00                    1169 	.db 0x00
+                                   1170 	.area _CODE
+                                   1171 	.area _INITIALIZER
+                                   1172 	.area _CABS (ABS)

@@ -7,65 +7,113 @@ Symbol Table
     .__.ABS.                                                    =  000000 G
     .__.CPU.                                                    =  000000 L
     .__.H$L.                                                    =  000000 L
-  0 ___str_0                                                       0000BD R
-  0 ___str_1                                                       0000DA R
-  0 ___str_10                                                      0002B9 R
-  0 ___str_11                                                      0002C0 R
-  0 ___str_12                                                      0002C8 R
-  0 ___str_13                                                      0002D8 R
-  0 ___str_14                                                      0002E5 R
-  0 ___str_15                                                      0002F1 R
-  0 ___str_16                                                      0002F7 R
-  0 ___str_17                                                      0002FD R
-  0 ___str_18                                                      000303 R
-  0 ___str_19                                                      00030A R
-  0 ___str_2                                                       0000F7 R
-  0 ___str_20                                                      000313 R
-  0 ___str_21                                                      00031D R
-  0 ___str_22                                                      000327 R
-  0 ___str_3                                                       000107 R
-  0 ___str_4                                                       000127 R
-  0 ___str_5                                                       00013C R
-  0 ___str_6                                                       00015B R
-  0 ___str_7                                                       000174 R
-  0 ___str_8                                                       0001A0 R
-  0 ___str_9                                                       0001BB R
-  0 __print                                                        000000 GR
-  7 __xinit__bDeviceOk                                             000000 R
-  2 _bDeviceOk                                                     000000 GR
-    _handleInterrupt                                               ****** GX
-  0 _host_basic_interpreter                                        000043 GR
-  0 _host_go                                                       000049 GR
-  0 _host_readByte                                                 00005C GR
-  0 _host_reset                                                    000040 GR
-  0 _host_writeByte                                                00004B GR
-    _initDevice                                                    ****** GX
-  0 _main                                                          00005F GR
-  0 _msx_disable_interrupt                                         000032 GR
-  0 _msx_enable_interrupt                                          000030 GR
-  0 _onCallMONITOR                                                 00018B GR
-  0 _onDeviceMON_IO                                                0001E3 GR
-  0 _onDeviceMON_getId                                             0001B0 GR
-  0 _print                                                         000034 GR
-  0 _printMSG_loop                                                 000008 R
-  0 _readData                                                      000028 GR
-  0 _readStatus                                                    00002C GR
-  0 _writeCommand                                                  000020 GR
-  0 _writeData                                                     000024 GR
-
-
+  0 C0F55                                                          000040 R
+  0 C10C2                                                          000050 R
+  0 CHECK_AGAIN                                                    000149 R
+  0 CTRLSTOP                                                       00003A R
+  0 HANDLE_BACKSPACE                                               000166 R
+  0 HANDLE_DELETE                                                  000169 R
+  0 SKIP_WAIT                                                      000159 R
+  0 STOP                                                           000034 R
+    _HCHGE                                                      =  00FDC2 G
+    _HCHPU                                                      =  00FDA4 G
+    _HCLEA                                                      =  00FED0 G
+    _HLOPD                                                      =  00FED5 G
+    _HSTKE                                                      =  00FEDA G
+    _HTIMI                                                      =  00FD9F G
+  0 _MSG_LICENSE                                                   00009F GR
+  0 _MSG_MSXUSB                                                    000081 GR
+  0 ___str_10                                                      000479 R
+  0 ___str_11                                                      000577 R
+  0 ___str_12                                                      00057E R
+  0 ___str_13                                                      000586 R
+  0 ___str_14                                                      000596 R
+  0 ___str_15                                                      0005A3 R
+  0 ___str_16                                                      0005AF R
+  0 ___str_17                                                      0005B5 R
+  0 ___str_18                                                      0005BB R
+  0 ___str_19                                                      0005C1 R
+  0 ___str_2                                                       0001E3 R
+  0 ___str_20                                                      0005C8 R
+  0 ___str_21                                                      0005D1 R
+  0 ___str_22                                                      0005DB R
+  0 ___str_23                                                      0005E5 R
+  0 ___str_3                                                       0001F8 R
+  0 ___str_4                                                       000215 R
+  0 ___str_5                                                       000303 R
+  0 ___str_6                                                       00036E R
+  0 ___str_7                                                       00038A R
+  0 ___str_8                                                       000398 R
+  0 ___str_9                                                       00041B R
+    __divsint                                                      ****** GX
+    _allocate_workarea                                             ****** GX
+  0 _basic_start                                                   0003B1 GR
+  1 _bootup_workarea                                               000000 GR
+    _device_init                                                   ****** GX
+    _device_interrupt                                              ****** GX
+    _device_monitor_reset                                          ****** GX
+    _device_reset                                                  ****** GX
+    _device_send                                                   ****** GX
+    _device_send_welcome                                           ****** GX
+  0 _getRegA                                                       000109 GR
+    _get_workarea                                                  ****** GX
+    _h_phyd                                                     =  00FFA7 G
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180 / ZX-Next / eZ80), page 2.
+Hexadecimal [24-Bits]
+
+Symbol Table
+
+    _himem                                                      =  00FC4A G
+    _himsav                                                     =  00F349 G
+    _hook                                                          ****** GX
+  0 _hook_terminal                                                 00022C GR
+  0 _host_delay                                                    0000E7 GR
+  0 _host_go                                                       000013 GR
+  0 _host_load                                                     0000CD GR
+  0 _host_millis_elapsed                                           0000FB GR
+    _host_millis_elapsed_FRAME_COUNTER_65536_100                =  00FC9E 
+  0 _host_putchar                                                  000029 GR
+  0 _host_readByte                                                 000026 GR
+  0 _host_reset                                                    000010 GR
+  0 _host_save                                                     000059 GR
+  0 _host_writeByte                                                000015 GR
+  0 _init_serial_device                                            0001B6 GR
+    _init_workarea                                                 ****** GX
+  0 _initialize_himsav                                             0003EE GR
+  0 _jump_address                                                  00016D GR
+  0 _main                                                          000421 GR
+    _memload                                                       ****** GX
+    _memsave                                                       ****** GX
+    _msx_wait                                                      ****** GX
+  0 _new_chget                                                     000139 GR
+  0 _new_chput                                                     00010B GR
+  0 _new_timi                                                      00016E GR
+  0 _onCallMONITOR                                                 000459 GR
+  0 _onDeviceMON_IO                                                0004A1 GR
+  0 _onDeviceMON_getId                                             00046E GR
+    _print                                                         ****** GX
+  0 _readData                                                      000008 GR
+  0 _readStatus                                                    00000C GR
+  0 _run_serial_monitor                                            00031D GR
+  0 _run_serial_terminal                                           0002CE GR
+    _unhook                                                        ****** GX
+  0 _unhook_terminal                                               000290 GR
+  0 _writeCommand                                                  000000 GR
+  0 _writeData                                                     000004 GR
+
+
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180 / ZX-Next / eZ80), page 3.
 Hexadecimal [24-Bits]
 
 Area Table
 
-   0 _CODE                                      size    34C   flags    0
-   1 _DATA                                      size      0   flags    0
-   2 _INITIALIZED                               size      1   flags    0
+   0 _CODE                                      size    60A   flags    0
+   1 _DATA                                      size     51   flags    0
+   2 _INITIALIZED                               size      0   flags    0
    3 _DABS                                      size      0   flags    8
    4 _HOME                                      size      0   flags    0
    5 _GSINIT                                    size      0   flags    0
    6 _GSFINAL                                   size      0   flags    0
-   7 _INITIALIZER                               size      1   flags    0
+   7 _INITIALIZER                               size      0   flags    0
    8 _CABS                                      size      0   flags    8
 

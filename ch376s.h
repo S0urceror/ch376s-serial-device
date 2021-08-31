@@ -56,29 +56,5 @@
 #define CH375_USB_MODE_HOST 0x06
 #define CH375_USB_MODE_HOST_RESET 0x07
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-    void host_reset ();
-    void host_basic_interpreter ();
-    void host_writeByte (uint16_t address, uint8_t value);
-    uint8_t readData ();
-    uint8_t readStatus ();
-#ifndef __SDCC
-    void writeCommand (uint8_t cmd);
-    void writeData (uint8_t data);
-    void host_go (uint16_t address);
-    uint8_t host_readByte (uint16_t address);
-#else
-    void writeCommand (uint8_t data) __z88dk_fastcall;
-    void writeData (uint8_t data) __z88dk_fastcall;
-    void host_go (uint16_t address) __z88dk_fastcall;
-    uint8_t host_readByte (uint16_t address) __z88dk_fastcall;
-#endif
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif // CH376S_H__

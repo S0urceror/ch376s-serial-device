@@ -12,6 +12,8 @@ Area                                    Addr        Size        Decimal Bytes (A
      00000000  l__DABS                         
      00000000  l__HEADER                       
      00000000  l__HEAP                         
+     00000000  l__INITIALIZED                  
+     00000000  l__INITIALIZER                  
      00000000  s__CABS                         
      00000000  s__DABS                         
      00000000  s__HEADER                       
@@ -21,80 +23,164 @@ Area                                    Addr        Size        Decimal Bytes (A
      0000001A  l__ROMDATA                      
      0000001C  l__HEADER0                      
      0000007C  l__HOME                         
-     000000DA  l__DATA                         
-     000001CA  l__INITIALIZED                  
-     000001CA  l__INITIALIZER                  
-     00000D77  l__CODE                         
-     0000401C  s__CODE                         
-     00004D93  s__HOME                         
-     00004E0F  s__GSINIT                       
-     00004E1F  s__GSFINAL                      
-     00004E20  s__INITIALIZER                  
-     00004FEA  s__ROMDATA                      
-     0000C000  s__DATA                         
-     0000C0DA  s__INITIALIZED                  
-     0000C2A4  s__HEAP                         
+     00000193  l__DATA                         
+     00001BD5  l__CODE                         
+     0000801C  s__CODE                         
+     00009BF1  s__HOME                         
+     00009C6D  s__GSINIT                       
+     00009C7D  s__GSFINAL                      
+     00009C7E  s__INITIALIZER                  
+     00009C7E  s__ROMDATA                      
+     0000C800  s__DATA                         
+     0000C993  s__HEAP                         
+     0000C993  s__INITIALIZED                  
+     0000F349  _himsav                            main_msx
+     0000FC4A  _himem                             main_msx
+     0000FD9F  _HTIMI                             workarea_msx
+     0000FDA4  _HCHPU                             workarea_msx
+     0000FDC2  _HCHGE                             workarea_msx
+     0000FED0  _HCLEA                             workarea_msx
+     0000FED5  _HLOPD                             workarea_msx
+     0000FEDA  _HSTKE                             workarea_msx
+     0000FFA7  _h_phyd                            main_msx
 ASxxxx Linker V03.00 + NoICE + sdld,  page 2.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-_CODE                               0000401C    00000D77 =        3447. bytes (REL,CON)
+_CODE                               0000801C    00001BD5 =        7125. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     0000401C  __print                            main_msx
-     0000403C  _writeCommand                      main_msx
-     00004040  _writeData                         main_msx
-     00004044  _readData                          main_msx
-     00004048  _readStatus                        main_msx
-     0000404C  _msx_enable_interrupt              main_msx
-     0000404E  _msx_disable_interrupt             main_msx
-     00004050  _print                             main_msx
-     0000405C  _host_reset                        main_msx
-     0000405F  _host_basic_interpreter            main_msx
-     00004065  _host_go                           main_msx
-     00004067  _host_writeByte                    main_msx
-     00004078  _host_readByte                     main_msx
-     0000407B  _main                              main_msx
-     000041A7  _onCallMONITOR                     main_msx
-     000041CC  _onDeviceMON_getId                 main_msx
-     000041FF  _onDeviceMON_IO                    main_msx
-     00004368  _strupr                            device
-     0000438D  _msx_wait                          device
-     00004394  _msdelay                           device
-     000043A8  _millis_elapsed                    device
-     000043B6  _reset                             device
-     000043D5  _sendEP0ACK                        device
-     000043DF  _sendEP0NAK                        device
-     000043E9  _sendEP0STALL                      device
-     000043F3  _writeDataForEndpoint0             device
-     00004465  _writeDataForEndpoint2             device
-     000044DF  _read_usb_data                     device
-     00004517  _set_target_device_address         device
-     00004528  _convertHex                        device
-     00004579  _convertToStr                      device
-     000045B4  _handleIHX                         device
-     00004660  _print_memory                      device
-     000046DC  _read_and_process_data             device
-     00004930  _handleInterrupt                   device
-     00004C7F  _check_exists                      device
-     00004C96  _set_usb_host_mode                 device
-     00004CC3  _initDevice                        device
-     00004CE9  _toupper                           toupper
-     00004CFB  _strlen                            
-     00004D0A  __divsint                          
-     00004D13  __divschar                         
-     00004D1A  __div8                             
-     00004D1E  __div_signexte                     
-     00004D22  __div16                            
-     00004D48  __get_remainder                    
-     00004D52  __divuint                          
-     00004D5A  __divuchar                         
-     00004D61  __divu8                            
-     00004D64  __divu16                           
-
+     0000801C  _writeCommand                      main_msx
+     00008020  _writeData                         main_msx
+     00008024  _readData                          main_msx
+     00008028  _readStatus                        main_msx
+     0000802C  _host_reset                        main_msx
+     0000802F  _host_go                           main_msx
+     00008031  _host_writeByte                    main_msx
+     00008042  _host_readByte                     main_msx
+     00008045  _host_putchar                      main_msx
+     00008075  _host_save                         main_msx
+     0000809D  _MSG_MSXUSB                        main_msx
+     000080BB  _MSG_LICENSE                       main_msx
+     000080E9  _host_load                         main_msx
+     00008103  _host_delay                        main_msx
+     00008117  _host_millis_elapsed               main_msx
+     00008125  _getRegA                           main_msx
+     00008127  _new_chput                         main_msx
+     00008155  _new_chget                         main_msx
+     00008189  _jump_address                      main_msx
+     0000818A  _new_timi                          main_msx
+     000081D2  _init_serial_device                main_msx
+     00008248  _hook_terminal                     main_msx
+     000082AC  _unhook_terminal                   main_msx
+     000082EA  _run_serial_terminal               main_msx
+     00008339  _run_serial_monitor                main_msx
+     000083CD  _basic_start                       main_msx
+     0000840A  _initialize_himsav                 main_msx
+     0000843D  _main                              main_msx
+     00008475  _onCallMONITOR                     main_msx
+     0000848A  _onDeviceMON_getId                 main_msx
+     000084BD  _onDeviceMON_IO                    main_msx
+     00008626  _strupr                            device
+     0000864B  _DevDes                            device
+     0000865D  _ConDes                            device
+     000086A0  _LangDes                           device
+     000086A4  _MANUFACTURER_Des                  device
+     000086B8  _PRODUCER_Des                      device
+     000086D4  _PRODUCER_SN_Des                   device
+     000086E6  _WELCOME_MSG                       device
+     000087C6  _UNKNOWN_MSG                       device
+     000087DC  _BYTES_MSG_ROM                     device
+     000087FE  _NEWLINE_MSG                       device
+     00008803  _IHX_TEMPLATE                      device
+     00008831  _device_reset                      device
+     00008877  _device_monitor_reset              device
+     00008890  _sendEP0ACK                        device
+     0000889A  _sendEP0NAK                        device
+     000088A4  _sendEP0STALL                      device
+     000088AE  _writeDataForEndpoint0             device
+     0000895C  _writeDataForEndpoint2             device
 ASxxxx Linker V03.00 + NoICE + sdld,  page 3.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_CODE                               0000801C    00001BD5 =        7125. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+     00008A04  _read_usb_data                     device
+     00008A3C  _set_target_device_address         device
+     00008A4D  _convertHex                        device
+     00008AFE  _convertToStr                      device
+     00008B39  _handleIHX                         device
+     00008BE8  _print_memory                      device
+     00008CA9  _device_send                       device
+     00008CD7  _device_send_welcome               device
+     00008CF0  _read_and_send_host                device
+     00008D0C  _read_and_process_data             device
+     00009271  _handleEP0SetupClass               device
+     000092D8  _handleEP0SetupStandard            device
+     000094C3  _handleEP0Setup                    device
+     00009525  _handleEP0IN                       device
+     0000958C  _handleEP0OUT                      device
+     000095E7  _device_interrupt                  device
+     000096D7  _check_exists                      device
+     000096EE  _set_usb_host_mode                 device
+     0000971B  _device_init                       device
+     00009741  _hook                              hooks_msx
+     000097B1  _unhook                            hooks_msx
+     000097CC  _get_slot_id                       workarea_msx
+     00009805  _getsltwrk                         workarea_msx
+     00009831  _byte_in_rom_space                 workarea_msx
+     00009832  _get_workarea                      workarea_msx
+     0000983F  _set_workarea                      workarea_msx
+     0000984E  _init_workarea                     workarea_msx
+     0000985A  _allocate_workarea                 workarea_msx
+     000098DF  _read_keyboard_matrix              keyboard_msx
+     000098EB  _pressed_ESC                       keyboard_msx
+     00009900  _clear_fcb                         filesystem_msx
+     0000990B  _file_load_error                   filesystem_msx
+     0000991D  _file_load_success                 filesystem_msx
+     0000992B  _file_save_error                   filesystem_msx
+     0000993C  _file_save_success                 filesystem_msx
+     00009949  _reset_fcb                         filesystem_msx
+     00009955  _filesize_fcb                      filesystem_msx
+     00009959  _prepare_fcb                       filesystem_msx
+     00009A15  _memload                           filesystem_msx
+     00009A65  _memsave                           filesystem_msx
+     00009ACB  __print                            screen_msx
+     00009AEB  _set_screen0                       screen_msx
+     00009AEF  _writeCharV                        screen_msx
+     00009B15  _sendBufferV                       screen_msx
+     00009B3F  _msx_wait                          screen_msx
+     00009B46  _msx_enable_interrupt              screen_msx
+     00009B48  _msx_disable_interrupt             screen_msx
+     00009B4A  _print                             screen_msx
+     00009B56  _toupper                           toupper
+     00009B68  __divsint                          
+     00009B71  __divschar                         
+ASxxxx Linker V03.00 + NoICE + sdld,  page 4.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_CODE                               0000801C    00001BD5 =        7125. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+     00009B78  __div8                             
+     00009B7C  __div_signexte                     
+     00009B80  __div16                            
+     00009BA6  __get_remainder                    
+     00009BB0  __divuint                          
+     00009BB8  __divuchar                         
+     00009BBF  __divu8                            
+     00009BC2  __divu16                           
+
+ASxxxx Linker V03.00 + NoICE + sdld,  page 5.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
@@ -103,124 +189,84 @@ _HEADER0                            00000000    0000001C =          28. bytes (A
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     00004010  init                               
-
-ASxxxx Linker V03.00 + NoICE + sdld,  page 4.
-Hexadecimal  [32-Bits]
-
-Area                                    Addr        Size        Decimal Bytes (Attributes)
---------------------------------        ----        ----        ------- ----- ------------
-_HOME                               00004D93    0000007C =         124. bytes (REL,CON)
-
-      Value  Global                              Global Defined In Module
-      -----  --------------------------------   ------------------------
-     00004D93  _call_expansion                    
-     00004DC4  _device_expansion                  
-     00004E03  compareString                      
-ASxxxx Linker V03.00 + NoICE + sdld,  page 5.
-Hexadecimal  [32-Bits]
-
-Area                                    Addr        Size        Decimal Bytes (Attributes)
---------------------------------        ----        ----        ------- ----- ------------
-_GSINIT                             00004E0F    00000010 =          16. bytes (REL,CON)
-
-      Value  Global                              Global Defined In Module
-      -----  --------------------------------   ------------------------
-     00004E0F  gsinit                             
+     00008010  init                               
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 6.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-_GSFINAL                            00004E1F    00000001 =           1. bytes (REL,CON)
+_HOME                               00009BF1    0000007C =         124. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
+     00009BF1  _call_expansion                    
+     00009C22  _device_expansion                  
+     00009C61  compareString                      
 ASxxxx Linker V03.00 + NoICE + sdld,  page 7.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-_INITIALIZER                        00004E20    000001CA =         458. bytes (REL,CON)
+_GSINIT                             00009C6D    00000010 =          16. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
+     00009C6D  gsinit                             
+
 ASxxxx Linker V03.00 + NoICE + sdld,  page 8.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-_ROMDATA                            00004FEA    0000001A =          26. bytes (REL,CON)
+_GSFINAL                            00009C7D    00000001 =           1. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     00004FEA  callStatementIndex                 
-     00004FEE  callStatement_MONITOR              
-     00004FF8  deviceIndex                        
-     00004FFC  device_MON                         
-
 ASxxxx Linker V03.00 + NoICE + sdld,  page 9.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-_DATA                               0000C000    000000DA =         218. bytes (REL,CON)
+_ROMDATA                            00009C7E    0000001A =          26. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     0000C000  _heap_top                          
-     0000C002  _dataToTransfer                    device
-     0000C004  _dataToTransfer2                   device
-     0000C006  _dataLength                        device
-     0000C008  _dataLength2                       device
-     0000C00A  _usb_device_address                device
-     0000C00B  _usb_configuration_id              device
-     0000C00C  _uart_parameters                   device
-     0000C013  _request                           device
-     0000C053  _length                            device
-     0000C055  _resultBuffer                      device
-     0000C096  _processing_command                device
-     0000C097  _payload                           device
-     0000C0D8  _payloadptr                        device
+     00009C7E  callStatementIndex                 
+     00009C82  callStatement_MONITOR              
+     00009C8C  deviceIndex                        
+     00009C90  device_MON                         
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 10.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-_INITIALIZED                        0000C0DA    000001CA =         458. bytes (REL,CON)
+_DATA                               0000C800    00000193 =         403. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     0000C0DA  _bDeviceOk                         main_msx
-     0000C0DB  _DevDes                            device
-     0000C0ED  _ConDes                            device
-     0000C130  _LangDes                           device
-     0000C134  _MANUFACTURER_Des                  device
-     0000C160  _PRODUCER_Des                      device
-     0000C186  _PRODUCER_SN_Des                   device
-     0000C198  _oneOneByte                        device
-     0000C199  _oneZeroByte                       device
-     0000C19A  _twoZeroBytes                      device
-     0000C19C  _usb_terminal_open                 device
-     0000C19D  _transaction_state                 device
-     0000C19E  _WELCOME_MSG                       device
-     0000C235  _UNKNOWN_MSG                       device
-     0000C24B  _BYTES_MSG                         device
-     0000C26D  _NEWLINE_MSG                       device
-     0000C272  _memory_buffer                     device
+     0000C800  _heap_top                          
+     0000C802  _bootup_workarea                   main_msx
+     0000C853  _strMonitorEcho                    device
+     0000C894  _ihx_bytes_processed               device
+     0000C8B6  _ihx_output_line                   device
+     0000C8E4  _strMonitorCmdArgs                 device
+     0000C925  _pstrMonitorCmdArgs                device
+     0000C927  _request                           device
+     0000C967  _uart_parameters                   device
+     0000C96E  _FCB                               filesystem_msx
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 11.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-_HEAP                               0000C2A4    00000000 =           0. bytes (REL,CON)
+_HEAP                               0000C993    00000000 =           0. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     0000C2A4  _HEAP_start                        
+     0000C993  _HEAP_start                        
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 12.
 
@@ -229,14 +275,17 @@ Files Linked                              [ module(s) ]
 build-msx/objs/msxromcrt0.rel             [  ]
 build-msx/objs/main-msx.rel               [ main_msx ]
 build-msx/objs/device.rel                 [ device ]
+build-msx/objs/hooks_msx.rel              [ hooks_msx ]
+build-msx/objs/workarea_msx.rel           [ workarea_msx ]
+build-msx/objs/keyboard_msx.rel           [ keyboard_msx ]
+build-msx/objs/filesystem_msx.rel         [ filesystem_msx ]
+build-msx/objs/screen_msx.rel             [ screen_msx ]
 
 
 Libraries Linked                          [ object file ]
 
 /Users/mario/Development/msx/Compilers/sdcc/bin/../share/sdcc/lib/z80/z80.lib
                                           [ toupper.rel ]
-/Users/mario/Development/msx/Compilers/sdcc/bin/../share/sdcc/lib/z80/z80.lib
-                                          [ strlen.rel ]
 /Users/mario/Development/msx/Compilers/sdcc/bin/../share/sdcc/lib/z80/z80.lib
                                           [ divsigned.rel ]
 /Users/mario/Development/msx/Compilers/sdcc/bin/../share/sdcc/lib/z80/z80.lib
@@ -246,7 +295,7 @@ Libraries Linked                          [ object file ]
 
 User Base Address Definitions
 
-_CODE = 0x401c
-_DATA = 0xc000
+_CODE = 0x801c
+_DATA = 0xc800
 
 

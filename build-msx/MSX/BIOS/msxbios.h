@@ -139,6 +139,8 @@
 #define BIOS_REDCLK     0x01f5
 #define BIOS_WRTCLK     0x01f9
 
+#define BDOS_HIMSAV     0xf349
+
 // --- work area ---
 #define BIOS_RDPRIM     0xf380
 #define BIOS_WRPRIM     0xf385
@@ -265,6 +267,7 @@
 #define BIOS_AUTLIN     0xf6ab
 #define BIOS_AUTINC     0xf6ad
 #define BIOS_SAVTXT     0xf6af
+#define BIOS_SAVSTK     0xF6B1
 #define BIOS_ERRLIN     0xf6b3
 #define BIOS_DOT        0xf6b5
 #define BIOS_ERRTXT     0xf6b7

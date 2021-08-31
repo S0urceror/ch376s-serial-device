@@ -1,12 +1,19 @@
 #include <wiring.h>
 #include <SPI.h>
+
+#include "host.h"
+#include "workarea.h"
 #include "device.h"
 #include "ch376s.h"
+
+WORKAREA workarea;
 
 int ledPin = 11;
 int intPin = 5;
 int misoPin = 3;
 bool bDeviceOk = false;
+#define LEDLOW LOW
+#define LEDHIGH HIGH
 
 int bytes_following;
 bool extended_command;
@@ -117,7 +124,7 @@ void beginCmd (byte cmd)
                                     break;
   }
   digitalWrite(SS, LOW);  
-  digitalWrite (ledPin, HIGH);
+  digitalWrite (ledPin, LEDHIGH);
 }
 void checkEndCmd (byte value)
 {
@@ -125,14 +132,14 @@ void checkEndCmd (byte value)
   {
     bytes_following=0;
     digitalWrite(SS, HIGH);
-    digitalWrite (ledPin, LOW);
+    digitalWrite (ledPin, LEDLOW);
     return; 
   }
   if (wait_for_operation_status && (value==CH_ST_RET_SUCCESS || value==CH_ST_RET_ABORT))
   {
     bytes_following=0;
     digitalWrite(SS, HIGH);
-    digitalWrite (ledPin, LOW);
+    digitalWrite (ledPin, LEDLOW);
     return;
   }
   if (--bytes_following==0) 
@@ -145,7 +152,7 @@ void checkEndCmd (byte value)
           return;
       }
       digitalWrite(SS, HIGH);
-      digitalWrite (ledPin, LOW);
+      digitalWrite (ledPin, LEDLOW);
       return;
   }
 }
@@ -194,12 +201,6 @@ void printf_begin(void)
   fdevopen( &serial_putc, 0 );
 }
 
-void loop() 
-{
-  if((readStatus() & 0x80) == 0)
-    handleInterrupt(); 
-}
-
 void host_reset ()
 {
   printf ("resetting host\n");
@@ -220,6 +221,64 @@ uint8_t host_readByte (uint16_t address)
 {
   return address&0xff;
 }
+void host_putchar (uint8_t character)
+{
+  
+}
+struct 
+{
+  char filename[11];
+} FCB;
+void host_load (uint16_t address, uint16_t in_filename)
+{
+  memset (FCB.filename,' ',sizeof(FCB.filename));
+  char* dot = strchr ((char*) in_filename,'.');
+  char* end = strchr ((char*) in_filename,'\0');
+  if (dot)
+  {
+      memcpy (FCB.filename,(void*)in_filename,dot-(char*)in_filename);
+      memcpy (FCB.filename+8,dot+1,end-dot);
+  }
+  else
+  {
+      memcpy (FCB.filename,(void*)in_filename,end-(char*)in_filename);
+  }
+  printf ("reading [%s] into address: 0x%04X\n",(char*)FCB.filename,address);
+}
+void host_save (uint16_t address, uint16_t size, uint16_t in_filename)
+{
+  memset (FCB.filename,' ',sizeof(FCB.filename));
+  char* dot = strchr ((char*) in_filename,'.');
+  char* end = strchr ((char*) in_filename,'\0');
+  if (dot)
+  {
+      memcpy (FCB.filename,(void*)in_filename,dot-(char*)in_filename);
+      memcpy (FCB.filename+8,dot+1,end-dot);
+  }
+  else
+  {
+      memcpy (FCB.filename,(void*)in_filename,end-(char*)in_filename);
+  }
+  printf ("saving 0x%04X bytes to [%s] from address: 0x%04X\n",size,(char*)FCB.filename,address);
+}
+void host_delay (int milliseconds)
+{
+    delay (milliseconds);
+}
+uint32_t host_millis_elapsed () 
+{
+    return millis();
+}
+
+void loop() 
+{
+  if((readStatus() & 0x80) == 0)
+  {
+    if (device_interrupt(&workarea,MONITOR_MODE)==MONITOR_EXIT_BASIC)
+      host_basic_interpreter ();
+  }
+}
+
 void setup() {
   // initialize SPI pins
   pinMode(SS, OUTPUT);
@@ -232,10 +291,13 @@ void setup() {
 
   // initialize LED
   pinMode (ledPin,OUTPUT);
-  digitalWrite (ledPin, LOW);
+  digitalWrite (ledPin, LEDLOW);
+
+  // reset global variables
+  device_reset (&workarea);
 
   // initialize USB device
-  bDeviceOk = initDevice ();
+  bDeviceOk = device_init ();
   if (bDeviceOk)
   {
       printf ("CH376s recognised\r\n");

@@ -1,7 +1,7 @@
 CHPUT equ 0A2h
 
 ; Our program!
-    org 0A000h
+    org 0D000h
 START:
     ld hl, TXT_HELLO1
     call PRINT

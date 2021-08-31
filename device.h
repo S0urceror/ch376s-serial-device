@@ -89,8 +89,29 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-bool initDevice ();
-void handleInterrupt ();
+
+typedef enum __DEVICE_MODE
+{
+    MONITOR_MODE,
+    TERMINAL_MODE
+} DEVICE_MODE;
+typedef enum __INTERRUPT_RESULT
+{
+    DEVICE_INTERRUPT_OKAY,
+    DEVICE_INTERRUPT_ERROR,
+    DEVICE_ADDRESS_SET,
+    DEVICE_CONFIGURATION_SET,
+    DEVICE_SERIAL_CONNECTED,
+    DEVICE_SERIAL_DISCONNECTED,
+    MONITOR_EXIT_BASIC
+} INTERRUPT_RESULT;
+bool device_init ();
+INTERRUPT_RESULT device_interrupt (WORKAREA* wrk, DEVICE_MODE mode);
+void device_reset (WORKAREA* wrk);
+void device_monitor_reset ();
+void device_send (WORKAREA* wrk,char* buffer,uint16_t length);
+void device_send_welcome (WORKAREA* wrk);
+
 #ifdef __cplusplus
 }
 #endif

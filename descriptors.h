@@ -11,7 +11,7 @@
 
 
 /* Device descriptor */
-uint8_t DevDes[] = {
+const uint8_t DevDes[] = {
     0X12, // bLength 1 the number of bytes of the device descriptor
     0X01, // bDecriptorType. 1 for the device type description 0x01
 
@@ -24,11 +24,15 @@ uint8_t DevDes[] = {
 
     EP0_PIPE_SIZE, // bMaxPacketSize0 1 The maximum packet size of endpoint 0, only 8, 16, 32, 64 are legal values; the current maximum is 8
     // idVendor 2 manufacturer logo (valued by USB standard)
-    0xC0, // VendorID-L
-    0x16, // VendorId-H
+    //0xC0, // VendorID-L
+    //0x16, // VendorId-H
+    0x09,// VendorID-L
+    0x12,// VendorId-H
     // idProduct 2 product logo (paid by the manufacturer)
-    0x83, // ProductId-L
-    0x04, // ProductId-H
+    0x34,// ProductId-L
+    0x34,// ProductId-H
+    //0x83, // ProductId-L
+    //0x04, // ProductId-H
 
     0X00, // bcdDevice 2 device release number BCD code
     0X01,
@@ -41,7 +45,7 @@ uint8_t DevDes[] = {
 };
 
 /* Configuration descriptor */
-uint8_t ConDes[9 + 9 + 5 + 4 + 5 + 5 + 7 + 9 + 7 + 7] = {
+const uint8_t ConDes[9 + 9 + 5 + 4 + 5 + 5 + 7 + 9 + 7 + 7] = {
     /* Configuration descriptor */
     0X09,                  // bLength 1 The number of bytes in the configuration descriptor
     0X02,                  // bDescriptorType 1 configuration description table type 0X02
@@ -144,105 +148,71 @@ uint8_t ConDes[9 + 9 + 5 + 4 + 5 + 5 + 7 + 9 + 7 + 7] = {
 };
 
 /* Language descriptor */
-uint8_t LangDes[] = {
+const uint8_t LangDes[] = {
     0X04, // bLength
     0X03, // bDescriptorType
     0X09,
     0X04};
 
 /* Vendor string descriptor */
-uint8_t MANUFACTURER_Des[] = {
-    0X2C,  // bLength
+const uint8_t MANUFACTURER_Des[] = {
+    0X14,  // bLength
     0X03,  // bDescriptorType
-    'w', // "www.temcocontrols.com"
+    'S', // "S0urceror"
     0X00,
-    'w',
+    '0',
     0X00,
-    'w',
+    'u',
     0X00,
-    '.',
+    'r',
     0X00,
-    't',
+    'c',
     0X00,
     'e',
-    0X00,
-    'm',
-    0X00,
-    'c',
-    0X00,
-    'o',
-    0X00,
-    'c',
-    0X00,
-    'o',
-    0X00,
-    'n',
-    0X00,
-    't',
     0X00,
     'r',
     0X00,
     'o',
     0X00,
-    'l',
+    'r',
     0X00,
-    's',
-    0X00,
-    '.',
-    0X00,
-    'c',
-    0X00,
-    'o',
-    0X00,
-    'm',
-    0X00
 };
 
 /* Product string descriptor */
-uint8_t PRODUCER_Des[] = {
-    0X26,  // bLength
+const uint8_t PRODUCER_Des[] = {
+    0X1c,  // bLength
     0X03,  // bDescriptorType
-    'N', // "Network Controller"
+    'M', // "Network Controller"
     0X00,
-    'e',
+    'S',
     0X00,
-    't',
+    'X',
     0X00,
-    'w',
+    'U',
     0X00,
-    'o',
+    'S',
     0X00,
-    'r',
+    'B',
     0X00,
-    'k',
+    '-',
     0X00,
-    ' ',
-    0X00,
-    'C',
-    0X00,
-    'o',
-    0X00,
-    'n',
-    0X00,
-    't',
-    0X00,
-    'r',
-    0X00,
-    'o',
-    0X00,
-    'l',
-    0X00,
-    'l',
+    'S',
     0X00,
     'e',
     0X00,
     'r',
-    0X00
+    0X00,
+    'i',
+    0X00,
+    'a',
+    0X00,
+    'l',
+    0X00,
 };
 
 /* Product serial number string descriptor */
-uint8_t PRODUCER_SN_Des[] = {
-    0X10,        // bLength
+const uint8_t PRODUCER_SN_Des[] = {
+    0X12,        // bLength
     0X03,        // bDescriptorType
     '2', 0x00, // "20210701"
     '0', 0x00,

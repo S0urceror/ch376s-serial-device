@@ -12,3 +12,6 @@ MacOS:
 MSX: 
 	$(MAKE) -f ./build-system/MSX.mk all
 	
+MSX-clean: 
+	$(MAKE) -f ./build-system/MSX.mk clean
+	

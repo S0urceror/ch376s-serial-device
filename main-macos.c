@@ -24,8 +24,12 @@
 #include <unistd.h>
 #include <assert.h>
 
+#include "host.h"
+#include "workarea.h"
 #include "device.h"
 #include "ch376s.h"
+
+WORKAREA workarea;
 
 //#define   B115200 0010002
 //#define   B230400 0010003
@@ -168,6 +172,66 @@ void host_writeByte (uint16_t address, uint8_t value)
 {
   printf ("address: 0x%04X, value: 0x%02X\n",address,value);
 }
+uint8_t host_readByte (uint16_t address)
+{
+  return address&0xff;
+}
+void host_putchar (uint8_t character)
+{
+  
+}
+struct 
+{
+  char filename[11];
+} FCB;
+void host_load (uint16_t address, char* in_filename)
+{
+  memset (FCB.filename,' ',sizeof(FCB.filename));
+  char* dot = strchr ((char*) in_filename,'.');
+  char* end = strchr ((char*) in_filename,'\0');
+  if (dot)
+  {
+      memcpy (FCB.filename,(void*)in_filename,dot-(char*)in_filename);
+      memcpy (FCB.filename+8,dot+1,end-dot);
+  }
+  else
+  {
+      memcpy (FCB.filename,(void*)in_filename,end-(char*)in_filename);
+  }
+  printf ("reading [%s] into address: 0x%04X\n",(char*)FCB.filename,address);
+}
+void host_save (uint16_t address, uint16_t size, char* in_filename)
+{
+  memset (FCB.filename,' ',sizeof(FCB.filename));
+  char* dot = strchr ((char*) in_filename,'.');
+  char* end = strchr ((char*) in_filename,'\0');
+  if (dot)
+  {
+      memcpy (FCB.filename,(void*)in_filename,dot-(char*)in_filename);
+      memcpy (FCB.filename+8,dot+1,end-dot);
+  }
+  else
+  {
+      memcpy (FCB.filename,(void*)in_filename,end-(char*)in_filename);
+  }
+  printf ("saving 0x%04X bytes to [%s] from address: 0x%04X\n",size,(char*)FCB.filename,address);
+}
+void host_delay (int milliseconds)
+{
+    usleep (milliseconds*1000);
+}
+uint32_t host_millis_elapsed () 
+{
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+
+    unsigned long long millisecondsSinceEpoch =
+        (unsigned long long)(tv.tv_sec) * 1000 +
+        (unsigned long long)(tv.tv_usec) / 1000;
+
+    return millisecondsSinceEpoch;
+}
+
 int main(int argc, const char * argv[]) 
 {
     bool bDeviceOk = false;
@@ -176,18 +240,20 @@ int main(int argc, const char * argv[])
     for (int i=0;i<10;i++) roundtrip ();
 
     // initialize USB device
-    bDeviceOk = initDevice ();
+    bDeviceOk = device_init ();
     if (bDeviceOk)
     {
         writeCommand (CH_CMD_SET_REGISTER);
         writeData (0x16);
         writeData (0x90);
     }
-
+    
+    // reset global variables
+    device_reset (&workarea);
     while (bDeviceOk)
     {
         if((readStatus() & 0x80) == 0) 
-            handleInterrupt(); 
+            device_interrupt(&workarea,MONITOR_MODE); 
     }
 
     return 0;
